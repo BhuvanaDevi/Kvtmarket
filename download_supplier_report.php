@@ -1,174 +1,145 @@
 <?php
-require_once "Classes/PHPExcel.php";
+require_once("include/config.php");
+require('fpdf/fpdf.php');
+$pdf = new FPDF();
+$pdf->AddPage();
+$pdf->SetLeftMargin(15);
 
-include("include/config.php");
+   $pdf->Image('images/ab_pdf.png',10,2,50);
+   // Arial bold 15
+   // $pdf->Ln(45);
+   $pdf->SetFont('Arial','B',12);
+   // Move to the right
+   $pdf->Cell(80);
+   // Title
+   $pdf->Cell(100,15,'A108 Adam Street New York, Us - 9042194877',0,0,'R');
+   // Line break
+   // $pdf->Ln(10);
+   $pdf -> Line(10, 30, 200, 30);
+  
+   $pdf->SetFont('Arial','B',14);
+$pdf->SetXY(80,20);
 
-$objPHPExcel = new PHPExcel();
+$from=$_REQUEST["from"];
+$to=$_REQUEST["to"];
+// $customer=$_REQUEST['customer'];
 
-// Set default font
-$objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri')->setSize(11);
+// if($customer==""){
+$sel_qryn = "SELECT * FROM `sar_supplier`";
+$data_qryn= $connect->prepare($sel_qryn);
+$data_qryn->execute();
+// }
 
-//Set the first row as the header row
-//print_r($_REQUEST);
+// $val = $data_qryn->fetch(PDO::FETCH_ASSOC);
+// print_r($val);die();
+$pdf->Ln(15);
+$pdf->SetFont('Arial','B',18);
+$pdf->Cell(180,10,'Customer List',0,0,'C');
+$pdf->Ln(10);
+// $pdf->SetFont('Arial','B',12);
+// $pdf->Cell(180,10,"From = ".$from."       To = ".$to,0,0,'C');
+$pdf->Ln(10);
+ 
+   $pdf->SetFillColor(40,48,77);
+               $pdf->SetTextColor(255,255,255);
+     
+               $pdf->SetFont('Arial','B',10);
+      //$pdf->Cell(30,10,'Invoice',0,0,'L',true);
+      // $pdf->Cell(30,10,'Payment Id',0,0,'L',true);
+      $pdf->Cell(30,10,'Group',0,0,'L',true);
+      $pdf->Cell(45,10,'Supplier Name',0,0,'L',true);
+      $pdf->Cell(45,10,'Contact Number',0,0,'L',true);
+      $pdf->Cell(30,10,'Address',0,0,'C',true);
+      $pdf->Cell(30,10,'Date',0,0,'R',true);
+   
+      $pdf->Ln(10);
+         $pdf->SetFillColor(40,48,77);
+               $pdf->SetTextColor(255,255,255);
 
-$user_role = $_REQUEST['user_role'];
-$username = $_REQUEST['username'];
-//exit;
+            //    $pdf->Ln();
+   $amt=0;
+   $pdf->SetTextColor(1, 0, 4);
+   $pdf->SetFont('Arial','',12);
 
-//Rename the worksheet
-
-
-$objPHPExcel->setActiveSheetIndex(0);
-
-/*****************  Fetching Data From Database  ********************/
-
-$objPHPExcel->getActiveSheet()->setCellValue('A1','S NO');
-$objPHPExcel->getActiveSheet()->setCellValue('B1','Supplier ID');
-$objPHPExcel->getActiveSheet()->setCellValue('C1','Supplier Name');
-$objPHPExcel->getActiveSheet()->setCellValue('D1','Contact Number');
-$objPHPExcel->getActiveSheet()->setCellValue('E1','Address');
-
-$objPHPExcel->getActiveSheet()->setTitle("Get Active Supplier Report");
-$sql="SELECT * FROM `sar_supplier` WHERE is_active=1";
-
-
-$res=mysqli_query($con,$sql);
-//echo mysqli_num_rows($res);
-if(mysqli_num_rows($res)>0)
-{
-    $i=2;
-    //$j=1;
-    //while($approval_row = $res->fetch(PDO::FETCH_ASSOC)) {
-    while($approval_row = mysqli_fetch_object($res)) {
-        
-        
-        // $contact_no_exp = explode(",",$approval_row->contact_number);
-        $objPHPExcel->getActiveSheet()->setCellValue('A'.($i),$approval_row->id);
-        $objPHPExcel->getActiveSheet()->setCellValue('B'.($i), $approval_row->supplier_no);
-        $objPHPExcel->getActiveSheet()->setCellValue('C'.($i), $approval_row->contact_person);
-        $objPHPExcel->getActiveSheet()->setCellValue('D'.($i), $approval_row->contact_number1);
-        $objPHPExcel->getActiveSheet()->setCellValue('E'.($i), $approval_row->Address);
-    
-        $i++;
-    }    
-}
-
-
-$objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri')->setSize(11);
-
-
-// Create a new worksheet, after the default sheet
-$objPHPExcel->createSheet();
-
-
-$objPHPExcel->setActiveSheetIndex(1);
-
-/*****************  Fetching Data From Database  ********************/
-
-$objPHPExcel->getActiveSheet()->setCellValue('A1','S NO');
-$objPHPExcel->getActiveSheet()->setCellValue('B1','Customer ID');
-$objPHPExcel->getActiveSheet()->setCellValue('C1','Customer Name');
-$objPHPExcel->getActiveSheet()->setCellValue('D1','Contact Number');
-$objPHPExcel->getActiveSheet()->setCellValue('E1','Address');
-
-//Rename the worksheet
-$objPHPExcel ->getActiveSheet()->setTitle("Get Inactive Supplier Report");
-$sql="SELECT * FROM `sar_supplier` WHERE is_active=0";
-
-
-$res=mysqli_query($con,$sql);
-//echo mysqli_num_rows($res);
-if(mysqli_num_rows($res)>0)
-{
-    $i=2;
-    //$j=1;
-    //while($approval_row = $res->fetch(PDO::FETCH_ASSOC)) {
-    while($approval_row = mysqli_fetch_object($res)) {
-        
-        
-        // $contact_no_exp = explode(",",$approval_row->contact_number);
-        $objPHPExcel->getActiveSheet()->setCellValue('A'.($i),$approval_row->id);
-        $objPHPExcel->getActiveSheet()->setCellValue('B'.($i), $approval_row->supplier_no);
-        $objPHPExcel->getActiveSheet()->setCellValue('C'.($i), $approval_row->contact_person);
-        $objPHPExcel->getActiveSheet()->setCellValue('D'.($i), $approval_row->contact_number1);
-        $objPHPExcel->getActiveSheet()->setCellValue('E'.($i), $approval_row->Address);
-    
-        $i++;
-    }    
-}
-
-$objPHPExcel->getActiveSheet()->getStyle("A1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("B1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("C1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("D1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("E1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("F1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("G1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("H1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("I1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("J1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("K1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("L1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("M1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("N1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("O1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("P1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("Q1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("R1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("S1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("T1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("U1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("V1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("W1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("Y1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("Z1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AA1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AB1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AC1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AD1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AE1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AF1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AG1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AH1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AI1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AJ1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AK1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AL1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AM1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AN1")->getFont()->setBold(true);
-
-$objPHPExcel->getActiveSheet()->getStyle("AO1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AP1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AQ1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AR1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AS1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AT1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AU1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AV1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AW1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AX1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AY1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("AZ1")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("A2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("B2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("C2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("D2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("E2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("F2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("G2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("H2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("I2")->getFont()->setBold(true);
-$objPHPExcel->getActiveSheet()->getStyle("J2")->getFont()->setBold(true);
+   while($result = $data_qryn->fetch(PDO::FETCH_ASSOC))
+     {
+    $pdf->Cell(30,10,$result['group_name'],0,0,'L');
+         $pdf->Cell(30,10,$result['contact_person'],0,0,'R');
+       $pdf->Cell(43,10,$result['contact_number1'],0,0,'R');
+       $pdf->Cell(38,10,$result['Address'],0,0,'R');
+       $pdf->Cell(40,10,$result['created_by'],0,0,'R');
+      
+       $pdf->Ln();
+     }
+// $pdf->SetFont('Arial','B',14);
+// $pdf->Cell(42,10,'Mobile Number ',0,0,'L',false);
+// $pdf->SetFont('Arial','',14);
 
 
-//exit;
+// $select_qry3= "SELECT sum(inward) as inward_sum FROM `tray_transactions` WHERE category='Customer' AND name='$customer_name' ";
+// 	    $select_sql3=$connect->prepare($select_qry3);
+//     	$select_sql3->execute();
+//     	$select_row3 = $select_sql3->fetch(PDO::FETCH_ASSOC);
+//     	$inward_sum=$select_row3["inward_sum"];
+    	
+//     	$select_qry4= "SELECT sum(outward) as outward_sum FROM `tray_transactions` WHERE category='Customer' AND name='$customer_name' ";
+// 	    $select_sql4=$connect->prepare($select_qry4);
+//     	$select_sql4->execute();
+//     	$select_row4 = $select_sql4->fetch(PDO::FETCH_ASSOC);
+//     	$outward_sum=$select_row4["outward_sum"];
+//     	$total_sum=$outward_sum-$inward_sum;
+//         //echo $select_qry3;
+//         $balance =  $row->total_bill_amount - $total_discount_on_sales - $data_row2["paid_amount"];
 
-$filename="Get Supplier Report";
-header("Content-Type:application/vnd.ms-excel");	
-header("Content-Disposition:attachment; filename=".$filename.".xls");
-header("Cache-Control:max-age=0");
-header("Pragma: no-cache");
+$pdf->SetFont('Arial','B',16);
+//$pdf->Cell(87 ,6,'','T',0);
+// $pdf->Cell(45 ,10,'Sub Total',1,0,'C');
+//$pdf->Cell(47, 10, 'Total', "T", 0, "R");
+//$pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
+//$pdf->Cell(40, 10, $total, 'T', 0, "R");
+// $pdf->Ln();
+// $pdf->Cell(87 ,6,'','T',0);
+// $pdf->Cell(47, 10, 'Balance', "T", 0, "R");
+// //$pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
+// $pdf->Cell(40, 10, $bal, 'T', 1, "R");
+// $pdf->Cell(87 ,6,'','T',0);
+// $pdf->Cell(45 ,10,'Sub Total',1,0,'C');
+$pdf->Ln();
+// $pdf->Cell(87 ,6,'','T',0);
+// $pdf->Cell(47, 10, 'Total Amount', "T", 0, "R");
+// //$pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
+// $pdf->Cell(40, 10, $resultb->balance, 'T', 0, "R");
+//$pdf->Ln(10);
+// $pdf->Cell(87 ,6,'',0,0);
+// $pdf->Cell(47, 10, 'Payment', 0, 0, "R");
+// // $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
+// $pdf->Cell(40, 10, $data_row2["paid_amount"], 0, 0, "R");
+// $pdf->Ln(10);
+// $pdf->Cell(87 ,6,'',0,0);
+// $pdf->Cell(47, 10, 'Discount', 0, 0, "R");
+// $pdf->Cell(40, 10, $total_discount_on_sales, 0, 0, "R");
+// $pdf->Ln(10);
+// $pdf->Cell(87 ,6,'',0,0);
+// $pdf->Cell(47, 10, 'Balance', "T", 0, "R");
+// $pdf->Cell(40, 10, $balance, 'T', 0, "R");
+// $pdf->Ln(10);
+// $pdf->Cell(87 ,6,'',0,0);
+// $pdf->Cell(47, 10, 'Inhand Trays', "T", 0, "R");
+// $pdf->Cell(40, 10, $total_sum, 'T', 0, "R");
+// $pdf->Ln(10);
+// $pdf->Cell(96 ,6,'',0,0);
 
-$objWriter=PHPExcel_IOFactory::createwriter($objPHPExcel,"Excel5");
-$objWriter->save("php://output");
+$pdf->SetDash(2,2);
+
+$pdf->SetFont('Arial','B',16);
+
+// $pdf->Cell(45 ,10,'Sub Total',1,0,'C');
+
+// $pdf->Ln(20);
+$pdf->Cell(20,10,'Note :',0,0,'L');
+$pdf->SetFont('Arial','I',14);
+$pdf->Cell(20,10,'Goods once sold will not be taken back or exchanged.',0,0);
+$pdf->SetDash();
+$pdf -> Line(0, 280, 210, 280);
+$pdf->Output();
 ?>
