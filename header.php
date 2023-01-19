@@ -163,15 +163,15 @@ session_start();
 
                     <!-- <li>-->
                    
-                         
-
+                    <li><a href="finance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Finance</span></a></li>
+                    <li><a href="ask_finance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Interest</span></a></li>
                           <li><a href="GeneratPatti.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-checkbox-checked'></i><span>Generate Patti</span></a></li>
 
                           </li>
 
                      <li>
 
-                             <li><a href="expenditure.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-store-alt' ></i><span>Expenditure</span></a></li>
+                        <li><a href="expenditure.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-store-alt' ></i><span>Expenditure</span></a></li>
 
                           </li>   
 

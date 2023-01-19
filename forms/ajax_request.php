@@ -2,6 +2,302 @@
 include("../include/config.php");
 $action = $_REQUEST["action"];
 
+if($action=="view_finance")
+{
+   
+    $from=$_REQUEST["from"];
+    $to=$_REQUEST["to"];
+	$customer=$_REQUEST["customer"];
+    $grp=$_REQUEST["grp"];
+    $draw = isset($_REQUEST['draw']) ? $_REQUEST['draw']: '';
+	$row = isset($_REQUEST['start']) ? $_REQUEST['start']: '';
+	$rowperpage = isset($_REQUEST['length']) ? $_REQUEST['length']: '10';
+	$columnIndex = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column']: '';
+	$columnName =    isset($_REQUEST['columns'][$columnIndex]['data']) ? $_REQUEST['columns'][$columnIndex]['data']: 'ID';
+	$columnSortOrder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir']: '';
+	$searchValue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value']: '';
+
+	
+	$searchQuery = " ";
+	if($searchValue != ''){
+	   $searchQuery = " payment_status = 0 AND
+	   (
+            date like '%".$searchValue."%'
+            OR finance_id like '%".$searchValue."%'
+            OR customer_name like '%".$searchValue."%'
+			OR group_name like '%".$searchValue."%'
+            OR amount like '%".$searchValue."%'
+	    )";
+	}else{
+	    $searchQuery = " payment_status = 0 ";
+	}
+    $sel_qry = " SELECT count(*) as allcount FROM `sar_finance` ";
+    
+		$sel_qry .= " WHERE ".$searchQuery;
+	if($from!="" && $to!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to')";   
+	}
+	else if($customer!="")
+    {
+     $sel_qry .=" AND customer_name='$customer'";   
+    }
+	else if($grp!="")
+    {
+     $sel_qry .=" AND group_name='$grp'";   
+    }
+	else if($from!="" && $to!="" && $customer!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer'";   
+	}
+	else if($from!="" && $to!="" && $grp!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to') AND group_name='$grp'";   
+	}
+    else if($from!="" && $to!="" && $customer!="" && $grp!="")
+    {
+     	$sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    }
+	
+    $sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecords = $sel_row["allcount"];
+	
+	
+	$sel_qry = " SELECT count(*) as allcount FROM `sar_finance` ";
+	
+	$sel_qry .= " WHERE ".$searchQuery;
+	if($from!="" && $to!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to')";   
+	}
+	else if($customer!="")
+    {
+     $sel_qry .=" AND customer_name='$customer'";   
+    }
+	else if($grp!="")
+    {
+     $sel_qry .=" AND group_name='$grp'";   
+    }
+	if($from!="" && $to!="" && $customer!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer'";   
+	}
+	if($from!="" && $to!="" && $grp!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to') AND group_name='$grp'";   
+	}
+    if($from!="" && $to!="" && $customer!="" && $grp!="")
+    {
+     $sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    }
+	
+	$sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecordwithFilter = $sel_row["allcount"];
+
+
+    $data_sql = " SELECT * FROM `sar_finance` ";
+	
+		$data_sql .= " WHERE ".$searchQuery;
+	if($from!="" && $to!="")
+	{
+		$data_sql .=" AND (date >='$from' AND date<='$to')";   
+	}
+	else if($customer!="")
+    {
+     $data_sql .=" AND customer_name='$customer'";   
+    }
+	else if($grp!="")
+    {
+     $data_sql .=" AND group_name='$grp'";   
+    }
+	if($from!="" && $to!="" && $customer!="")
+	{
+		$data_sql .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer'";   
+	}
+	if($from!="" && $to!="" && $grp!="")
+	{
+		$data_sql .=" AND (date >='$from' AND date<='$to') AND group_name='$grp'";   
+	}
+    if($from!="" && $to!="" && $customer!="" && $grp!="")
+    {
+     $data_sql .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    }
+
+	$data_qry= $connect->prepare($data_sql);
+	$data_qry->execute();
+	
+	$data = array();
+
+	while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
+		$sel_qry2 = "SELECT  *,sum(amount) as paid_amount from sar_finance_payment where finance_id = '".$data_row["finance_id"]."' AND is_revoked is NULL group by finance_id ";
+	    $data_qry2= $connect->prepare($sel_qry2);
+	    $data_qry2->execute();
+	    $data_row2 = $data_qry2->fetch(PDO::FETCH_ASSOC);
+	    
+        // $select_qry2="SELECT sum(waiver_discount) as discount FROM sar_waiver WHERE sales_no='".$data_row["sales_no"]."' GROUP BY sales_no";
+    	// $select_sql2=$connect->prepare($select_qry2);
+    	// $select_sql2->execute();
+    	// $total_discount_on_sales_list = $select_sql2->fetch(PDO::FETCH_ASSOC);
+    	// $total_discount_on_sales =  $total_discount_on_sales_list['discount'];
+	
+	    $balance = $data_row["amount"] - $data_row2["paid_amount"];
+	    $data[]=array(
+	        "balance"=>$balance,
+	        "id"=>$data_row["id"],
+			"payment_status"=>$data_row["payment_status"],
+	        "paid_amount"=>$data_row2["paid_amount"],
+	        "finance_id"=>$data_row["finance_id"],
+	        "date"=>$data_row["date"],
+	        "customer_name"=>$data_row["customer_name"],
+	        "group_name"=>$data_row["group_name"],
+	        "amount"=>$data_row["amount"],
+	        "updated_by"=>$data_row["updated_by"]
+	    );
+	}
+
+	$response = array(
+        "draw" => intval($draw),
+        "iTotalRecords" => $totalRecords,
+        "iTotalDisplayRecords" => $totalRecordwithFilter,
+        "aaData" => $data
+	);
+
+	echo json_encode($response);
+   
+}
+if($action=="view_finance_settled")
+{
+   
+    $from=$_REQUEST["from"];
+    $to=$_REQUEST["to"];
+	$customer=$_REQUEST["customer"];
+    $grp=$_REQUEST["grp"];
+    $draw = isset($_REQUEST['draw']) ? $_REQUEST['draw']: '';
+	$row = isset($_REQUEST['start']) ? $_REQUEST['start']: '';
+	$rowperpage = isset($_REQUEST['length']) ? $_REQUEST['length']: '10';
+	$columnIndex = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column']: '';
+	$columnName =    isset($_REQUEST['columns'][$columnIndex]['data']) ? $_REQUEST['columns'][$columnIndex]['data']: 'ID';
+	$columnSortOrder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir']: '';
+	$searchValue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value']: '';
+	
+	$searchQuery = " ";
+	if($searchValue != ''){
+	   $searchQuery = " payment_status = 1 AND
+	   (
+            date like '%".$searchValue."%'
+            OR finance_id like '%".$searchValue."%'
+            OR customer_name like '%".$searchValue."%'
+			OR group_name like '%".$searchValue."%'
+            OR amount like '%".$searchValue."%'
+	    )";
+	}else{
+	    $searchQuery = " payment_status = 1 ";
+	}
+    $sel_qry = " SELECT count(*) as allcount FROM `sar_finance` ";
+
+		$sel_qry .= " WHERE ".$searchQuery;
+    if($from!="" && $to!="" && $customer!="" && $grp!="")
+    {
+     $sel_qry .=" WHERE (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    }
+	if($customer!="")
+    {
+     $sel_qry .=" AND customer_name='$customer'";   
+    }
+	if($grp!="")
+    {
+     $sel_qry .=" AND group_name='$grp'";   
+    }
+    $sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecords = $sel_row["allcount"];
+	
+	
+	$sel_qry = " SELECT count(*) as allcount FROM `sar_finance` ";
+	
+	$sel_qry .= " WHERE ".$searchQuery;
+	
+    if($from!="" && $to!="" && $customer!="" && $grp!="")
+    {
+     $sel_qry .=" WHERE (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    }
+	if($customer!="")
+    {
+     $sel_qry .=" AND customer_name='$customer'";   
+    }
+	if($grp!="")
+    {
+     $sel_qry .=" AND group_name='$grp'";   
+    }
+	$sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecordwithFilter = $sel_row["allcount"];
+
+
+    $data_sql = " SELECT * FROM `sar_finance` ";
+	
+		$data_sql .= " WHERE ".$searchQuery;
+
+    if($from!="" && $to!="" && $customer!="" && $grp!="")
+    {
+     $data_sql .=" WHERE (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    }
+	if($customer!="")
+    {
+     $data_sql .=" AND customer_name='$customer'";   
+    }
+	if($grp!="")
+    {
+     $data_sql .=" AND group_name='$grp'";   
+    }
+	$data_qry= $connect->prepare($data_sql);
+	$data_qry->execute();
+	
+	$data = array();
+
+	while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
+		$sel_qry2 = "SELECT  *,sum(amount) as paid_amount from sar_finance_payment where finance_id = '".$data_row["finance_id"]."' AND is_revoked is NULL group by finance_id ";
+	    $data_qry2= $connect->prepare($sel_qry2);
+	    $data_qry2->execute();
+	    $data_row2 = $data_qry2->fetch(PDO::FETCH_ASSOC);
+	    
+        // $select_qry2="SELECT sum(waiver_discount) as discount FROM sar_waiver WHERE sales_no='".$data_row["sales_no"]."' GROUP BY sales_no";
+    	// $select_sql2=$connect->prepare($select_qry2);
+    	// $select_sql2->execute();
+    	// $total_discount_on_sales_list = $select_sql2->fetch(PDO::FETCH_ASSOC);
+    	// $total_discount_on_sales =  $total_discount_on_sales_list['discount'];
+	
+	    $balance = $data_row["amount"] - $data_row2["paid_amount"];
+	    $data[]=array(
+	        "balance"=>$balance,
+	        "id"=>$data_row["id"],
+	        "paid_amount"=>$data_row2["paid_amount"],
+	        "finance_id"=>$data_row["finance_id"],
+	        "date"=>$data_row["date"],
+	        "customer_name"=>$data_row["customer_name"],
+	        "group_name"=>$data_row["group_name"],
+	        "amount"=>$data_row["amount"],
+			"payment_status"=>$data_row["payment_status"],
+	        "updated_by"=>$data_row["updated_by"]
+	    );
+	}
+
+	$response = array(
+        "draw" => intval($draw),
+        "iTotalRecords" => $totalRecords,
+        "iTotalDisplayRecords" => $totalRecordwithFilter,
+        "aaData" => $data
+	);
+
+	echo json_encode($response);
+   
+}
 if($action=="view_supplier")
 {
     $req=$_REQUEST["req"];
