@@ -167,12 +167,12 @@ if(isset($_POST['add_payment'])) {
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Finance ID</th>
-                                    <th>Customer Name</th>
-                                    <th>Group Name</th>
+                                    <th>Interest ID</th>
+                                    <th>Client Name</th>
                                     <th>Amount</th>
-                                    <th>Payment</th>
-                                    <th>Balance</th>
+                                    <!-- <th>Payment</th>
+                                    <th>Balance</th> -->
+                                    <th>Updated By</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -236,37 +236,35 @@ if(isset($_POST['add_payment'])) {
                     </div>
                 </div>
             </div>
-        </div>
-   
+        </div>  
       <!-- Wrapper END -->
       <!-- Footer -->
 
 <?php
 if(isset($_POST["add_finance"])){
-  $exp_qry="SELECT id FROM sar_finance ORDER BY id DESC LIMIT 1 ";
+  $exp_qry="SELECT id FROM sar_interest ORDER BY id DESC LIMIT 1 ";
   $exp_sql=$connect->prepare("$exp_qry");
   $exp_sql->execute();
   $exp_row=$exp_sql->fetch(PDO::FETCH_ASSOC);
   $Last_id=$exp_row["id"]+1;
-  $finance_id = "FIN_".date("Ym")."0".$Last_id;
+  $interest_id = "IN_".date("Ym")."0".$Last_id;
   
   $date = date("Y-m-d");
-  $customer_name = ucwords($_POST["customer_name"]);
-  $group_name = ucwords($_POST["group_name"]);
+  $client_name = ucwords($_POST["client_name"]);
+//   $group_name = ucwords($_POST["group_name"]);
   $amount = $_POST["amount"];
 
 //   if($id==""){
-  $query_1 = "INSERT INTO `sar_finance` SET 
-                finance_id='$finance_id',
+  $query_1 = "INSERT INTO `sar_interest` SET 
+                interest_id='$interest_id',
                 date='$date',
-                customer_name='$customer_name',
-                group_name='$group_name',
+                client_name='$client_name',
                 amount='$amount',
-                updated_by='$updated_by'
+                updated_by='$username'
                 ";
         $sql_1= $connect->prepare($query_1);
         $sql_1->execute();
-        header('Location: finance.php');
+        header('Location: ask_finance.php');
     
 // }else {
         
@@ -358,17 +356,17 @@ function revoke_payment(obj, sar_patti_payment_id, data_src) {
             "serverSide": true,
             "responsive": true,
             "ajax": {
-                "url": "forms/ajax_request.php?action=view_finance",
+                "url": "forms/ajax_request.php?action=view_interest",
                 "type": "POST"
             },
             "columns": [
                 { "data": "date" },
-                { "data": "finance_id" },
-                { "data": "customer_name" },
-                { "data": "group_name" },
+                { "data": "interest_id" },
+                { "data": "client_name" },
                 { "data": "amount" },
-                { "data": "paid_amount" },
-                { "data": "balance" },
+                { "data": "updated_by" },
+                // { "data": "paid_amount" },
+                // { "data": "balance" },
                 { "data": "id" }
             ],
             columnDefs: [
@@ -382,44 +380,44 @@ function revoke_payment(obj, sar_patti_payment_id, data_src) {
                 {
                     targets: 1,
                     render: function(data, type, row) {
-                        return row.finance_id;
+                        return row.interest_id;
                     }
                 },
                 {
                     targets: 2,
                     render: function(data, type, row) {
-                        return '<a class="mymodal" style="color:#f55989" finance_id="' + row.finance_id+'">' +
-                        row.customer_name + '</a>';
+                        return '<a class="mymodal" style="color:#f55989" interest_id="' + row.interest_id+'">' +
+                        row.client_name + '</a>';
                     }
                 },
                 {
                     targets: 3,
                     render: function(data, type, row) {
-                        return row.group_name;
+                        return row.amount;
                     }
                 },
                 {
                     targets: 4,
                     render: function(data, type, row) {
-                        return row.amount;
+                        return row.updated_by;
                     }
                 },
+                // {
+                //     targets: 5,
+                //     render: function(data, type, row) {
+                //         return row.paid_amount;
+                //     }
+                // },
+                // {
+                //     targets: 6,
+                //     render: function(data, type, row) {
+                //         return row.balance;
+                //     }
+                // },
                 {
                     targets: 5,
                     render: function(data, type, row) {
-                        return row.paid_amount;
-                    }
-                },
-                {
-                    targets: 6,
-                    render: function(data, type, row) {
-                        return row.balance;
-                    }
-                },
-                {
-                    targets: 7,
-                    render: function(data, type, row) {
-                        return '<a href="finance.php?req=delete&id='+row.id+'&finance_id='+row.finance_id+'" onclick="return checkDelete()">Delete</a>';
+                        return '<a href="ask_finance.php?req=delete&id='+row.id+'&interest_id='+row.interest_id+'" onclick="return checkDelete()">Delete</a>';
                     }
                 }
                 
@@ -672,7 +670,7 @@ function checkDelete(){
             <div class="modal-body">
                 
                 <form  method="post" action="">
-                    <div class="form-group ">          
+                    <!-- <div class="form-group ">          
                         <label for="exampleFormControlSelect1">Group Name</label><span style="color:red">*</span>                                   
                     <select class="form-control" id="group" name="group_name" required>
                             <option value="">--Choose Group Name--</option>
@@ -687,26 +685,15 @@ function checkDelete(){
                             ?>
                         
                         </select>
-                    </div>
+                    </div> -->
                     <div class="form-group ">
-                        <label for="exampleFormControlSelect1">Customer Name</label><span style="color:red">*</span>
-                    <select class="form-control" id="customer" name="customer_name" required>
-                            <option value="">Choose Customer Name </option>
-                            <?php
-                                    $sel_qry = "SELECT * FROM `sar_sales_invoice` WHERE payment_status=0 GROUP BY customer_name";
-                                    $sel_sql= $connect->prepare($sel_qry);
-                                    $sel_sql->execute();
-                                while ($sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC)){
-                                        
-                                        echo '<option value="'.$sel_row["customer_name"].'">'.$sel_row["customer_name"].'</option>';
-                                }
-                            ?>
-                        </select>
+                        <label for="exampleFormControlSelect1">Client Name</label><span style="color:red">*</span>
+                        <input type="text" class="form-control" id="exampleInputNumber1" name="client_name" required>
                     </div>                             
                     <div class="form-group">
                         <label for="exampleInputNumber1">Amount</label>
                         <span style="color:red">*</span>
-                        <input type="number" class="form-control" id="exampleInputNumber1" required name="amount" min="0" required>
+                        <input type="number" class="form-control" id="exampleInputNumber1" name="amount" min="0" required>
                     </div>
                 
                     <input type="submit" class="btn btn-primary" name="add_finance" value="Submit">
