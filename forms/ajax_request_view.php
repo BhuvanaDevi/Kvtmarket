@@ -74,7 +74,26 @@ if($action=="view_finance_modal")
                 "finance_id"=>  $select_fetch["finance_id"],
                 "is_revoked"=> $select_fetch["is_revoked"]
             );
-        }		
+        }	
+    }	
+if($action=="view_chit_modal")
+{
+    $chit_id = $_REQUEST["chit_id"];
+    $cash_qry="SELECT * FROM chit WHERE chitid='$chit_id' ";
+    $cash_sql=$connect->prepare($cash_qry);
+    $cash_sql->execute();
+    $fetch=array();
+    while($cash_row = $cash_sql->fetch(PDO::FETCH_ASSOC)){
+        $fetch[]=array(
+            "id"=>$cash_row["id"],
+            "chitid"=> $cash_row["chitid"],
+            "chitname"=>  $cash_row["chitname"],
+            "chitamt"=>  $cash_row["chitamt"],
+            "chitdate"=>  $cash_row["chitdate"]
+           
+        );
+    }
+        	
 	echo json_encode($fetch);
 }
 if($action=="view_patti_search")
@@ -398,31 +417,6 @@ else if($action=="view_supplier_modal")
         	
 	echo json_encode($fetch);
 }
-else if($action=="view_grp_customer_modal")
-{
-    $grp_cust_name = $_REQUEST["grp_cust_name"];
-    $cash_qry="SELECT * FROM sar_customer WHERE grp_cust_name='$grp_cust_name' ";
-    $cash_sql=$connect->prepare($cash_qry);
-    $cash_sql->execute();
-    $fetch=array();
-
-    while($cash_row = $cash_sql->fetch(PDO::FETCH_ASSOC)){
-        $fetch[]=array(
-            "id"=>$cash_row["id"],
-            "grp_cust_no"=> $cash_row["grp_cust_no"],
-            "grp_cust_name"=>  $cash_row["grp_cust_name"],
-            "customer_no"=>  $cash_row["customer_no"],
-            "customer_name"=>  $cash_row["customer_name"],
-            "contact_number1"=>  $cash_row["contact_number1"],
-            "address"=>  $cash_row["address"],
-            "is_active"=>  $cash_row["is_active"]
-           
-        );
-    }
-        	
-	echo json_encode($fetch);
-}
-
 else if($action=="view_open_balance_modal")
 {
 	
