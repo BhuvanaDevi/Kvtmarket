@@ -3,6 +3,43 @@ include("../include/config.php");
 
 $action = $_REQUEST["action"];
 
+if($action=="view_interest_modal")
+{
+    $interest_id = $_REQUEST["interest_id"];
+    $cash_qry="SELECT * FROM sar_interest WHERE interest_id='$interest_id'";
+    // print_r($cash_qry);die();
+    $cash_sql=$connect->prepare($cash_qry);
+    $cash_sql->execute();
+    $fetch=array();
+    // while($cash_row = $cash_sql->fetch(PDO::FETCH_ASSOC)){
+    //     $fetch[]=array(
+    //         "id"=>$cash_row["id"],
+    //         "finance_id"=> $cash_row["finance_id"],
+    //         "date"=>  $cash_row["date"],
+    //         "amount"=>  $cash_row["amount"],
+    //         "updated_by"=>  $cash_row["updated_by"]
+    //     );
+    // }
+        $interest_id = $_REQUEST["interest_id"];
+        $select_qry1="SELECT * FROM sar_interest_payment WHERE interest_id='$interest_id'";
+        $select_sql1=$connect->prepare($select_qry1);
+        $select_sql1->execute();
+	
+	
+	    while($select_fetch = $select_sql1->fetch(PDO::FETCH_ASSOC)){
+            $fetch[]=array(
+                "id"=>$select_fetch["id"],
+                "payment_id"=> $select_fetch["payment_id"],
+                "payment_date"=>  $select_fetch["payment_date"],
+                "payment_mode"=>  $select_fetch["payment_mode"],
+                "amount"=>  $select_fetch["amount"],
+                "balance"=>  $select_fetch["balance"],
+                "interest_id"=>  $select_fetch["interest_id"],
+                "is_revoked"=> $select_fetch["is_revoked"]
+            );
+        }		
+	echo json_encode($fetch);
+}
 if($action=="view_finance_modal")
 {
     $finance_id = $_REQUEST["finance_id"];

@@ -2,11 +2,81 @@
 include("../include/config.php");
 $action = $_REQUEST["action"];
 
+if($action=="revoke_interest_payment")
+{
+  if(isset($_REQUEST['id'])){
+		$id=$_REQUEST["id"];
+		$data_src=$_REQUEST["data_src"];
+	//	$supplier_id=$_REQUEST["supplier_id"];
+		
+		$fetch_record = "SELECT * FROM `sar_interest_payment` WHERE id='".$id."' AND is_revoked is NULL";
+		$sql_1 = $connect->prepare($fetch_record);
+		$sql_1->execute();
+		$data = array();
+		while ($data_row = $sql_1->fetch(PDO::FETCH_ASSOC)) {
+		   $data[] = $data_row;
+		}
+		$amount = $data[0]['amount'];
+		$interest_id = $data[0]['interest_id'];
+		if(count($data) != 0){
+			$delete = "UPDATE `sar_interest_payment` SET is_revoked = 1 WHERE id='".$id."'";
+			$sql_1 = $connect->prepare($delete);
+			$sql_1->execute();
+			
+			$update = "UPDATE `sar_interest_payment` SET balance = balance + ".$amount." WHERE interest_id='".$interest_id."' and is_revoked is NULL and id > " . $id ;
+			$sql_1 = $connect->prepare($update);
+			$sql_1->execute();
+			
+			if($data_src=="settled"){
+    			$update = "UPDATE `sar_interest` SET payment_status = 0 WHERE interest_id='".$interest_id."' and payment_status = 1";
+    			$sql_1 = $connect->prepare($update);
+    			$sql_1->execute();
+			}
+			
+		}
+		echo json_encode($data);
+	}  
+}
+if($action=="revoke_finance_payment")
+{
+  if(isset($_REQUEST['id'])){
+		$id=$_REQUEST["id"];
+		$data_src=$_REQUEST["data_src"];
+	//	$supplier_id=$_REQUEST["supplier_id"];
+		
+		$fetch_record = "SELECT * FROM `sar_finance_payment` WHERE id='".$id."' AND is_revoked is NULL";
+		$sql_1 = $connect->prepare($fetch_record);
+		$sql_1->execute();
+		$data = array();
+		while ($data_row = $sql_1->fetch(PDO::FETCH_ASSOC)) {
+		   $data[] = $data_row;
+		}
+		$amount = $data[0]['amount'];
+		$finance_id = $data[0]['finance_id'];
+		if(count($data) != 0){
+			$delete = "UPDATE `sar_finance_payment` SET is_revoked = 1 WHERE id='".$id."'";
+			$sql_1 = $connect->prepare($delete);
+			$sql_1->execute();
+			
+			$update = "UPDATE `sar_finance_payment` SET balance = balance + ".$amount." WHERE finance_id='".$finance_id."' and is_revoked is NULL and id > " . $id ;
+			$sql_1 = $connect->prepare($update);
+			$sql_1->execute();
+			
+			if($data_src=="settled"){
+    			$update = "UPDATE `sar_finance` SET payment_status = 0 WHERE finance_id='".$finance_id."' and payment_status = 1";
+    			$sql_1 = $connect->prepare($update);
+    			$sql_1->execute();
+			}
+			
+		}
+		echo json_encode($data);
+	}  
+}
 if($action=="view_interest")
 {
    
-    // $from=$_REQUEST["from"];
-    // $to=$_REQUEST["to"];
+    $from=$_REQUEST["from"];
+    $to=$_REQUEST["to"];
 	// $customer=$_REQUEST["customer"];
     // $grp=$_REQUEST["grp"];
     $draw = isset($_REQUEST['draw']) ? $_REQUEST['draw']: '';
@@ -33,10 +103,10 @@ if($action=="view_interest")
     $sel_qry = " SELECT count(*) as allcount FROM `sar_interest` ";
     
 		$sel_qry .= " WHERE ".$searchQuery;
-	// if($from!="" && $to!="")
-	// {
-	// 	$sel_qry .=" AND (date >='$from' AND date<='$to')";   
-	// }
+	if($from!="" && $to!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to')";   
+	}
 	// else if($customer!="")
     // {
     //  $sel_qry .=" AND customer_name='$customer'";   
@@ -67,10 +137,10 @@ if($action=="view_interest")
 	$sel_qry = " SELECT count(*) as allcount FROM `sar_interest` ";
 	
 	$sel_qry .= " WHERE ".$searchQuery;
-	// if($from!="" && $to!="")
-	// {
-	// 	$sel_qry .=" AND (date >='$from' AND date<='$to')";   
-	// }
+	if($from!="" && $to!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to')";   
+	}
 	// else if($customer!="")
     // {
     //  $sel_qry .=" AND customer_name='$customer'";   
@@ -101,10 +171,10 @@ if($action=="view_interest")
     $data_sql = " SELECT * FROM `sar_interest` ";
 	
 		$data_sql .= " WHERE ".$searchQuery;
-	// if($from!="" && $to!="")
-	// {
-	// 	$data_sql .=" AND (date >='$from' AND date<='$to')";   
-	// }
+	if($from!="" && $to!="")
+	{
+		$data_sql .=" AND (date >='$from' AND date<='$to')";   
+	}
 	// else if($customer!="")
     // {
     //  $data_sql .=" AND customer_name='$customer'";   
@@ -132,10 +202,10 @@ if($action=="view_interest")
 	$data = array();
 
 	while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
-		// $sel_qry2 = "SELECT  *,sum(amount) as paid_amount from sar_finance_payment where finance_id = '".$data_row["finance_id"]."' AND is_revoked is NULL group by finance_id ";
-	    // $data_qry2= $connect->prepare($sel_qry2);
-	    // $data_qry2->execute();
-	    // $data_row2 = $data_qry2->fetch(PDO::FETCH_ASSOC);
+		$sel_qry2 = "SELECT  *,sum(amount) as paid_amount from sar_interest_payment where interest_id = '".$data_row["interest_id"]."' AND is_revoked is NULL group by interest_id ";
+	    $data_qry2= $connect->prepare($sel_qry2);
+	    $data_qry2->execute();
+	    $data_row2 = $data_qry2->fetch(PDO::FETCH_ASSOC);
 	    
         // $select_qry2="SELECT sum(waiver_discount) as discount FROM sar_waiver WHERE sales_no='".$data_row["sales_no"]."' GROUP BY sales_no";
     	// $select_sql2=$connect->prepare($select_qry2);
@@ -143,12 +213,177 @@ if($action=="view_interest")
     	// $total_discount_on_sales_list = $select_sql2->fetch(PDO::FETCH_ASSOC);
     	// $total_discount_on_sales =  $total_discount_on_sales_list['discount'];
 	
-	    // $balance = $data_row["amount"] - $data_row2["paid_amount"];
+	    $balance = $data_row["amount"] - $data_row2["paid_amount"];
 	    $data[]=array(
-	        // "balance"=>$balance,
+	        "balance"=>$balance,
 	        "id"=>$data_row["id"],
 			"payment_status"=>$data_row["payment_status"],
-	        // "paid_amount"=>$data_row2["paid_amount"],
+	        "paid_amount"=>$data_row2["paid_amount"],
+	        "interest_id"=>$data_row["interest_id"],
+	        "date"=>$data_row["date"],
+	        "client_name"=>$data_row["client_name"],
+	        "amount"=>$data_row["amount"],
+	        "updated_by"=>$data_row["updated_by"]
+	    );
+	}
+
+	$response = array(
+        "draw" => intval($draw),
+        "iTotalRecords" => $totalRecords,
+        "iTotalDisplayRecords" => $totalRecordwithFilter,
+        "aaData" => $data
+	);
+
+	echo json_encode($response);
+   
+}
+if($action=="view_interest_settled")
+{
+   
+    $from=$_REQUEST["from"];
+    $to=$_REQUEST["to"];
+	// $customer=$_REQUEST["customer"];
+    // $grp=$_REQUEST["grp"];
+    $draw = isset($_REQUEST['draw']) ? $_REQUEST['draw']: '';
+	$row = isset($_REQUEST['start']) ? $_REQUEST['start']: '';
+	$rowperpage = isset($_REQUEST['length']) ? $_REQUEST['length']: '10';
+	$columnIndex = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column']: '';
+	$columnName =    isset($_REQUEST['columns'][$columnIndex]['data']) ? $_REQUEST['columns'][$columnIndex]['data']: 'ID';
+	$columnSortOrder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir']: '';
+	$searchValue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value']: '';
+
+	
+	$searchQuery = " ";
+	if($searchValue != ''){
+	   $searchQuery = " payment_status = 1 AND
+	   (
+            date like '%".$searchValue."%'
+            OR interest_id like '%".$searchValue."%'
+            OR client_name like '%".$searchValue."%'
+            OR amount like '%".$searchValue."%'
+	    )";
+	}else{
+	    $searchQuery = " payment_status = 1 ";
+	}
+    $sel_qry = " SELECT count(*) as allcount FROM `sar_interest` ";
+    
+		$sel_qry .= " WHERE ".$searchQuery;
+	if($from!="" && $to!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to')";   
+	}
+	// else if($customer!="")
+    // {
+    //  $sel_qry .=" AND customer_name='$customer'";   
+    // }
+	// else if($grp!="")
+    // {
+    //  $sel_qry .=" AND group_name='$grp'";   
+    // }
+	// else if($from!="" && $to!="" && $customer!="")
+	// {
+	// 	$sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer'";   
+	// }
+	// else if($from!="" && $to!="" && $grp!="")
+	// {
+	// 	$sel_qry .=" AND (date >='$from' AND date<='$to') AND group_name='$grp'";   
+	// }
+    // else if($from!="" && $to!="" && $customer!="" && $grp!="")
+    // {
+    //  	$sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    // }
+	
+    $sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecords = $sel_row["allcount"];
+	
+	
+	$sel_qry = " SELECT count(*) as allcount FROM `sar_interest` ";
+	
+	$sel_qry .= " WHERE ".$searchQuery;
+	if($from!="" && $to!="")
+	{
+		$sel_qry .=" AND (date >='$from' AND date<='$to')";   
+	}
+	// else if($customer!="")
+    // {
+    //  $sel_qry .=" AND customer_name='$customer'";   
+    // }
+	// else if($grp!="")
+    // {
+    //  $sel_qry .=" AND group_name='$grp'";   
+    // }
+	// if($from!="" && $to!="" && $customer!="")
+	// {
+	// 	$sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer'";   
+	// }
+	// if($from!="" && $to!="" && $grp!="")
+	// {
+	// 	$sel_qry .=" AND (date >='$from' AND date<='$to') AND group_name='$grp'";   
+	// }
+    // if($from!="" && $to!="" && $customer!="" && $grp!="")
+    // {
+    //  $sel_qry .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    // }
+	
+	$sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecordwithFilter = $sel_row["allcount"];
+
+
+    $data_sql = " SELECT * FROM `sar_interest` ";
+	
+		$data_sql .= " WHERE ".$searchQuery;
+	if($from!="" && $to!="")
+	{
+		$data_sql .=" AND (date >='$from' AND date<='$to')";   
+	}
+	// else if($customer!="")
+    // {
+    //  $data_sql .=" AND customer_name='$customer'";   
+    // }
+	// else if($grp!="")
+    // {
+    //  $data_sql .=" AND group_name='$grp'";   
+    // }
+	// if($from!="" && $to!="" && $customer!="")
+	// {
+	// 	$data_sql .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer'";   
+	// }
+	// if($from!="" && $to!="" && $grp!="")
+	// {
+	// 	$data_sql .=" AND (date >='$from' AND date<='$to') AND group_name='$grp'";   
+	// }
+    // if($from!="" && $to!="" && $customer!="" && $grp!="")
+    // {
+    //  $data_sql .=" AND (date >='$from' AND date<='$to') AND customer_name='$customer' AND group_name='$grp'";   
+    // }
+
+	$data_qry= $connect->prepare($data_sql);
+	$data_qry->execute();
+	
+	$data = array();
+
+	while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
+		$sel_qry2 = "SELECT  *,sum(amount) as paid_amount from sar_interest_payment where interest_id = '".$data_row["interest_id"]."' AND is_revoked is NULL group by interest_id ";
+	    $data_qry2= $connect->prepare($sel_qry2);
+	    $data_qry2->execute();
+	    $data_row2 = $data_qry2->fetch(PDO::FETCH_ASSOC);
+	    
+        // $select_qry2="SELECT sum(waiver_discount) as discount FROM sar_waiver WHERE sales_no='".$data_row["sales_no"]."' GROUP BY sales_no";
+    	// $select_sql2=$connect->prepare($select_qry2);
+    	// $select_sql2->execute();
+    	// $total_discount_on_sales_list = $select_sql2->fetch(PDO::FETCH_ASSOC);
+    	// $total_discount_on_sales =  $total_discount_on_sales_list['discount'];
+	
+	    $balance = $data_row["amount"] - $data_row2["paid_amount"];
+	    $data[]=array(
+	        "balance"=>$balance,
+	        "id"=>$data_row["id"],
+			"payment_status"=>$data_row["payment_status"],
+	        "paid_amount"=>$data_row2["paid_amount"],
 	        "interest_id"=>$data_row["interest_id"],
 	        "date"=>$data_row["date"],
 	        "client_name"=>$data_row["client_name"],
