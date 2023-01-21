@@ -177,7 +177,7 @@ if($req=="deletecus")
                                         </div>
                                         <div class="iq-card-body">
                                             <center>
-                                                <button type="button" id="download" name="download"
+                                                <button type="button" id="download1" name="download"
                                                     class="btn btn-danger">Download</button>
                                                 <button type="button" class="btn btn-warning mymodalcustomergrp">Add
                                                     Group</button>
@@ -390,7 +390,7 @@ $(document).ready(function() {
             }
         });
     });
-    $("#download").on("click", function() {
+    $("#download1").on("click", function() {
 
         window.location = "download_customer_report.php";
     });

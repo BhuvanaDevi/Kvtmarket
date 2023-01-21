@@ -78,48 +78,46 @@ foreach($results as $row) {
     if($cnt == 1){
 
         $paid=$row->patti_id;
-// $select_qry4= "SELECT * FROM `trays` WHERE ids='$paid' order by id desc limit 1";
-// $select_sql4=$connect->prepare($select_qry4);
-// $select_sql4->execute();
-// $select_row4 = $select_sql4->fetch(PDO::FETCH_ASSOC);
-// // print_r($select_qry4);die();
-// $outward_sum=$select_row4["inhand"];
-// $smalltray=$select_row4["smalltray"];
-// $bigtray=$select_row4["bigtray"];
-// $inhand=$select_row4["inhand"];
+$select_qry4= "SELECT * FROM `trays` WHERE ids='$paid' order by id desc limit 1";
+$select_sql4=$connect->prepare($select_qry4);
+$select_sql4->execute();
+$select_row4 = $select_sql4->fetch(PDO::FETCH_ASSOC);
+// print_r($select_qry4);die();
+$outward_sum=$select_row4["inhand"];
+$smalltray=$select_row4["smalltray"];
+$bigtray=$select_row4["bigtray"];
+$inhand=$select_row4["inhand"];
       
         $pdf->SetFont('Arial','B',14);
         $pdf->Cell(45 ,10,'Invoice Id',0,0,'L',false);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(47 ,10,$row->patti_id,0,0,'L',false);
-        
-        
-        $pdf->SetFont('Arial','B',14);
-        $pdf->Cell(45,10,'Farmer Name  ',0,0,'L',false);
-        $pdf->SetFont('Arial','',14);
-        // $pdf->SetTopMargin(50);
-        $pdf->Cell(20,10,$row->farmer_name,0,0,false);
-       
         $pdf->Ln();
-         
-           
-        $pdf->SetFont('Arial','B',14);
-           $pdf->Cell(45,10,'Date ',0,0,'L',false);
+        
+            $pdf->SetFont('Arial','B',14);
+            $pdf->Cell(45,10,'Farmer Name  ',0,0,'L',false);
             $pdf->SetFont('Arial','',14);
-            $pdf->Cell(47,10,$row->patti_date,0,0,false);
-            
+           
+            // $pdf->SetTopMargin(50);
+            $pdf->Cell(20,10,$row->farmer_name,0,0,false);
+            $pdf->SetFont('Arial','B',14);
+           
+            $pdf->Cell(80,10,'Date :',0,0,'R',false);
+            $pdf->SetFont('Arial','',14);
+            $pdf->Cell(10,10,$row->patti_date,0,0,false);
+            $pdf->Ln();
+           
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(45 ,10,'Supplier Name ',0,0,'L',false);
             $pdf->SetFont('Arial','',14);
             $pdf->Cell(45 ,10,$row->supplier_name,0,0,'L',false);
+           
+           
+            $pdf->SetFont('Arial','B',14);
+            $pdf->Cell(69,10,'Small Tray :',0,0,'R',false);
+            $pdf->SetFont('Arial','',14);
+            $pdf->Cell(10,10,$smalltray,0,0,false);
             $pdf->Ln();
-           
-           
-            // $pdf->SetFont('Arial','B',14);
-            // $pdf->Cell(69,10,'Small Tray :',0,0,'R',false);
-            // $pdf->SetFont('Arial','',14);
-            // $pdf->Cell(10,10,$smalltray,0,0,false);
-            // $pdf->Ln();
            
             // $pdf->SetFont('Arial','B',14);
             // $pdf->Cell(47 ,10,'Address',0,0,'L',false);
@@ -131,25 +129,25 @@ foreach($results as $row) {
             $pdf->SetFont('Arial','',14);
             $pdf->Cell(45 ,10,$row->mobile_number,0,0,'L',false);
             
-             
+            
+                
+            $pdf->SetFont('Arial','B',14);
+            $pdf->Cell(69,10,'Big Tray :',0,0,'R',false);
+            $pdf->SetFont('Arial','',14);
+            $pdf->Cell(10,10,$bigtray,0,0,false);
+            $pdf->Ln();
+            
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(45 ,10,'Boxes Arrived',0,0,'L',false);
             $pdf->SetFont('Arial','',14);
-            $pdf->Cell(47 ,10,$row->boxes_arrived,0,0,'L',false);
+            $pdf->Cell(45 ,10,$row->boxes_arrived,0,0,'L',false);
            
-                
-            // $pdf->SetFont('Arial','B',14);
-            // $pdf->Cell(69,10,'Big Tray :',0,0,'R',false);
-            // $pdf->SetFont('Arial','',14);
-            // $pdf->Cell(10,10,$bigtray,0,0,false);
-            $pdf->Ln();
-           
-            // $pdf->SetFont('Arial','B',14);
-            // $pdf->Cell(69,10,'Inhand :',0,0,'R',false);
-            // $pdf->SetFont('Arial','',14);
-            // $pdf->Cell(10,10,$inhand,0,0,false);
+            $pdf->SetFont('Arial','B',14);
+            $pdf->Cell(69,10,'Inhand :',0,0,'R',false);
+            $pdf->SetFont('Arial','',14);
+            $pdf->Cell(10,10,$inhand,0,0,false);
             
-            // $pdf->Ln();
+            $pdf->Ln();
             
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(45 ,10,'Lorry No',0,0,'L',false);
@@ -210,7 +208,7 @@ foreach($results as $row) {
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(40, 10, 'Sub Total',1,0, "C");
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(32 ,10,$row->net_bill_amount,1,0,'R');
+            $pdf->Cell(32 ,10,$row->total_bill_amount,1,0,'R');
             $pdf->Ln(10);
             
             $pdf->Cell(35, 15, ' ', "T", 0, "R");
@@ -277,7 +275,7 @@ $olds1=$oldbal1['obal'];
           
           
           
-                                            $old4="select *,SUM(sale) as sales from payment where supplierid = '$supplier_id' and (date>='$date' or date<='$date') order by id desc limit 1";
+                                            $old4="select *,SUM(sale) as sales from payment where supplierid = '$supplier_id' and date='$date' order by id desc limit 1";
     $oldsql4=$connect->prepare($old4);
 $oldsql4->execute();
 $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
@@ -308,17 +306,17 @@ $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
     $oldsql2=$connect->prepare($old2);
 $oldsql2->execute();
 $oldbal2 = $oldsql2->fetch(PDO::FETCH_ASSOC);
-
+    if($oldbal4['dis']>0){
+         
                $pdf->Cell(95 ,6,'',0,0);
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(50 ,10,'Discount',0,0,'R');
-             if($oldbal2['dis']>0){
-          $pdf->Cell(38 ,10,$oldbal2['dis'],0,1,'R');
+          $pdf->Cell(38 ,10,$oldbal4['dis'],0,1,'R');
              }
-             else{
-          $pdf->Cell(38 ,10,0,0,1,'R');
+        //      else{
+        //   $pdf->Cell(38 ,10,0,0,1,'R');
                  
-             }
+        //      }
              
                $old3="select * from payment where supplierid = '$supplier_id' or date<'$date' order by id desc limit 1";
     $oldsql3=$connect->prepare($old3);
