@@ -81,6 +81,30 @@ while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
 	echo json_encode($response);
    
 }
+if($action=="fetch_finance"){
+	$grp=$_REQUEST['grp'];
+	$sql="select * from sar_customer where grp_cust_name='$grp'";
+	$exe=mysqli_query($con,$sql);
+	$cusdata=array();
+	while($cus=mysqli_fetch_assoc($exe)){
+		$cusdata[] = $cus;
+	}
+
+//print_r($cusdata);die();
+echo json_encode($cusdata);
+}
+if($action=="fetch_finance_settled"){
+	$grp=$_REQUEST['grp'];
+	$sql="select * from sar_customer where grp_cust_name='$grp'";
+	$exe=mysqli_query($con,$sql);
+	$cusdata=array();
+	while($cus=mysqli_fetch_assoc($exe)){
+		$cusdata[] = $cus;
+	}
+
+//print_r($cusdata);die();
+echo json_encode($cusdata);
+}
 if($action=="view_supplier")
 {
     $req=$_REQUEST["req"];
