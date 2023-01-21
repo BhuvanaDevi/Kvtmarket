@@ -155,6 +155,9 @@ session_start();
                      <li><a href="add_customer.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Add Customer</span></a></li>
 
                      <li>
+                     <li><a href="add_chit.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Add Chit</span></a></li>
+
+                     <li>
                      <li><a href="add_open_balance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Opening Balance</span></a></li>
 
                      <li>

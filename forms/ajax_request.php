@@ -5435,6 +5435,75 @@ else if($action=="fetchsup"){
 
 //print_r($cusdata);die();
 echo json_encode($cusdata);
+}else if($action=="view_chit")
+{
+    $req=$_REQUEST["req"];
+    //$is_active=$_REQUEST["is_active"];
+    
+    $draw = isset($_REQUEST['draw']) ? $_REQUEST['draw']: '';
+	$row = isset($_REQUEST['start']) ? $_REQUEST['start']: '';
+	$rowperpage = isset($_REQUEST['length']) ? $_REQUEST['length']: '10';
+	$columnIndex = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column']: '';
+	$columnName =    isset($_REQUEST['columns'][$columnIndex]['data']) ? $_REQUEST['columns'][$columnIndex]['data']: 'ID';
+	$columnSortOrder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir']: '';
+	$searchValue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value']: '';
+
+	$searchQuery = " ";
+	if($searchValue != ''){
+	   $searchQuery = " 
+	   (
+            contact_person like '%".$searchValue."%'
+            OR contact_number1 like '%".$searchValue."%'
+            OR address like '%".$searchValue."%'
+	    )";
+	}
+	
+	
+	
+	$sel_qry = "SELECT count(*) as allcount FROM `chit`  ";
+	if($searchValue!=''){
+	    $sel_qry .= " WHERE ".$searchQuery;
+	}
+    
+    $sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecords = $sel_row["allcount"];
+
+	$sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecordwithFilter = $sel_row["allcount"];
+
+
+    $data_sql = "SELECT * FROM `chit` ";
+	if($searchValue!=''){
+	    $data_sql .= " WHERE ".$searchQuery;
+	}
+    
+	$data_sql.=" ORDER BY ".$columnName." DESC limit ".$row.",".$rowperpage;
+	
+	//echo $data_sql;exit;
+	
+	$data_qry= $connect->prepare($data_sql);
+	$data_qry->execute();
+	
+	$data = array();
+while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
+		$rowIndex++;
+		$data_row["rowIndex"] = $rowIndex;
+		
+	   $data[] = $data_row; 
+	}
+	$response = array(
+        "draw" => intval($draw),
+        "iTotalRecords" => $totalRecords,
+        "iTotalDisplayRecords" => $totalRecordwithFilter,
+        "aaData" => $data
+	);
+
+	echo json_encode($response);
+   
 }
 
 ?>
