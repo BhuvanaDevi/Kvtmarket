@@ -5,6 +5,8 @@ $action = $_REQUEST["action"];
 if($action=="view_customer_table")
 {
     $req=$_REQUEST["req"];
+	$from=$_REQUEST["from"];
+	$to=$_REQUEST["to"];
     //$is_active=$_REQUEST["is_active"];
     
     $draw = isset($_REQUEST['draw']) ? $_REQUEST['draw']: '';
@@ -31,7 +33,10 @@ if($action=="view_customer_table")
 	if($searchValue!=''){
 	    $sel_qry .= " WHERE ".$searchQuery;
 	}
-    
+    if($from!="" && $to!="")
+    {
+     	$sel_qry .=" where (date >='$from' AND date<='$to')";   
+	}
     $sel_sql= $connect->prepare($sel_qry);
 	$sel_sql->execute();
 	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
@@ -46,7 +51,10 @@ if($action=="view_customer_table")
 	if($searchValue!=''){
 	    $data_sql .= " WHERE ".$searchQuery;
 	}
-    
+    if($from!="" && $to!="")
+    {
+     	$data_sql .=" where (date >='$from' AND date<='$to')";   
+	}
 	$data_sql.=" ORDER BY ".$columnName." DESC limit ".$row.",".$rowperpage;
 	
 	//echo $data_sql;exit;
@@ -55,7 +63,7 @@ if($action=="view_customer_table")
 	$data_qry->execute();
 	
 	$data = array();
-while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
+	while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
 		$rowIndex++;
 		$data_row["rowIndex"] = $rowIndex;
 		$sel_qry2 = "SELECT  *,sum(chitamt) as total_amount from chit where chitid = '".$data_row["customer_id"]."' group by chitid ";
