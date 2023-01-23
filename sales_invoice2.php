@@ -42,6 +42,7 @@ if(isset($_REQUEST['req'])!="" && $_REQUEST["req"] == 'edit'){
 	       $mobile_number = $data_row['mobile_number'];
 	       $customer_name = $data_row['customer_name'];
 	       $customer_address = $data_row['customer_address'];
+	       $customerid = $data_row['customer_id'];
 	       $boxes_arrived = $data_row['boxes_arrived'];
 	       $total_bill_amount = $data_row['total_bill_amount'];
 	       
@@ -88,8 +89,8 @@ if(isset($_REQUEST['req'])!="" && $_REQUEST["req"] == 'edit'){
 	//     </div>';
 
     $quality_box .= '
-    <div class="row col-md-12" id="inputFormRow" style="margin:10px;">                      
-        <div class="form-group col-md-2">
+        <div class="row col-md-12 qualityBox" id="inputFormRow" style="margin:10px;">                      
+    <div class="form-group col-md-2">
             <label for="exampleFormControlSelect1">Select Quality</label>
             <select class="form-control" id="exampleFormControlSelect1" name="quality_name[]">
                 <option value="">--Choose Quality--</option>';
@@ -111,20 +112,21 @@ if(isset($_REQUEST['req'])!="" && $_REQUEST["req"] == 'edit'){
             <input type="number" onchange="calculate_bill_amount('.$cnt.')" class="form-control rate_arr sum_tol" onkeyup=total_amt("'. $cnt .'"); id="rate_arr' . $cnt . '" myattr="' . $cnt . '" name="rate[]" value="'.$data_row['rate'].'" min="0">
         </div>
         <div class="form-group col-md-2">
-        <label>Quantity</label>
-        <input type="text" class="form-control" name="type[]" readonly myattr="' . $cnt . '" id="type' . $cnt . '" value="'.$data_row['type'].'">
-    </div> 
-        <div class="form-group col-md-2">
             <label>Total</label>
-            <input type="text" readonly name="bill_amount[]" class="sum_tol_ov form-control" id="bill_amount' . $cnt . '" value="'.$data_row['bill_amount'].'" >
+        <input type="text" readonly name="bill_amount[]" class="sum_tol_ov form-control boxTotal" id="bill_amount' . $cnt . '" value="'.$data_row['bill_amount'].'" >
             <input type="hidden" name="rec_id[]" class="form-control boxTotal" id="rec_id' . $cnt . '" value="'.$data_row['id'].'" min="0">
-        </div>
+            </div>
         <div class="form-group col-md-2">
         <button id="removeRow" style="position:relative;top:28px !important" data-rec-id="' . $data_row['id'] . '" type="button" class="btn btn-danger">Remove</button>
         </div>
     </div>';
 	   $cnt = $cnt + 1;
 	}
+//     <div class="form-group col-md-2">
+//     <label>Quantity</label>
+//     <input type="text" class="form-control" name="type[]" readonly myattr="' . $cnt . '" id="type' . $cnt . '" value="'.$data_row['type'].'">
+// </div> 
+   
 } else {
     $req="";
     $sales_qry = "SELECT id FROM sar_sales_invoice ORDER BY id DESC LIMIT 1 ";
@@ -195,7 +197,7 @@ $numrow=$execheck->rowCount();
                                <div id="delete_rec_id_list">
                              
                                </div>
-                                <input type="hidden" class="form-control" id="customer_id" name="customer_id" value="<?= $customer_id ?>" >
+                                <input type="hidden" class="form-control" id="customer_id" name="customer_id" value="<?= $customerid ?>" >
                                 <div class="row col-md-12">
                                                                     <div class="form-group col-md-6">
                                        <div class="row col-md-12">
@@ -299,6 +301,7 @@ $numrow=$execheck->rowCount();
                                          <?php
                                         while ($row = $execheck->fetch(PDO::FETCH_ASSOC)){
                                    if($row['remain_box']==-1 || $row['remain_box']>0){
+                                    //   print_r($row["pat_id"]==$patname);die();
                                    ?>
  <option value="<?=$row["pat_id"]?>" <?=($row["pat_id"]==$patname)?"selected":''?>><?=$row["supplier_name"]." - ".$row["pat_id"]?></option>
                            <?php        }
@@ -350,7 +353,8 @@ $numrow=$execheck->rowCount();
                        <br/><br/>
                             <form id="form2" method="post" action="#" class="searchbox">
                             <div class="row col-md-12">
-                            <div class="form-group col-md-4">
+                                   
+                            <div class="form-group col-md-6">
                                          <label for="exampleInputdate">Cash&Carry ID </label>
                                          <?php
                                          $cash_qry="SELECT id FROM sar_cash_carry ORDER BY id DESC LIMIT 1 ";
@@ -362,15 +366,8 @@ $numrow=$execheck->rowCount();
                                             
                                         ?>
                                   <input type="text" class="form-control" id="cash_no" name="cash_no" value="<?=$cash_no?>" readonly>
-                            </div> 
-                            <div class="form-group col-md-2"></div>        
-                                  <div class="form-group col-md-4">
-                                         <label for="exampleInputNumber1">Date</label><span style="color:red">*</span>
-                                         <input type="date" value="<?= $date ?>" class="form-control date_cash datepicker" id="date_cash" name="date_cash" required>
                                       </div>
-                                    
-                                    </div>
-                                      <!-- <div class="form-group col-md-6">
+                                      <div class="form-group col-md-6">
                                       <label for="exampleInputText1">Tray Type</label>
                           <input list="types" name="type1" id="type1" class="form-control">
                           
@@ -381,8 +378,12 @@ $numrow=$execheck->rowCount();
                                           
                                         
 </datalist> 
-                          </div> -->
+                          </div>
                           <div class="row col-md-12">
+                                  <div class="form-group col-md-4">
+                                         <label for="exampleInputNumber1">Date</label><span style="color:red">*</span>
+                                         <input type="date" value="<?= $date ?>" class="form-control date_cash datepicker" id="date_cash" name="date_cash" required>
+                                      </div>
                                       <div class="form-group col-md-4">
                                        <label for="exampleInputNumber1">Group Name</label><span style="color:red">*</span>
                                        <select class="form-control" name="grpname1" id="grpname1" required>
@@ -399,7 +400,6 @@ $numrow=$execheck->rowCount();
                             	          
                             	           </select>
                                        </div>
-                                       <div class="form-group col-md-2"></div>
                                        <div class="form-group col-md-4">
                                       <label for="exampleFormControlSelect1">Customer Name</label><span style="color:red">*</span>
                                          <input list="searchvals" id="search_vals" class="form-control" name="search_vals">
@@ -501,7 +501,8 @@ if(isset($_POST["add_sales_invoice"]))
        $bill_amount=0; $tpend=0; $s=0; $tot=0;
     for($i=0;$i<=$s;$i++)
     {
-    if($_POST["quantity"][$i]!=0 && $_POST["rate"][$i]!=0 && $_POST["rate"][$i]!=0 && $_POST["tray_type"][$i]!=""){
+    if($_POST["quantity"][$i]!=0 && $_POST["rate"][$i]!=0 && $_POST["rate"][$i]!=0){
+        //&& $_POST["tray_type"][$i]!=""
 
         $sales_qry="SELECT id FROM sar_sales_invoice ORDER BY id DESC LIMIT 1 ";
         $sales_sql=$connect->prepare("$sales_qry");
@@ -513,7 +514,7 @@ if(isset($_POST["add_sales_invoice"]))
   
         $quality_name=$_POST["quality_name"][$i];
         $quantity=$_POST["quantity"][$i];
-        $type=$_POST['tray_type'][$i];
+        // $type=$_POST['tray_type'][$i];
         $patid=$_POST['patid'][$i];
         $rate=$_POST["rate"][$i];
        $bill_amount=$quantity*$rate;
@@ -528,8 +529,8 @@ if(isset($_POST["add_sales_invoice"]))
         //print_r($_POST);
         if($id==""){
       
-            $add_sales_query="insert into sar_sales_invoice(groupname,date,sale_id,sales_no,mobile_number,customer_name,customer_address,boxes_arrived,quality_name,quantity,rate,bill_amount,total_bill_amount,customer_id,updated_by,credit_type,is_active,patti_name,type,pattiid) values('$grpname','$date','$saleid','$sales_no','$mobile_number','$customer_name','$customer_address','$boxes_arrived','$quality_name','$quantity','$rate','$bill_amount','$total_bill_amount','$customer_id','$username','Unsettled',1,'$patti_name','$type','$patti')";
-            // print_r($add_sales_query);die();
+            $add_sales_query="insert into sar_sales_invoice(groupname,date,sale_id,sales_no,mobile_number,customer_name,customer_address,boxes_arrived,quality_name,quantity,rate,bill_amount,total_bill_amount,customer_id,updated_by,credit_type,is_active,patti_name,pattiid) values('$grpname','$date','$saleid','$sales_no','$mobile_number','$customer_name','$customer_address','$boxes_arrived','$quality_name','$quantity','$rate','$bill_amount','$total_bill_amount','$customer_id','$username','Unsettled',1,'$patti_name','$patti')";
+            // print_r($add_sales_query);die(); type '$type',
             $res=mysqli_query($con,$add_sales_query);
      
                 // print_r("hello");die();
@@ -668,9 +669,9 @@ $sqltray="select * from trays where name='$customer_id' and type='$type' order b
 
  //    print_r($abtray);die();
  // $boxes=-$boxes_arrived;
- $instray="insert into trays(date,name,no_of_trays,type,description,inward,outward,inhand,updated_by,category,ab_tray,ids,smalltray,bigtray,absmall,abbig) values('$date','$customer_id','$quantity','$type','Outward from sales $customer_name',0,'$box','$tray','Admin','Customer','$abtray','$saleid',$small,$big,$absmall,$abbig)";
-//  print_r($instray."d");die();
-   $trayexe=mysqli_query($con,$instray);
+//  $instray="insert into trays(date,name,no_of_trays,type,description,inward,outward,inhand,updated_by,category,ab_tray,ids,smalltray,bigtray,absmall,abbig) values('$date','$customer_id','$quantity','$type','Outward from sales $customer_name',0,'$box','$tray','Admin','Customer','$abtray','$saleid',$small,$big,$absmall,$abbig)";
+// //  print_r($instray."d");die();
+//    $trayexe=mysqli_query($con,$instray);
  
 }
 }
@@ -702,9 +703,10 @@ if($valbal['total']==0){
     $pay_id = "PAY" . date("Ym") . $paybal;   
 
         $total=round($tot);
+      $am=$valbal["total"];
     
-      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',0,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
-    // print_r($insbal."ok");die(); 
+      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$am,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
+    // print_r($insbal."ok1");die(); 
       $exe=mysqli_query($con,$insbal);
     
 }
@@ -757,7 +759,7 @@ if($valbal['total']==""){
  $total=round($total);
 
   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$opne,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
-//   print_r($insbal."ok");die(); 
+//   print_r($insbal."okh");die(); 
   $exe=mysqli_query($con,$insbal);
 }
 else{
@@ -841,6 +843,7 @@ $sqlfetch="select * from sar_sales_invoice WHERE id='$id'";
 $sqlexe=mysqli_query($con,$sqlfetch);
 $idfetch=mysqli_fetch_assoc($sqlexe);
 $sid=$idfetch['sale_id'];
+$cid=$idfetch['customer_id'];
 
     $sqltray="select * from trays where ids='$sid' and type='$type' order by id desc limit 1";
  $exetray=mysqli_query($con,$sqltray);
@@ -869,16 +872,16 @@ $sid=$idfetch['sale_id'];
  $absmall=$reslast['absmall'];
  }
 
- $instray="insert into trays(date,name,no_of_trays,type,description,inward,outward,inhand,updated_by,category,ab_tray,ids,smalltray,bigtray,absmall,abbig) values('$date','$customer_id','$quantity','$type','Outward from sales $customer_name',0,'$box','$tray','Admin','Customer','$abtray','$saleid',$small,$big,$absmall,$abbig)";
-   $trayexe=mysqli_query($con,$instray);
+//  $instray="insert into trays(date,name,no_of_trays,type,description,inward,outward,inhand,updated_by,category,ab_tray,ids,smalltray,bigtray,absmall,abbig) values('$date','$customer_id','$quantity','$type','Outward from sales $customer_name',0,'$box','$tray','Admin','Customer','$abtray','$saleid',$small,$big,$absmall,$abbig)";
+//    $trayexe=mysqli_query($con,$instray);
  
-   $sqlbal="select * from payment_sale where customerid='$customer_id' order by id desc limit 1";
+   $sqlbal="select * from payment_sale where saleid='$saleid' and customerid='$cid' order by id desc limit 1";
 $exebal=mysqli_query($con,$sqlbal);
 $valbal=mysqli_fetch_assoc($exebal);
 $no=mysqli_num_rows($exebal);
 
 
-$tray="SELECT * FROM trays where name='$customer_id' ORDER BY id DESC LIMIT 1 ";
+$tray="SELECT * FROM trays where name='$cid' ORDER BY id DESC LIMIT 1 ";
 $tray1=$connect->prepare("$tray");
 $tray1->execute();
 $tray=$tray1->fetch(PDO::FETCH_ASSOC);   
@@ -889,29 +892,34 @@ $inhand=$tray['inhand'];
 
     $paybal = $valbal["id"] + 1;
     $pay_id = "PAY" . date("Ym") . $paybal;   
-
-    if($valbal['total']==""){
+    
+ if($valbal['total']==0){
         $total=$tot;
       }
      else{
-        $total=$valbal['total']-$idfetch['total_bill_amount'];  
+        $total=$valbal['total']-$idfetch['total_bill_amount']+$tot;  
+        // $total=$valbal['total']-+$tot;  
      }
-     
-     $total=round($total);
-
-      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',0,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
+    
+    $am=$valbal['total'];
+    $sal=$idfetch['total_bill_amount'];
+    $total=round($total);
+    
+      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$am,$sal,0,0,0,$total,'$cid','$saleid',$small,$big,$inhand)";
+    // print_r($insbal."e".$am."-".$total.$tot);die();
       $exe=mysqli_query($con,$insbal);
 
        $del_sales_query = "DELETE FROM `sar_sales_invoice` WHERE id=".$_POST["delete_rec_id"][$i];
        $del_sales_sql = mysqli_query($con, $del_sales_query);
+
    }
 }
     for($i=0;$i<$count;$i++)
     {
         $quality_name=$_POST["quality_name"][$i];
-        $type=$_POST['tray_type'][$i];
+        // $type=$_POST['tray_type'][$i];
         $quantity=$_POST["quantity"][$i];
-        $type=$_POST['tray_type'][$i];
+        // $type=$_POST['tray_type'][$i];
         $rate=$_POST["rate"][$i];
         $bill_amount=$quantity*$rate;
     }
@@ -919,7 +927,7 @@ $inhand=$tray['inhand'];
   {
       $quality_name = $_POST["quality_name"][$i];
       $quantity = $_POST["quantity"][$i];
-      $type=$_POST['tray_type'][$i];
+    //   $type=$_POST['tray_type'][$i];
       $rate = $_POST["rate"][$i];
       $rec_id = $_POST["rec_id"][$i];
       $bill_amount=$quantity*$rate;
@@ -960,12 +968,12 @@ $inhand=$tray['inhand'];
         //     patti_name='$patti_name',
         //     ";
          //   print_r($add_sales_query);die();
-         $add_sales_query="insert into sar_sales_invoice(groupname,date,sale_id,sales_no,mobile_number,customer_name,customer_address,boxes_arrived,quality_name,quantity,rate,bill_amount,total_bill_amount,customer_id,updated_by,credit_type,is_active,patti_name,type,pattiid) values('$grpname','$date','$saleid','$sales_no','$mobile_number','$customer_name','$customer_address','$boxes_arrived','$quality_name','$quantity','$rate','$bill_amount','$total_bill_amount','$customer_id','$username','Unsettled',1,'$patti_name','$type','$patti')";
-         // print_r($add_sales_query);die();
+         $add_sales_query="insert into sar_sales_invoice(groupname,date,sale_id,sales_no,mobile_number,customer_name,customer_address,boxes_arrived,quality_name,quantity,rate,bill_amount,total_bill_amount,customer_id,updated_by,credit_type,is_active,patti_name,pattiid) values('$grpname','$date','$saleid','$sales_no','$mobile_number','$customer_name','$customer_address','$boxes_arrived','$quality_name','$quantity','$rate','$bill_amount','$total_bill_amount','$customer_id','$username','Unsettled',1,'$patti_name','$patti')";
+         // print_r($add_sales_query);die(); type ,'$type'
   $res=mysqli_query($con,$add_sales_query);
 
             
-$sqlbal="select * from payment_sale where saleid='$saleid' order by id desc limit 1";
+$sqlbal="select * from payment_sale where saleid='$saleid' and customerid='$customer_id' order by id desc limit 1";
 $exebal=mysqli_query($con,$sqlbal);
 $valbal=mysqli_fetch_assoc($exebal);
 $no=mysqli_num_rows($exebal);
@@ -986,18 +994,28 @@ $inhand=$tray['inhand'];
 // $valbal = $exebal->fetch(PDO::FETCH_ASSOC);
 // $no=$valbal->rowCount();
 // print_r($no);die();
-if($valbal['total']==0){
-    $paybal = $valbal["id"] + 1;
+  $paybal = $valbal["id"] + 1;
     $pay_id = "PAY" . date("Ym") . $paybal;   
 
-        $total=round($tot);
+
+if($valbal['total']==0){
+   $total=$total_bill_amount;
+}
+    else{
+        // $total=$valbal['total']+($total_bill_amount-$valbal['sale']);  
+        $total=($valbal['total']+$total_bill_amount)-$valbal['sale']; 
+        }
+        
+         
+    $sale=$total_bill_amount-$valbal['sale'];
+    $total=round($total);
+    $am=$valbal['total'];
     
-      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',0,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
+      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$am,$sale,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
     // print_r($insbal."ok");die(); 
       $exe=mysqli_query($con,$insbal);
     
-           // echo $add_sales_query;
-    }
+          // echo $add_sales_query;
 }
  
 else if($rec_id != ""){
@@ -1218,8 +1236,9 @@ remain=result[j].quantity;
             else{
                 remain=result[j].remain_box;
             }
-            $('#dynamic_field').append('<div class="col-md-12 row qualityBox" id="inputFormRow" style="margin:10px;"><div class="form-group col-md-2"><select class="form-control" name="quality_name[]" id="quality"><option value="">--Choose Quality--</option><option value="'+result[j].quality_name+'" selected>'+result[j].quality_name+'</option></select></div><div col-md-2"><input type="text" class="form-control name="size" read-only value="'+remain+'"/></div><div class="form-group col-md-2"><select name="tray_type[]" style="pointer_events:none" class="form-control"><option value="'+result[j].type+'" selected>'+result[j].type+'</option></select></div><div class="form-group col-md-2"><input type="hidden" name="patid[]" value="'+result[j].patti_id+'"><input type="text" class="form-control qty sum_qty" placeholder="Enter Quantity" onkeyup="total_qty();" name="quantity[]" myattr="' + i + '" id="qty' + i + '"></div> <div class="form-group col-md-2"><input type="number" class="form-control rate_arr sum_tol" placeholder="Rate" onkeyup=total_amt("'+i+'"); id="rate_arr'+i+'" myattr="'+i+'"name="rate[]"></div><div class="col-md-2"><input type="text" readonly name="bill_amount[]" id="bill_amount'+i+'" class=" sum_tol_ov form-control"></div><br><div class="form-group col-md-2"><button id="removeRow" type="button" class=" btn btn-danger">Remove</button></div></div></div>');
+            $('#dynamic_field').append('<div class="col-md-12 row qualityBox" id="inputFormRow" style="margin:10px;"><div class="form-group col-md-2"><select class="form-control" name="quality_name[]" id="quality"><option value="">--Choose Quality--</option><option value="'+result[j].quality_name+'" selected>'+result[j].quality_name+'</option></select></div><div col-md-2"><input type="text" class="form-control name="size" read-only value="'+remain+'"/></div><div class="form-group col-md-2"><input type="hidden" name="patid[]" value="'+result[j].patti_id+'"><input type="text" class="form-control qty sum_qty" placeholder="Enter Quantity" onkeyup="total_qty();" name="quantity[]" myattr="' + i + '" id="qty' + i + '"></div> <div class="form-group col-md-2"><input type="number" class="form-control rate_arr sum_tol" placeholder="Rate" onkeyup=total_amt("'+i+'"); id="rate_arr'+i+'" myattr="'+i+'"name="rate[]"></div><div class="col-md-2"><input type="text" readonly name="bill_amount[]" id="bill_amount'+i+'" class=" sum_tol_ov form-control"></div><br><div class="form-group col-md-2"><button id="removeRow" type="button" class=" btn btn-danger">Remove</button></div></div></div>');
             $(".rate_arr").on('change',function(){
+                //<div class="form-group col-md-2"><select name="tray_type[]" style="pointer_events:none" class="form-control"><option value="'+result[j].type+'" selected>'+result[j].type+'</option></select></div>
                 var id=$(this).attr("myattr");
                 var qty=$("#qty"+id).val();
                 var rate_arr=$(this).val();
@@ -1265,13 +1284,29 @@ remain=result[j].quantity;
       
         $(document).on('click', '#removeRow', function() {
             $(this).closest('#inputFormRow').remove();
-          var id = $(this).attr("data-rec-id");
+              var id = $(this).attr("data-rec-id");
           if(id){
               $('#delete_rec_id_list').append("<input type='hidden' class='form-control' id='delete_rec_id' name='delete_rec_id[]' value= "+id+" readonly>"
               );
           }
-          
-        });
+          var quaBoxTotal = 0;
+      $(".qualityBox").each(function(index){
+        var value = $(this).find(".boxTotal").val();
+        if (value) {
+           quaBoxTotal += parseFloat(value);
+        }
+      });
+      $("#totalamt").val(quaBoxTotal);
+    //   alert(quaBoxTotal);
+      calculate_grantotal();
+   });
+   
+     function calculate_grantotal() {
+    var totalBoxAmount = ( $("#totalamt").val() ) ? parseFloat($("#totalamt").val()) : 0;
+    var total_deduction = ( $("#total_deduction").val() ) ? parseFloat($("#total_deduction").val()) : 0;
+    $("#grandTotal").val(totalBoxAmount - total_deduction);
+}
+
         $(document).on('click', '#removeRow2', function() {
                   $(this).closest('#inputFormRow2').remove();
                });
