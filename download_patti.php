@@ -92,32 +92,34 @@ $inhand=$select_row4["inhand"];
         $pdf->Cell(45 ,10,'Invoice Id',0,0,'L',false);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(47 ,10,$row->patti_id,0,0,'L',false);
+        
+        $pdf->SetFont('Arial','B',14);
+        $pdf->Cell(45,10,'Farmer Name  ',0,0,'R',false);
+        $pdf->SetFont('Arial','',14);
+       
+        // $pdf->SetTopMargin(50);
+        $pdf->Cell(20,10,$row->farmer_name,0,0,false);
+       
         $pdf->Ln();
         
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(45,10,'Farmer Name  ',0,0,'L',false);
-            $pdf->SetFont('Arial','',14);
-           
-            // $pdf->SetTopMargin(50);
-            $pdf->Cell(20,10,$row->farmer_name,0,0,false);
-            $pdf->SetFont('Arial','B',14);
-           
-            $pdf->Cell(80,10,'Date :',0,0,'R',false);
+        $pdf->SetFont('Arial','B',14);
+          
+            $pdf->Cell(15,10,'Date ',0,0,'R',false);
             $pdf->SetFont('Arial','',14);
             $pdf->Cell(10,10,$row->patti_date,0,0,false);
-            $pdf->Ln();
            
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(45 ,10,'Supplier Name ',0,0,'L',false);
+            $pdf->Cell(110 ,10,'Supplier Name ',0,0,'R',false);
             $pdf->SetFont('Arial','',14);
             $pdf->Cell(45 ,10,$row->supplier_name,0,0,'L',false);
-           
-           
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(69,10,'Small Tray :',0,0,'R',false);
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(10,10,$smalltray,0,0,false);
             $pdf->Ln();
+           
+           
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(69,10,'Small Tray :',0,0,'R',false);
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(10,10,$smalltray,0,0,false);
+            // $pdf->Ln();
            
             // $pdf->SetFont('Arial','B',14);
             // $pdf->Cell(47 ,10,'Address',0,0,'L',false);
@@ -132,22 +134,23 @@ $inhand=$select_row4["inhand"];
             
                 
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(69,10,'Big Tray :',0,0,'R',false);
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(10,10,$bigtray,0,0,false);
-            $pdf->Ln();
-            
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(45 ,10,'Boxes Arrived',0,0,'L',false);
+            $pdf->Cell(45 ,10,'Boxes Arrived',0,0,'R',false);
             $pdf->SetFont('Arial','',14);
             $pdf->Cell(45 ,10,$row->boxes_arrived,0,0,'L',false);
-           
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(69,10,'Inhand :',0,0,'R',false);
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(10,10,$inhand,0,0,false);
-            
+          
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(69,10,'Big Tray :',0,0,'R',false);
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(10,10,$bigtray,0,0,false);
             $pdf->Ln();
+            
+           
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(69,10,'Inhand :',0,0,'R',false);
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(10,10,$inhand,0,0,false);
+            
+            // $pdf->Ln();
             
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(45 ,10,'Lorry No',0,0,'L',false);
@@ -261,7 +264,7 @@ $inhand=$select_row4["inhand"];
     $oldsql=$connect->prepare($old);
 $oldsql->execute();
 $oldbal = $oldsql->fetch(PDO::FETCH_ASSOC);
-$olds=$oldbal['obal'];
+$olds=$oldbal['total'];
 // print_r($olds);die();
     $pdf->Ln();
         
@@ -275,7 +278,7 @@ $olds1=$oldbal1['obal'];
           
           
           
-                                            $old4="select *,SUM(sale) as sales from payment where supplierid = '$supplier_id' and date='$date' order by id desc limit 1";
+                                            $old4="select * from payment where supplierid = '$supplier_id' and date='$date' order by id desc limit 1";
     $oldsql4=$connect->prepare($old4);
 $oldsql4->execute();
 $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
@@ -283,8 +286,8 @@ $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
               $pdf->Cell(95 ,6,'',0,0);
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(50 ,10,'Today Patti',0,0,'R');
-             if($oldbal4['sales'] > 0){
-          $pdf->Cell(38 ,10,$oldbal4['sales'],0,1,'R');
+             if($oldbal4['sale'] > 0){
+          $pdf->Cell(38 ,10,$oldbal4['sale'],0,1,'R');
              }
              else{
           $pdf->Cell(38 ,10,0,0,1,'R');
@@ -297,7 +300,10 @@ $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
              if($oldbal['obal']>0){
         $pdf->Cell(38 ,10,$oldbal['total'],0,1,'R');
              }
-             else{
+        //          else if($oldbal['obal'] > 0){
+        //   $pdf->Cell(38 ,10,$oldbal['total'],0,1,'R');
+        //      }
+           else{
         $pdf->Cell(38 ,10,0,0,1,'R');
                  
              }
@@ -326,16 +332,16 @@ $oldbal3 = $oldsql3->fetch(PDO::FETCH_ASSOC);
        $pdf->Cell(95 ,6,'',"T",0);
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(50 ,10,'Balance',"T",0,'R');
-           if($oldbal3['total']>0){
-               $pdf->Cell(38 ,10,$oldbal3['total'],'T',1,'R');
+           if($oldbal['total']>0){
+               $pdf->Cell(38 ,10,$oldbal['total'],'T',1,'R');
            }
-           else if($oldbal1['tpay']==""){
-               $pdf->Cell(38 ,10,$oldbal['tpay'],'T',1,'R');
-           }
-           else{
-               $pdf->Cell(38 ,10,0,'T',1,'R');
+        //   else if($oldbal1['tpay']==""){
+        //       $pdf->Cell(38 ,10,$oldbal['tpay'],'T',1,'R');
+        //   }
+          else{
+              $pdf->Cell(38 ,10,0,'T',1,'R');
                
-           }
+          }
             $pdf->Ln();
           
             $pdf->Cell(20,10,'Note  :',0,0,'');

@@ -4,7 +4,7 @@ require('fpdf/fpdf.php');
 $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetLeftMargin(15);
-$date = date("Y-m-d");
+$dates = date("Y-m-d");
 
 // $pdf->Image('images/ab_pdf.png',50,2,100);
 
@@ -48,7 +48,7 @@ $pdf->SetY(30);
 $pdf->SetFont('Arial','',8);
 
 $customer_id=$_REQUEST["customer_id"];
-$dates=$_REQUEST["date"];
+$date=$_REQUEST["date"];
 $customer_name=$_REQUEST["customer_name"];
 
 $saleid=$_REQUEST["saleid"];
@@ -93,7 +93,7 @@ $saleid=$_REQUEST["saleid"];
 
 //code for print data
 
-$sql = "SELECT * FROM  sar_sales_invoice WHERE sale_id='$saleid' and date='$dates'";
+$sql = "SELECT * FROM  sar_sales_invoice WHERE sale_id='$saleid' and date='$date'";
 $query = $connect -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -111,6 +111,7 @@ $cnt=1;
 
 $pdf->Ln();
 $row;
+$qty=0; $tot=0;
 foreach($results as $row) {
     if($cnt == 1){
         
@@ -134,39 +135,39 @@ foreach($results as $row) {
         $pdf->SetFont('Arial','',14);
         // $pdf->SetTopMargin(50);
         $pdf->Cell(20,10,$row->customer_name,0,0,false);
-        $pdf->Cell(80,10,'Small Tray ',0,0,'R',false);
-        $pdf->SetFont('Arial','',14);
+        // $pdf->Cell(80,10,'Small Tray ',0,0,'R',false);
+        // $pdf->SetFont('Arial','',14);
         // $pdf->SetTopMargin(50);
-        $pdf->Cell(10,10,$select_row4['smalltray'],0,0,false);
-        $pdf->Ln();
+        // $pdf->Cell(10,10,$select_row4['smalltray'],0,0,false);
         $pdf->SetFont('Arial','B',14);
-        $pdf->Cell(42,10,'Mobile Number ',0,0,'L',false);
+        $pdf->Cell(80,10,'Mobile Number ',0,0,'R',false);
         $pdf->SetFont('Arial','',14);
         // $pdf->SetTopMargin(50);
         $pdf->Cell(20,10,$row->mobile_number,0,0,false);
-         $pdf->Cell(80,10,'Big Tray ',0,0,'R',false);
-        $pdf->SetFont('Arial','',14);
+         $pdf->Ln();
+       //  $pdf->Cell(80,10,'Big Tray ',0,0,'R',false);
+        // $pdf->SetFont('Arial','',14);
         // $pdf->SetTopMargin(50);
-        $pdf->Cell(10,10,$select_row4['bigtray'],0,0,false);
-        $pdf->Ln();
+        // $pdf->Cell(10,10,$select_row4['bigtray'],0,0,false);
+        // $pdf->Ln();
         $pdf->SetFont('Arial','B',14);
         $pdf->Cell(42,10,'Address ',0,0,'L',false);
         $pdf->SetFont('Arial','',14);
         // $pdf->SetTopMargin(50);
         $pdf->Cell(20,10,$row->customer_address,0,0,false);
-         $pdf->Cell(80,10,'Inhand Tray ',0,0,'R',false);
-        $pdf->SetFont('Arial','',14);
-        // $pdf->SetTopMargin(50);
-        $pdf->Cell(10,10,$select_row4['inhand'],0,0,false);
-        $pdf->Ln();
+        //  $pdf->Cell(80,10,'Inhand Tray ',0,0,'R',false);
+        // $pdf->SetFont('Arial','',14);
+        // // $pdf->SetTopMargin(50);
+        // $pdf->Cell(10,10,$select_row4['inhand'],0,0,false);
         $pdf->SetFont('Arial','B',14);
-        $pdf->Cell(42,10,'Boxes Arrived ',0,0,'L',false);
+        $pdf->Cell(80,10,'Boxes Arrived ',0,0,'R',false);
         $pdf->SetFont('Arial','',14);
         // $pdf->SetTopMargin(50);
         $pdf->Cell(20,10,$row->boxes_arrived,0,0,false);
+       $pdf->Ln();
+     
     
-    
-        $pdf->Ln(20);
+        // $pdf->Ln(20);
         
         $pdf->SetFillColor(40,48,77);
         $pdf->SetTextColor(255,255,255);
@@ -175,7 +176,7 @@ foreach($results as $row) {
         $pdf->Cell(50,10,'Quality Name',0,0,'R',true);
         $pdf->Cell(35,10,'Quantity',0,0,'R',true);
         $pdf->Cell(30,10,'Rate',0,0,'R',true);
-        $pdf->Cell(30,10,'Bill Amount',0,0,'R',true);
+        $pdf->Cell(35,10,'Bill Amount',0,0,'R',true);
         $pdf->Ln();
         
     }
@@ -185,11 +186,26 @@ foreach($results as $row) {
         $pdf->Cell(50,10,$row->quality_name,0, 0, "R");
         $pdf->Cell(35,10,$row->quantity ,0, 0, "R");
         $pdf->Cell(30,10,$row->rate,0,0,'R');
-        $pdf->Cell(30,10,$row->bill_amount,0,1,'R');
+        $pdf->Cell(35,10,$row->bill_amount,0,1,'R');
         $customer_name=$row->customer_name;
         $cnt++;
+        $qty+=$row->quantity;
+        $tot+=$row->bill_amount;
  
 }
+$pdf->SetFont('Arial','',14);
+$pdf->Cell(56, 10, ' Total Qty', "T", 0, "C");
+$pdf->Cell(35, 10, $qty, 'T', 0, "C");
+//$pdf->Ln15);
+$pdf->Cell(18 ,6,'','T',0);
+$pdf->SetFont('Arial','B',14);
+$pdf->Cell(40, 10, 'Sub Total',1,0, "C");
+$pdf->SetFont('Arial','B',14);
+$pdf->Cell(32 ,10,$row->total_bill_amount,1,0,'R');
+$pdf->Ln(10);
+
+
+
 // $select_qry3= "SELECT sum(inward) as inward_sum FROM `tray_transactions` WHERE category='Customer' AND name='$customer_name' ";
 // 	    $select_sql3=$connect->prepare($select_qry3);
 //     	$select_sql3->execute();
@@ -207,7 +223,7 @@ foreach($results as $row) {
         //echo $select_qry3;
         $balance =  $row->total_bill_amount - $total_discount_on_sales - $data_row2["paid_amount"];
 
-        $old="select * from payment_sale where customerid = '$cusid' and date<'$date' order by id desc limit 1";
+        $old="select * from payment_sale where customerid = '$cusid' and date<'$dates' order by id desc limit 1";
  $oldsql=$connect->prepare($old);
 $oldsql->execute();
 $oldbal = $oldsql->fetch(PDO::FETCH_ASSOC);
@@ -218,7 +234,7 @@ $pdf->Cell(87 ,6,'','T',0);
 // $pdf->Cell(45 ,10,'Sub Total',1,0,'C');
 
 
-                                            $old4="select *,SUM(sale) as sales from payment_sale where customerid = '$cusid' and date='$date' order by id desc limit 1";
+                                            $old4="select * from payment_sale where customerid = '$cusid' and date='$dates' order by id desc limit 1";
     $oldsql4=$connect->prepare($old4);
 $oldsql4->execute();
 $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
@@ -227,7 +243,7 @@ $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
 $pdf->Cell(47, 10, 'Today Sales', "T", 0, "R");
 
 
- $old1="select * from payment_sale where customerid = '$cusid' and date='$date' and (paymentmode!='cash' or paymentmode!='percentage' or paymentmode!='-' or paymentmode!='') order by id desc limit 1";
+ $old1="select * from payment_sale where customerid = '$cusid' and date='$dates' and (paymentmode!='cash' or paymentmode!='percentage' or paymentmode!='-' or paymentmode!='') order by id desc limit 1";
 $oldsql1=$connect->prepare($old1);
 $oldsql1->execute();
 $oldbal1 = $oldsql1->fetch(PDO::FETCH_ASSOC);
@@ -235,11 +251,11 @@ $olds1=$oldbal1['obal'];
 
 
 // $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
-  if($oldbal4['sales']>0){
-$pdf->Cell(40, 10, $oldbal4['sales'], 'T', 0, "R");
+  if($oldbal4['sale']>0){
+$pdf->Cell(47, 10, $oldbal4['sale'], 'T', 0, "R");
 }
 else{
-$pdf->Cell(40, 10, 0, 'T', 0, "R");    
+$pdf->Cell(47, 10, 0, 'T', 0, "R");    
 }
 $pdf->Ln(10);
 
@@ -247,15 +263,15 @@ $pdf->Cell(87 ,6,'',0,0);
 $pdf->Cell(47, 10, 'Old Balance', 0, 0, "R");
 // $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
        if($oldbal['obal']>0){
-   $pdf->Cell(40, 10,$oldbal['total'], 0, 0, "R");
+   $pdf->Cell(47, 10,$oldbal['total'], 0, 0, "R");
 }
 else{
-$pdf->Cell(40, 10,0, 0, 0, "R");
+$pdf->Cell(47, 10,0, 0, 0, "R");
     }
     $pdf->Ln(10);
     
     
-       $old2="select * from payment_sale where customerid = '$cusid' and (date<'$date' or date='$date') and (paymentmode='cash' or paymentmode='percentage') order by id desc limit 1";
+       $old2="select * from payment_sale where customerid = '$cusid' and (date<'$dates' or date='$dates') and (paymentmode='cash' or paymentmode='percentage') order by id desc limit 1";
     $oldsql2=$connect->prepare($old2);
 $oldsql2->execute();
 $oldbal2 = $oldsql2->fetch(PDO::FETCH_ASSOC);
@@ -264,14 +280,14 @@ if($oldbal4['dis']>0){
 $pdf->Cell(87 ,6,'',0,0);
 $pdf->Cell(47, 10, 'Discount', 0, 0, "R");
 
-    $pdf->Cell(40, 10,$oldbal4['dis'], 0, 0, "R");
+    $pdf->Cell(47, 10,$oldbal4['dis'], 0, 0, "R");
 }
 // else{
 //     $pdf->Cell(40, 10,0, 0, 0, "R");
 //     }
     $pdf->Ln(5);
     
-       $old3="select * from payment_sale where customerid = '$cusid' or date<'$date' order by id desc limit 1";
+       $old3="select * from payment_sale where customerid = '$cusid' or date<'$dates' order by id desc limit 1";
     $oldsql3=$connect->prepare($old3);
 $oldsql3->execute();
 $oldbal3 = $oldsql3->fetch(PDO::FETCH_ASSOC);
@@ -280,15 +296,15 @@ $oldbal3 = $oldsql3->fetch(PDO::FETCH_ASSOC);
 $pdf->Cell(87 ,6,'',0,0);
 $pdf->Cell(47, 10, 'Balance', "T", 0, "R");
    if($oldbal3['total']>0){
-        $pdf->Cell(40, 10, $oldbal3['total'], 'T', 0, "R");
-}
-else if($oldbal1['tpay']==""){
-$pdf->Cell(40, 10,$oldbal['tpay'], 'T', 0, "R");
-}
-else{
-$pdf->Cell(40, 10,0, 'T', 0, "R");
-
-}
+               $pdf->Cell(47 ,10,$oldbal3['total'],'T',1,'R');
+           }
+           else if($oldbal1['tpay']==""){
+               $pdf->Cell(47 ,10,$oldbal['tpay'],'T',1,'R');
+           }
+           else{
+               $pdf->Cell(47 ,10,0,'T',1,'R');
+               
+           }
 $pdf->Ln(10);
 // $pdf->Cell(87 ,6,'',0,0);
 // $pdf->Cell(47, 10, 'Inhand Trays', "T", 0, "R");
