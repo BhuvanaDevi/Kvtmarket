@@ -7,7 +7,7 @@ if(isset($_REQUEST['req'])!=""){
 } else {
     $req="";
 }
-
+$customer_name=$_REQUEST['customer_name'];
 
 if(isset($_REQUEST['id'])!=""){
     $id=$_REQUEST["id"];
@@ -36,7 +36,7 @@ if($req=="delete")
                               </li>
                                  <li class="col-md-4 p-0">
                                     <a class="nav-link active" data-toggle="pill" href="#personal-information">
-                                       Add Chit
+                                       Add Customer
                                     </a>
                                  </li>
                                  <!-- <li class="col-md-3 p-0">
@@ -101,97 +101,14 @@ if($req=="delete")
                  </div>
              </div>
         </div>
-    </div>
-                              
+    </div>                              
 </div>
-                           
-            <!-- <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
-                     <div class="add-item-flex">
-                         <div class="add-item-row">
-                                 <div class="row col-md-12">
-                                         <div class="col-md-6">
-                                 <div class="iq-card-body iq-card">
-                                     <h4 class="card-title">Add trays</h4><br/>
-                                    <form method="post" name="tray_form">
-                                       <div class="form-group">
-                                          <label for="cpass">Add New Trays</label>
-                                         
-                                             <input type="text" required class="form-control" id="cpass" name="total_trays">
-                                          </div>
-                                          <div class="form-group">
-                                          <label for="cpass">Select Tray Types</label>
-                                        <select name="type" class="form-control">
-                                        <option value="">Select Tray Type</option>
-                                      <option value="Big Tray">Big Tray</option>
-                                        <option value="Small Tray">Small Tray</option>
-                                        </select>
-                                        </div>
-                                          <input type="submit" name="add_trays" class="btn btn-primary mr-2" value="Submit">
-                                      </form>
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                 <div class="iq-card-body iq-card">
-                                     <h4 class="card-title">Delete trays</h4>
-                                     <form method="post" name="tray_delete">
-                                       <div class="form-group"><br>
-                                          <label for="npass">Delete Trays</label>
-                                          <input required type="text" class="form-control" id="npass" name="delete_trays">
-                                       </div>
-                                       <div class="form-group"><br>
-                                          <label for="npass">Select Tray Types</label>
-                                          <select name="tray_type" class="form-control">
-                                          <option value="">Select Tray Type</option>
-                                            <option value="Big Tray">Big Tray</option>
-                                            <option value="Small Tray">Small Tray</option>
-                                          </select>
-                                       </div>
-                                        <input type="submit" name="delete_tray" class="btn btn-primary mr-2" value="submit">
-                                      
-                                     </form>
-                                
-                                 </div>
-                                 </div>
-                                 </div>
-                                
-                  
-                  
-                                 </div>
-                                 </div>
-                                 </div>
-                              </div>
-                           </div>
-                     </div>
-                  </div>
-               </div>
-            </div> -->
-         </div>
-     
-      <!-- Wrapper END -->
-      <!-- Footer -->
-     
+</div>  
+<!-- Wrapper END -->
+<!-- Footer -->
  <?php
 require "footer.php";
 
-// if(isset($_POST["add_chit"]))
-// {
-//     $select_qry = "SELECT * FROM chit ORDER BY id DESC limit 1";
-//     $select_sql = $connect->prepare($select_qry);
-//     $select_sql->execute();
-//     $group_row=$select_sql->fetch(PDO::FETCH_ASSOC);
-//     $Last_id=$group_row["id"]+1;
-//     $chit_id = "chit_".date("Ym")."0".$Last_id;
-//     $customer_name = $_POST['customer_name'];
-//     $customer_date = $_POST['add_date'];
-//     $add_customer_sql = "INSERT INTO `chit` SET chitname='$customer_name', chitdate='$customer_date', chitid='$chit_id'";
-//     $add_customer = $connect->prepare($add_customer_sql);
-//     if($add_customer->execute())
-//     {
-//     //    $result='<div class="alert alert-success">Success</div>';
-//        echo "<script>alert('Success')</script>";
-//     }
-    
-// }
 if(isset($_POST["add_chit"]))
 {
     $select_qry = "SELECT * FROM customer_table ORDER BY id DESC limit 1";
@@ -251,7 +168,7 @@ if(isset($_POST["add_chit"]))
                     targets: 2,
                     render: function(data, type, row) {
                         // return row.chitamt;
-                        return '<a idd='+ row.customer_id+' class="mymodal">'+ row.customer_name + '</a>';
+                        return '<a name_val='+ row.customer_name + ' idd='+ row.customer_id+' class="mymodal">'+ row.customer_name + '</a>';
                     }
                 },
                 {
@@ -289,6 +206,8 @@ if(isset($_POST["add_chit"]))
             });
     $('#example tbody').on('click', '.mymodal', function() {
         var idd=$(this).attr('idd');
+        var cus_name=$(this).attr('name_val'); 
+        $('#title').html(cus_name);
         // alert(idd)
         $('#hidden_id').val(idd);
         $("#myModal").modal("show");
@@ -297,7 +216,7 @@ if(isset($_POST["add_chit"]))
             url: "forms/ajax_request_view.php",
             data: {
                 "action": "view_chit_modal",
-                "chit_id": idd
+                     "chit_id": idd
             },
             dataType: "json",
             success: function(result) {
@@ -329,7 +248,7 @@ if(isset($_POST["add_chit"]))
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title" style="color:#f55989;">Add chit</h4>
+                <h4 class="modal-title" style="color:#f55989;">Add Customer</h4>
                 <button type="button" class="btn-btn close" data-bs-dismiss="modal">X</button>
             </div>
             <!-- Modal body -->
@@ -374,7 +293,7 @@ if(isset($_POST["add_chit"]))
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title" style="color:#f55989;">Add Amount</h4>
+                <h4 class="modal-title" style="color:#f55989;" id="title"></h4>
                 <button type="button" class="btn-btn close" data-bs-dismiss="modal">X</button>
             </div>
             <!-- Modal body -->

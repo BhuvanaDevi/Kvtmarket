@@ -639,7 +639,30 @@ function revoke_payment(obj, sar_patti_payment_id, data_src) {
                 }
             })
         });
- 
+        $("#group_modal").on("change", function() {
+            var grp = $(this).val();
+            // alert(grp);
+            $.ajax({
+                type: "POST",
+                url: "forms/ajax_request.php",
+                data: {
+                    "action": "fetch_finance",
+                    "grp": grp
+                },
+                dataType: "json",
+                success: function(result) {
+                    var len = result.length;
+                    // alert(result.length);
+                    $("#customer_modal").empty();
+                    $("#customer_modal").append('<option>CustomerName</option>');
+                    for (var i = 0; i < len; i++) {
+                        $("#customer_modal").append('<option value=' + result[i].customer_name+ '>' + result[i]
+                            .customer_name + '</option>');
+                    }
+                    // alert(result.contact_person);
+                }
+            })
+        });
     });
         var dtToday = new Date();
 
@@ -674,7 +697,7 @@ function checkDelete(){
                 <form  method="post" action="">
                     <div class="form-group ">          
                         <label for="exampleFormControlSelect1">Group Name</label><span style="color:red">*</span>                                   
-                    <select class="form-control" id="group" name="group_name" required>
+                    <select class="form-control" id="group_modal" name="group_name" required>
                             <option value="">--Choose Group Name--</option>
                             <?php
                                 $sel_qry = "SELECT distinct grp_cust_name from `sar_customer` order by grp_cust_name ASC ";
@@ -690,17 +713,8 @@ function checkDelete(){
                     </div>
                     <div class="form-group ">
                         <label for="exampleFormControlSelect1">Customer Name</label><span style="color:red">*</span>
-                    <select class="form-control" id="customer" name="customer_name" required>
-                            <option value="">Choose Customer Name </option>
-                            <?php
-                                    $sel_qry = "SELECT * FROM `sar_sales_invoice` WHERE payment_status=0 GROUP BY customer_name";
-                                    $sel_sql= $connect->prepare($sel_qry);
-                                    $sel_sql->execute();
-                                while ($sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC)){
-                                        
-                                        echo '<option value="'.$sel_row["customer_name"].'">'.$sel_row["customer_name"].'</option>';
-                                }
-                            ?>
+                        <select class="form-control" id="customer_modal" name="customer_name" required>
+                            <option value="">Choose Customer Name </option>                  
                         </select>
                     </div>                             
                     <div class="form-group">
