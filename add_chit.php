@@ -64,6 +64,66 @@ if($req=="delete")
                                         </div>
                                     </div>
                                 </div>
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-lg-12">
+                     <div class=""style="padding:0">
+                        <div class="iq-card-body p-0">
+                           <div class="iq-edit-list">
+                              <ul class="iq-edit-profile d-flex nav nav-pills">
+                              <li class="col-md-4 p-0">
+                              </li>
+                                 <li class="col-md-4 p-0">
+                                    <a class="nav-link active" data-toggle="pill" href="#personal-information">
+                                       Add Customer
+                                    </a>
+                                 </li>
+                                 <!-- <li class="col-md-3 p-0">
+                                    <a class="nav-link" data-toggle="pill" href="#chang-pwd">
+                                       Add & Delete Trays
+                                    </a>
+                                 </li> -->
+                                 
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-lg-12">
+                     <div class="iq-edit-list-data">
+                        <div class="tab-content">
+                           <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
+                               <div class="iq-card">
+                                 
+                                 <div class="add-item-flex">
+                                     <div class="add-item-row">
+                                     <div class="row">
+                                         <div class="container-fluid">
+                                 <!-- <div class="iq-card-body iq-card1">
+                                     <h4 class="card-title">Add Quality</h4>
+                                  
+                                 </div>
+                  -->
+                     <div class="iq-card-header d-flex justify-content-between">
+                           <div class="iq-header-title">
+                              <h4 class="card-title">View Chit List</h4>
+                           </div>
+                        </div>
+                        <div class="iq-card-body card1">
+                           <div class="row col-md-12">
+                           <div class="col" style="margin-bottom:20px">                               
+                                <input type="date" id="from" name="from" class="form-control">
+                            </div>
+                            <div class="col">   
+                                <input type="date" id="to" name="to" class="form-control">
+                            </div>   
+                            <div class="col">
+                                <button type="button" style="float: right;" id="display" name="display" class="btn btn-danger">Display</button>
+                                <button type="button" style="float: right;" id="download" name="download" class="btn btn-danger">Download</button>
+                            </div>
+                              <div class="col">
+                              <button type="button" id="add" name="add" style="color: #fff;" class="btn btn-success mymodalQuality">Add chit</button>
+                              </div>
                             </div>
                         </div>
                     </div>                                                    
@@ -150,9 +210,22 @@ if(isset($_POST["add_chit"]))
              "order": [[ 1, 'asc' ]]
         });
             $("#download").on("click",function(){
-            window.location="download_quality_list_report.php";
+                var from=$("#from").val();
+                var to=$("#to").val();
+                window.location.href="Getchit.php?from="+from+"&to="+to;
             });
-
+        $("#display").on("click",function(){
+            var from=$("#from").val();
+            var to=$("#to").val();
+            if(from!="" && to!=""){
+                table.ajax.url("forms/ajax_request.php?action=view_customer_table&from="+from+'&to='+to).load();
+                table.ajax.reload();
+            }
+            else {
+                table.ajax.url("forms/ajax_request.php?action=view_customer_table").load();
+                table.ajax.reload();
+            }
+        });
             $('.mymodalQuality').on('click', function (){
                 $( "#mymodal_quality" ).modal( "show" );
             });
