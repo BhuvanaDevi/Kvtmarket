@@ -25,78 +25,53 @@ if($req=="delete")
 }
  ?>
 <div id="content-page" class="content-page">
-            <div class="container-fluid">
-               <div class="row">
-                  <div class="col-lg-12">
-                     <div class=""style="padding:0">
-                        <div class="iq-card-body p-0">
-                           <div class="iq-edit-list">
-                              <ul class="iq-edit-profile d-flex nav nav-pills">
-                              <li class="col-md-4 p-0">
-                              </li>
-                                 <li class="col-md-4 p-0">
-                                    <a class="nav-link active" data-toggle="pill" href="#personal-information">
-                                       Add Customer
-                                    </a>
-                                 </li>
-                                 <!-- <li class="col-md-3 p-0">
-                                    <a class="nav-link" data-toggle="pill" href="#chang-pwd">
-                                       Add & Delete Trays
-                                    </a>
-                                 </li> -->
-                                 
-                              </ul>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-lg-12">
-                     <div class="iq-edit-list-data">
-                        <div class="tab-content">
-                           <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
-                               <div class="iq-card">
-                                 
-                                 <div class="add-item-flex">
-                                     <div class="add-item-row">
-                                     <div class="row">
-                                         <div class="container-fluid">
-                                 <!-- <div class="iq-card-body iq-card1">
-                                     <h4 class="card-title">Add Quality</h4>
-                                  
-                                 </div>
-                  -->
-                     <div class="iq-card-header d-flex justify-content-between">
-                           <div class="iq-header-title">
-                              <h4 class="card-title">View Chit List</h4>
-                           </div>
-                        </div>
-                        <div class="iq-card-body card1">
-                           <div class="row col-md-12">
-                           <div class="col-md-6">
-                              <button type="button" style="float: right;" id="download" name="download" class="btn btn-danger">Download</button>
-                              </div>
-                              <div class="col-md-6">
-                              <button type="button" id="add" name="add" style="color: #fff;" class="btn btn-success mymodalQuality">Add Customer</button>
-                              </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="iq-card-body iq-card1">
+                <h4 class="card-title">Add Chit</h4>                    
+            </div>               
+            <div class="col-lg-12">
+                <div class="iq-edit-list-data">                    
+                    <div class="iq-card">                               
+                        <div class="add-item-flex">
+                            <div class="add-item-row">
+                                <div class="row">
+                                    <div class="container-fluid">                               
+                                        <div class="iq-card-header d-flex justify-content-between">
+                                            <div class="iq-header-title">
+                                                <h4 class="card-title">View Chit List</h4>
+                                            </div>
+                                        </div>
+                                        <div class="iq-card-body card1">
+                                            <div class="row col-md-12">
+                                                <div class="col-md-6">
+                                                    <button type="button" style="float: right;" id="download" name="download" class="btn btn-danger">Download</button>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <button type="button" id="add" name="add" style="color: #fff;" class="btn btn-success mymodalQuality">Add Customer</button>
+                                                </div>
+                                            </div>
+                                            <table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Customer ID</th>
+                                                        <th>Date</th>
+                                                        <th>Customer Name</th>
+                                                        <th>Total Amount</th>
+                                                    </tr>
+                                                </thead> 
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                           <table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>Customer ID</th>
-                                        <th>Date</th>
-                                        <th>Customer Name</th>
-                                        <th>Total Amount</th>
-                                    </tr>
-                                </thead> 
-                            </table>
                         </div>
-                    </div>
-                 </div>
-             </div>
+                    </div>                                                    
+                </div>
+            </div>
         </div>
-    </div>                              
+    </div>
 </div>
-</div>  
 <!-- Wrapper END -->
 <!-- Footer -->
  <?php
@@ -233,36 +208,26 @@ if(isset($_POST["add_chit"]))
             </div>
             <!-- Modal body -->
             <div class="modal-body">
-                    <div id="tabs1" class="tabcontent">
+                <div id="tabs1" class="tabcontent">
                     <form method="post">
-
-                                       <div class="form-group">
-                                          <label for="cpass">Customer Name</label>
-                                         
-                                             <input type="text" required class="form-control" name="customer_name">
-                                             <label for="cpass">Date</label>
-                                         
-                                             <input type="date" required class="form-control" value="<?php echo $date1?>" name="add_date">
-                                          </div>
-                                          <input type="submit" name="add_chit" class="btn btn-primary mr-2" value="Submit">
-                                       <!--<button type="reset" class="btn iq-bg-danger">Cancel</button>-->
-                               <div class="form-group">                                
-                                  <div class="col-sm-10 col-sm-offset-2">
-                                    <?php echo $result; ?>    
-                                </div>
-                                </div>
-                                     
-                                     
-                                     
-                                    </form>
-                                </div>
+                        <div class="form-group">
+                            <label for="cpass">Customer Name</label>
                             
-                    
-                                <div class="modal-footer">
-
-
+                                <input type="text" required class="form-control" name="customer_name">
+                                <label for="cpass">Date</label>                           
+                            <input type="date" required class="form-control" value="<?php echo $date1?>" name="add_date">
+                        </div>
+                        <input type="submit" name="add_chit" class="btn btn-primary mr-2" value="Submit">
+                        <!--<button type="reset" class="btn iq-bg-danger">Cancel</button>-->
+                        <div class="form-group">                                
+                            <div class="col-sm-10 col-sm-offset-2">
+                                <?php echo $result; ?>    
+                            </div>
+                        </div>             
+                    </form>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn close" data-bs-dismiss="modal">Close</button>
-
                 </div>
             </div>
         </div>
@@ -278,43 +243,38 @@ if(isset($_POST["add_chit"]))
             </div>
             <!-- Modal body -->
             <div class="modal-body">
-                    <div id="tabs1" class="tabcontent">
+                <div id="tabs1" class="tabcontent">
                     <form method="post">
                         <input type="hidden" id='hidden_id' name='hidden_id'>
-                                       <div class="form-group">
-                                          <label for="cpass">Enter Amount</label>
-                                         
-                                             <input type="text" required class="form-control" name="amt">
-                                             <label for="cpass">Date</label>
-                                         
-                                             <input type="date" required class="form-control" value="<?php echo $date1 ?>" name="amt_date">
-                                          </div>
-                                          <input type="submit" name="add_amt" class="btn btn-primary mr-2" value="Submit">
-                                       <!--<button type="reset" class="btn iq-bg-danger">Cancel</button>-->
-                               <div class="form-group">                                
-                                  <div class="col-sm-10 col-sm-offset-2">
-                                    <?php echo $result; ?>    
-                                </div>
-                                </div>
-                                 
-                                    </form>
-                                    <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead> 
-                                <tbody id="datas">
-                                </tbody>    
-                            </table>
-                                </div>
-                
-                    <div class="modal-footer">
-
+                        <input type="hidden" id='hidden_id' name='hidden_id'>
+                        <div class="form-group">
+                            <label for="cpass">Enter Amount</label>                                
+                            <input type="text" required class="form-control" name="amt">
+                            <label for="cpass">Date</label>                        
+                            <input type="date" required class="form-control" value="<?php echo $date1 ?>" name="amt_date">
+                        </div>
+                        <input type="submit" name="add_amt" class="btn btn-primary mr-2" value="Submit">
+                        <!--<button type="reset" class="btn iq-bg-danger">Cancel</button>-->
+                        <div class="form-group">                                
+                            <div class="col-sm-10 col-sm-offset-2">
+                            <?php echo $result; ?>    
+                        </div>
+                        </div>
+                    </form>
+                    <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead> 
+                        <tbody id="datas">
+                        </tbody>    
+                    </table>
+                </div>               
+                <div class="modal-footer">
                     <button type="button" class="btn close" data-bs-dismiss="modal">Close</button>
-
                 </div>
             </div>
         </div>
@@ -334,10 +294,10 @@ if(isset($_POST['add_amt'])) {
 
    
    
-//    $update_query = "UPDATE `chit` SET chitamt = '$add_amt', updatedate = '$amt_date' WHERE id='$hidden_id'";
-   $update_query = "INSERT INTO `chit` SET chitamt='$add_amt', chitdate='$amt_date', chitid='$hidden_id'";
-   $update_query_run =$connect->prepare($update_query);
-   $update_query_run->execute();
+    // $update_query = "UPDATE `chit` SET chitamt = '$add_amt', updatedate = '$amt_date' WHERE id='$hidden_id'";
+    $update_query = "INSERT INTO `chit` SET chitamt='$add_amt', chitdate='$amt_date', chitid='$hidden_id'";
+    $update_query_run =$connect->prepare($update_query);
+    $update_query_run->execute();
     header("location:add_chit.php");
 }
 ?>

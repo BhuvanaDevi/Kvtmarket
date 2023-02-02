@@ -53,6 +53,7 @@ if(isset($_POST['add_payment'])) {
     $payment_mode = $_POST["payment_mode"];
     // echo $popup_finance_id; die();
     $popup_finance_id = $_POST["finance_id"];
+    $popup_customer_name = $_POST["customer_name_modal"];
     
     $select_qry5 = "SELECT amount FROM sar_finance WHERE finance_id='$popup_finance_id' GROUP BY finance_id";
 
@@ -74,6 +75,7 @@ if(isset($_POST['add_payment'])) {
                         payment_date='$payment_date',
                         payment_mode='$payment_mode',
                         finance_id='$popup_finance_id',
+                        customer_name='$popup_customer_name',
                         balance='$balance'
                         ";
                     $sql_1 = $connect->prepare($insert);
@@ -93,7 +95,29 @@ if(isset($_POST['add_payment'])) {
                         // $sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
                         // // $farmer_name=$sel_row["farmer_name"];
                         // $balance = $bal_row["balance"] - $amount;
-        
+                $balance_qry1="SELECT balance FROM financial_transactions ORDER BY id DESC LIMIT 1 ";
+                $balance_sql1=$connect->prepare("$balance_qry1");
+                $balance_sql1->execute();
+                $bal_row1=$balance_sql1->fetch(PDO::FETCH_ASSOC);   
+                if($bal_row1["balance"]!=""){ 
+                $balance1 =$bal_row1["balance"] + $amount;
+                }
+                else{
+                $balance1 = $amount;
+                }
+                // print_r($balance1."n");die();
+                
+                $fin_trans_qry = "INSERT INTO financial_transactions SET 
+                date = '$payment_date',
+                credit= '$amount',
+                balance='$balance1',
+                description = 'Payment Revoke for Finance $popup_customer_name',
+                finance_id = '$popup_finance_id',
+                payment_id = '$payment_id',
+                ids='$popup_finance_id'
+                ";
+                $sql_1 = $connect->prepare($fin_trans_qry);
+                $sql_1->execute();
     }
 
 }
@@ -266,22 +290,9 @@ if(isset($_POST["add_finance"])){
                 ";
         $sql_1= $connect->prepare($query_1);
         $sql_1->execute();
+
         header('Location: finance.php');
-    
-// }else {
-        
-//             $query_1 = "UPDATE `sar_finance` SET 
-//                             finance_id='$finance_id',
-//                             date='$date',
-//                             customer_name='$customer_name',
-//                             group_name='$group_name',
-//                             amount='$amount'
-//                             updated_by='$updated_by'
-//                         WHERE id='$id'";
-//             $sql_1= $connect->prepare($query_1);
-//             $sql_1->execute();
-                       
-//     }    
+      
 }
 
  ?>
@@ -289,7 +300,7 @@ if(isset($_POST["add_finance"])){
 
     <?php require "footer.php" ?>
 <script>
-function update_model_data(finance_id, data_src) {
+function update_model_data(finance_id,customer_name, data_src) {
     if (data_src == 'settled') {
         $('#payment_form').hide();
     } else {
@@ -301,6 +312,7 @@ function update_model_data(finance_id, data_src) {
         data: {
             "action": "view_finance_modal",
             "finance_id": finance_id,
+            "customer_name": customer_name,
             "data_src": data_src
         },
         dataType: "json",
@@ -325,7 +337,10 @@ function update_model_data(finance_id, data_src) {
                     $('#sar_payment_table').append('<td>' + result[i].balance + '</td>');
                     $('#sar_payment_table').append(
                         '<td><a class="tabs_click tablinks" onclick=revoke_payment(this,' + result[
-                            i].id + ',"' + data_src +
+                            i].id + ',"'+ result[
+                            i].payment_id +'","'+ result[
+                            i].payment_date +'","'+ result[
+                            i].amount +'","' + data_src +
                         '") data-toggle="tab" href="#tabs1">Revoke</a></td>');
                     $('#sar_payment_table').append('</tr>');
                 }
@@ -334,9 +349,12 @@ function update_model_data(finance_id, data_src) {
     });
 }
 
-function revoke_payment(obj, sar_patti_payment_id, data_src) {
+function revoke_payment(obj, sar_patti_payment_id, payment_id, payment_date, amount, data_src) {
     var myKeyVals = {
         "id": sar_patti_payment_id,
+        "payment_id": payment_id,
+        "payment_date": payment_date,
+        "amount": amount,
         "action": "revoke_finance_payment",
         "data_src": data_src
     };
@@ -388,7 +406,7 @@ function revoke_payment(obj, sar_patti_payment_id, data_src) {
                 {
                     targets: 2,
                     render: function(data, type, row) {
-                        return '<a class="mymodal" style="color:#f55989" finance_id="' + row.finance_id+'">' +
+                        return '<a class="mymodal" style="color:#f55989" customer_name="' + row.customer_name+'" finance_id="' + row.finance_id+'">' +
                         row.customer_name + '</a>';
                     }
                 },
@@ -502,7 +520,7 @@ function revoke_payment(obj, sar_patti_payment_id, data_src) {
                 {
                     targets: 2,
                     render: function(data, type, row) {
-                        return '<a class="mymodal" style="color:#f55989" finance_id="' + row.finance_id+'">' +
+                        return '<a class="mymodal" style="color:#f55989" customer_name="' + row.customer_name+'" finance_id="' + row.finance_id+'">' +
                         row.customer_name + '</a>';
                     }
                 },
@@ -556,15 +574,20 @@ function revoke_payment(obj, sar_patti_payment_id, data_src) {
         // });
         $('#example tbody').on('click', '.mymodal', function() {
             var finance_id = $(this).attr("finance_id");
+            var customer_name = $(this).attr("customer_name");
+            alert(customer_name)
             $("#myModal").modal("show");
             $("#finance_id").val(finance_id);
+            $("#customer_name_modal").val(customer_name);
             // alert(finance_id);
-            update_model_data(finance_id, 'unsettled')
+            update_model_data(finance_id,customer_name, 'unsettled')
         });    
         $('#example_settled tbody').on('click', '.mymodal', function() {
             var finance_id = $(this).attr("finance_id");
+            var customer_name = $(this).attr("customer_name");
             $("#myModal").modal("show");
             $("#finance_id").val(finance_id);
+            $("#customer_name_modal").val(customer_name);
             // alert(finance_id);
             update_model_data(finance_id, 'settled')
         });
@@ -743,7 +766,8 @@ function checkDelete(){
             <!-- Modal body -->
             <div class="modal-body">
                 <form id="form1" action="" method="POST">
-                    <input type="hidden" name="finance_id" id="finance_id" value=""/>                
+                    <input type="hidden" name="finance_id" id="finance_id" value=""/>
+                    <input type="hidden" name="customer_name_modal" id="customer_name_modal" value=""/>                
                         <table class="table table-responsive">
                             <tbody>
                                 <tr>

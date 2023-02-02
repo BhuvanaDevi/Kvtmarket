@@ -43,6 +43,7 @@ if($action=="view_interest_modal")
 if($action=="view_finance_modal")
 {
     $finance_id = $_REQUEST["finance_id"];
+    $customer_name = $_REQUEST["customer_name"];
     $cash_qry="SELECT * FROM sar_finance WHERE finance_id='$finance_id'";
     // print_r($cash_qry);die();
     $cash_sql=$connect->prepare($cash_qry);
@@ -72,9 +73,11 @@ if($action=="view_finance_modal")
                 "amount"=>  $select_fetch["amount"],
                 "balance"=>  $select_fetch["balance"],
                 "finance_id"=>  $select_fetch["finance_id"],
+                "customer_name"=>  $select_fetch["customer_name"],
                 "is_revoked"=> $select_fetch["is_revoked"]
             );
         }	
+    echo json_encode($fetch);
     }	
 if($action=="view_chit_modal")
 {

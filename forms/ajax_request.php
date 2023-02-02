@@ -5117,6 +5117,10 @@ if($action=="revoke_finance_payment")
 {
   if(isset($_REQUEST['id'])){
 		$id=$_REQUEST["id"];
+		$payment_id=$_REQUEST["payment_id"];
+		$payment_date=$_REQUEST["payment_date"];
+		$amount=$_REQUEST["amount"];
+
 		$data_src=$_REQUEST["data_src"];
 	//	$supplier_id=$_REQUEST["supplier_id"];
 		
@@ -5143,6 +5147,29 @@ if($action=="revoke_finance_payment")
     			$sql_1 = $connect->prepare($update);
     			$sql_1->execute();
 			}
+			$balance_qry1="SELECT balance FROM financial_transactions ORDER BY id DESC LIMIT 1 ";
+                $balance_sql1=$connect->prepare("$balance_qry1");
+                $balance_sql1->execute();
+                $bal_row1=$balance_sql1->fetch(PDO::FETCH_ASSOC);   
+                if($bal_row1["balance"]!=""){ 
+                $balance1 =$bal_row1["balance"] + $amount;
+                }
+                else{
+                $balance1 = $amount;
+                }
+                // print_r($balance1."n");die();
+                
+                $fin_trans_qry = "INSERT INTO financial_transactions SET 
+                date = '$payment_date',
+                debit= '$amount',
+                balance='$balance1',
+                description = 'Payment Revoke for Finance',
+                finance_id = '$finance_id',
+                payment_id = '$payment_id',
+                ids='$id'
+                ";
+                $sql_1 = $connect->prepare($fin_trans_qry);
+                $sql_1->execute();
 			
 		}
 		echo json_encode($data);

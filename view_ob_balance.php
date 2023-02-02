@@ -9,7 +9,7 @@ if($req1!="" && $id1!=""){
 
     $cusid=$_REQUEST["cusid"];
     $amount1=$_REQUEST["amount1"];
-
+echo json_encode($fetch);
     $delete="DELETE FROM sar_opening_balance WHERE id=:id";
     $delete_sql= $connect->prepare($delete);
     $delete_sql->execute(array(':id' => $id1));
@@ -794,12 +794,12 @@ function update_payment_modal(ob_supplier_id,data_src) {
                 {
                     targets: 5,
                     render: function(data, type, row) {
-                        if(row.paid_amount == null){
-                           return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" href="view_ob_balance.php?req=delete&id='+row.id+'&supid='+row.supplier_id+'&amount='+row.amount+'" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a></div></div>';
-                        }else{
-                            // <a class="dropdown-item" id="mymodal_id" href="#" ob_supplier_id="'+row.ob_supplier_id+'"><i class="ri-eye-fill mr-2"></i>Payment</a>
+                        // if(row.paid_amount == null){
+                        //    return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" href="view_ob_balance.php?req=delete&id='+row.id+'&supid='+row.supplier_id+'&amount='+row.amount+'" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a></div></div>';
+                        // }else{
+                           return '<a class="dropdown-item" id="mymodal_id" href="#" ob_supplier_id="'+row.ob_supplier_id+'"><i class="ri-eye-fill mr-2"></i>Payment</a>';
                             // return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" id="mymodal_id" href="#" ob_supplier_id="'+row.ob_supplier_id+'"><i class="ri-eye-fill mr-2"></i>Payment</a></div></div>';
-                        }
+                        // }
                     }
                 }
              ],
