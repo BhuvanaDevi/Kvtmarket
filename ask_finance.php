@@ -694,11 +694,11 @@ function checkDelete(){
 
                                                 <option value="neft">NEFT</option>
 
-                                                <option value="online">Online</option>
+                                                <option value="gpay">Gpay(UPI)</option>
 
                                                 <option value="cash">Cash</option>
 
-                                                <option value="dd">DD</option>
+                                                <option value="cheque">Cheque</option>
 
                                             </select>
                                         </td>

@@ -12,6 +12,7 @@ if(isset($_REQUEST['id'])!=""){
 } else {
     $id="";
 }
+
 $customer_no = $_REQUEST["customer_no"];
 $supplier_qry="SELECT * FROM `sar_customer` WHERE id='".$id."'";
 $supplier_sql= $connect->prepare($supplier_qry);
@@ -167,7 +168,7 @@ if(isset($_POST["submit"])){
     $contact_number1 = $_POST["contact_number1"];
     $address = $_POST["address"];
     
-    $cust_var="SELECT * FROM sar_customer WHERE customer_name='".$customer_name."'";
+    $cust_var="SELECT * FROM sar_customer WHERE id=$id";
     $cust_query = $connect->prepare($cust_var);
     $customer_array = $cust_query ->execute();
     $customer_count=$cust_query->rowCount();
@@ -188,9 +189,9 @@ if(isset($_POST["submit"])){
         $sql_1->execute();
       
     }
-     else if($count !=0 && $customer_count!=0) {
-       echo "<script type='text/javascript'>alert('Lead added successfully');location='add_customer.php';</script>";
-    }
+    //  else if($count !=0 && $customer_count!=0) {
+    //    echo "<script type='text/javascript'>alert('Lead added successfully');location='add_customer.php';</script>";
+    // }
     
     else {
         

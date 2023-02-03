@@ -72,11 +72,19 @@ if($req=="disabled")
                                 <div class="form-group col-md-6">
                                  <label for="exampleInputText1">Payment Mode </label><span style="color:red">*</span>
                                  <select name="mode" class="form-control" required>
-                                     <option value="Cash">Cash</option>
+                                     <!-- <option value="Cash">Cash</option>
                                      <option value="Cheque">Cheque</option>
                                      <option value="DD">DD</option>
                                      <option value="UPI">UPI</option>
-                                     <option value="NEFT">NEFT</option>
+                                     <option value="NEFT">NEFT</option> -->
+                                          
+                                <option value="NEFT">NEFT</option>
+
+<option value="Gpay">Gpay(UPI)</option>
+
+<option value="Cash">Cash</option>
+
+<option value="Cheque">Cheque</option>
                                  </select>
                               </div>
                                <div class="form-group col-md-6">

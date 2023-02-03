@@ -326,13 +326,6 @@ if($valbal['total']==""){
    } 
 if(isset($_POST["add_customer_balance"]))
 {
-    $supplier_qry="SELECT id FROM sar_opening_balance ORDER BY id DESC LIMIT 1 ";
-    $supplier_sql=$connect->prepare("$supplier_qry");
-    $supplier_sql->execute();
-    $supplier_row1=$supplier_sql->fetch(PDO::FETCH_ASSOC);
-    $Last_id=$supplier_row1["id"]+1;
-    $balance_id = "COB".date("Ym")."0".$Last_id;
-    $date=date("Y-m-d");
     
     $name=$_POST["customer"];
     $group_name=$_POST["group"];
@@ -346,6 +339,14 @@ if(isset($_POST["add_customer_balance"]))
     $customername=mysqli_fetch_assoc($execus);
     $cusname=$customername['customer_name'];
 
+    $supplier_qry="SELECT id FROM sar_opening_balance ORDER BY id DESC LIMIT 1 ";
+    $supplier_sql=$connect->prepare("$supplier_qry");
+    $supplier_sql->execute();
+    $supplier_row1=$supplier_sql->fetch(PDO::FETCH_ASSOC);
+    $Last_id=$supplier_row1["id"]+1;
+    $balance_id = "COB".date("Ym")."0".$Last_id;
+    $date=date("Y-m-d");
+    
     $supplier_insert_query="insert into `sar_opening_balance`(date,balance_id,name,group_name,amount,customerid,category,updated_by) values('$date','$balance_id','$cusname','$group_name',$amount,'$name','$category','$username')";
    $supplier_sql=mysqli_query($con,$supplier_insert_query);
     

@@ -80,13 +80,13 @@ if($req=="delete")
                                     <input type="date" value="<?= $date ?>" id="to" name="to" class="form-control">
                                  </div>
                                 
-                                 <div class="col">
+                                 <!-- <div class="col">
                                  <select id="category" class="form-control" name="category">
      <option value="">Please Select Revenue</option>
      <option value="Expenditure">Expenditure</option>
         <option value="Miscellaneous Revenue">Miscellaneous Revenue</option>
      </select>
-                                 </div>
+                                 </div> -->
                                  <!-- <div class="col">
                                  <select id="purchased" class="form-control" name="purchased">
      <option value="">Please Select Name</option>
@@ -396,38 +396,151 @@ function checkDelete(){
                                  <label for="exampleInputdate">Date </label><span style="color:red">*</span>
                                  <input type="date" value="<?= $date ?>" class="form-control datepicker" id="date" name="date" value="" required>
                               </div>
+
                               <div class="form-group col-md-6">
-                                 <label for="exampleInputText1">Purchased From </label>
-                                 <input type="text" class="form-control" id="purchased_from" name="purchased_from" value="">
+                              <label for="exampleInputNumber1">Expenditure Type</label><span style="color:red">*</span>
+                            <select name="expenditure" class="form-control">
+                                <option disabled selected>Select Expenditure Type</option>
+
+                                <option value="Comission">Comission</option>
+
+<option value="Tea">Tea</option>
+
+<option value="Salary">Salary</option>
+
+<option value="Breakfast">Breakfast</option>
+
+<option value="Fuel">Fuel</option>
+
+<option value="Stationary">Stationary</option>
+
+<option value="Repair">Repair</option>
+<option value="Furniture">Furniture</option>
+<option value="Hand Loan">Hand Loan</option>
+<option value="Other Expense">Other Expense</option>  
+
+                            </select>
+                           </div>
+
+                              <div class="form-group col-md-4">
+                                 <label for="exampleInputText1">People</label>
+                                 <select name="type" id="type" class="form-control">
+                                <option disabled selected>Select Customer / Supplier</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Supplier">Supplier</option>
+                                 </select> 
+                            </div>
+                            
+                              <div class="form-group col-md-4" id="grp">
+                                 <label for="exampleInputText1">Group Name </label>
+                                 <!-- <input type="text" class="form-control" id="grp" name="grp" value=""> -->
+                          <input list="grp_name" class="form-control" name="grpname" id="grpname"> 
+                                <datalist class="grp_name" id="grp_name" name="group_name" required >
+                                    <option value="">--Choose Group Name--</option>
+                                    <?php
+                                        $sel_qry = "SELECT distinct group_name from `sar_group` order by group_name ASC ";
+                                    	$sel_sql= $connect->prepare($sel_qry);
+                        	            $sel_sql->execute();
+                        	           while ($sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC)){
+                        	                
+                        	                echo '<option value="'.$sel_row["group_name"].'">'.$sel_row["group_name"].'</option>';
+                                            }
+                                                 ?>
+                                </datalist>
+
                               </div>
+
+                              <div class="form-group col-md-4" id="grp1">
+                                 <label for="exampleInputText1">Group Name </label>
+                                 <input list="grp_name1" class="form-control" name="grpname1" id="grpname1"> 
+                                <datalist class="grp_name1" id="grp_name1" name="group_name1" required >
+                                    <option value="">--Choose Group Name--</option>
+                             <?php
+                                        $sel_qry1 = "SELECT * from `sar_group_customer` order by grp_cust_name ASC ";
+                                    	$sel_sql1= $connect->prepare($sel_qry1);
+                        	            $sel_sql1->execute();
+                        	           while ($sel_row1 = $sel_sql1->fetch(PDO::FETCH_ASSOC)){
+                        	              
+                                        echo '<option value="'.$sel_row1["grp_cust_name"].'">'.$sel_row1["grp_cust_name"].'</option>';
+                                    
+                                    }
+                                                 ?>
+                                </datalist>
+                               </div>
+
+                               <div class="form-group col-md-4" id="cus">
+                               <label for="exampleInputText1">Expenditure To </label>
+                          <input list="searchval1" id="search_val1" class="form-control" name="search_val1">
+                                <datalist class="searchval1" id="searchval1" name="customer_name" required>
+                                    <option value="">--Choose Customer Name--</option>
+                                  
+                                 <?php
+                                //     $sel_qry = "SELECT distinct contact_person from `sar_supplier` order by contact_person ASC ";
+                                // 	$sel_sql= $connect->prepare($sel_qry);
+                    	        //     $sel_sql->execute();
+                    	        //    while ($sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC)){
+                    	                
+                    	        //         echo '<option>'.$sel_row["contact_person"].'</option>';
+                    	        //    }
+                    	           ?>
+                                </datalist> 
+
+                                </div>
+  
+                              <div class="form-group col-md-4" id="sup">
+                                 <label for="exampleInputText1">Expenditure To </label>
+                           <input list="searchval" id="search_val" class="form-control" name="search_val">
+                                <datalist class="searchval" id="searchval" name="supplier_name" required>
+                                    <option value="">--Choose Supplier Name--</option>
+                                  
+                                 <?php
+                                //     $sel_qry = "SELECT distinct contact_person from `sar_supplier` order by contact_person ASC ";
+                                // 	$sel_sql= $connect->prepare($sel_qry);
+                    	        //     $sel_sql->execute();
+                    	        //    while ($sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC)){
+                    	                
+                    	        //         echo '<option>'.$sel_row["contact_person"].'</option>';
+                    	        //    }
+                    	           ?>
+                                </datalist>  </div>
                               
-                              <div class="form-group col-md-6">
-                                 <label for="exampleInputText1">Particulars </label><span style="color:red">*</span>
-                                 <input type="text" class="form-control" id="particulars" name="particulars" value="" required>
+                              <div class="form-group col-md-12">
+                                 <label for="exampleInputText1">Remarks </label><span style="color:red">*</span>
+                                 <!-- <input type="text" class="form-control" id="particulars" name="particulars" value="" required> -->
+                                 <textarea id="particulars" name="particulars" class="form-control" required></textarea>
                               </div>
                                <div class="form-group col-md-6">
                                  <label for="exampleInputNumber1">Amount</label><span style="color:red">*</span>
                                  <input type="number" id="amount" min="0" name="amount" class="form-control" id="exampleInputNumber1" value="" required>
                               </div>
                           
-                              <div class="form-group col-md-6">
+                              <!-- <div class="form-group col-md-6">
                                  <label for="exampleInputNumber1">Revenue</label><span style="color:red">*</span>
                             <select name="revenue" class="form-control">
                                 <option disabled selected>Select Revenue</option>
                                 <option value="Expenditure">Expenditure</option>
                                 <option value="Miscellaneous Revenue">Miscellaneous Revenue</option>
                             </select>
-                                </div>
+                                </div> -->
                           
                               <div class="form-group col-md-6">
                               <label for="exampleInputNumber1">Payment Mode</label><span style="color:red">*</span>
                             <select name="payment_mode" class="form-control">
                                 <option disabled selected>Select Payment Mode</option>
-                                <option value="Cash">Cash</option>
+                                
+                                <option value="NEFT">NEFT</option>
+
+<option value="Gpay">Gpay(UPI)</option>
+
+<option value="Cash">Cash</option>
+
+<option value="Cheque">Cheque</option>
+
+                                <!-- <option value="Cash">Cash</option>
                                 <option value="Cheque">Cheque</option>
                                 <option value="DD">DD</option>
                                 <option value="UPI">UPI</option>
-                                <option value="NEFT">NEFT</option>
+                                <option value="NEFT">NEFT</option> -->
                             </select>
                            </div>
                             </div>
@@ -438,3 +551,72 @@ function checkDelete(){
         </div>
     </div>
 </div>
+
+
+<script>
+   $("#grp1").hide();
+    $("#cus").hide();
+    $("#grp").hide();
+    $("#sup").hide();
+ 
+$("#type").on("change", function() {
+    var type = $(this).val();
+  if(type=="Customer"){
+    $("#grp1").show();
+    $("#cus").show();
+    $("#grp").hide();
+    $("#sup").hide();
+    }
+  else{
+    $("#grp1").hide();
+    $("#cus").hide();
+    $("#grp").show();
+    $("#sup").show();
+   }
+});
+    
+$("#grpname1").on("change", function() {
+    var grp = $(this).val();
+    // alert(grp);
+    $.ajax({
+        type: "POST",
+        url: "forms/ajax_request.php",
+        data: {
+            "action": "fetchsup",
+            "grp": grp
+        },
+        dataType: "json",
+        success: function(result) {
+            var len = result.length;
+            // alert(result.length);
+            $("#searchval1").empty();
+            $("#searchval1").append('<option>Choose Customer Name</option>');
+            for (var i = 0; i < len; i++) {
+                $("#searchval1").append('<option>' + result[i].customer_name + '</option>');
+            }
+            // alert(result.contact_person);
+        }
+    })
+});
+
+      $("#grpname").on("change",function(){
+        var grp=$(this).val();
+        // alert(grp);
+        $.ajax({
+                type:"POST",
+                url:"forms/ajax_request.php",
+                data:{"action":"fetchgrp","grp":grp},
+                dataType:"json",
+                success:function(result){
+                    var len=result.length;
+                    // alert(result.length);
+                    $("#searchval").empty();
+                    for(var i=0;i<len;i++){
+                    $("#searchval").append('<option>'+result[i].contact_person+'</option>');
+                                    }
+                                                    // alert(result.contact_person);
+	   }
+    })
+});
+ //   $("#searchval").chosen();
+</script>

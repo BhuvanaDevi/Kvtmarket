@@ -174,7 +174,7 @@ $select_qry3= "SELECT sum(inward) as inward_sum FROM `tray_transactions` WHERE c
 //$pdf->Cell(47, 10, 'Total Bill Amount', "T", 0, "R");
 // $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
 //$pdf->Cell(40, 10, $row->stock_amount, 'T', 0, "R");
-$pdf->Ln(10);
+// $pdf->Ln(10);
 // $pdf->Cell(87 ,6,'',0,0);
 // $pdf->Cell(47, 10, 'Payment', 0, 0, "R");
 // $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
@@ -188,9 +188,9 @@ $pdf->Ln(10);
 // $pdf->Cell(47, 10, 'Balance', "T", 0, "R");
 // $pdf->Cell(40, 10, $balance, 'T', 0, "R");
 // $pdf->Ln(10);
-$pdf->Cell(87 ,6,'',0,0);
-$pdf->Cell(47, 10, 'Total Bill Amount', "T", 0, "R");
-$pdf->Cell(40, 10, $row->stock_amount, 'T', 0, "R");
+$pdf->Cell(105 ,10,'',0,0);
+$pdf->Cell(40, 10, 'Total Bill Amount', "T", 0, "R");
+$pdf->Cell(28, 10, $row->stock_amount, 'T', 0, "R");
 $pdf->Ln(10);
 $pdf->Cell(96 ,6,'',0,0);
 

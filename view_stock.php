@@ -44,11 +44,14 @@ if(isset($_POST["add_ob_return"])){
     $stock_return = $_POST["return_box"];
     $popup_return_id = $_POST["popup_return_id"];
     
+
     $opening_balance_qry = "SELECT * FROM sar_stock WHERE purchase_id='$popup_return_id' GROUP BY purchase_id";
 
     $opening_balance_sql = $connect->prepare($opening_balance_qry);
     $opening_balance_sql->execute();
     $opening_balance_row = $opening_balance_sql->fetch(PDO::FETCH_ASSOC);
+    $rate=$opening_balance_row['rate'];
+    $stockamount=$opening_balance_row['stock_amount'];
 
     $balance_qry = "SELECT no_of_boxes FROM sar_ob_return WHERE purchase_id='$popup_return_id' GROUP BY purchase_id";
     $balance_sql = $connect->prepare($balance_qry);
@@ -63,11 +66,11 @@ if(isset($_POST["add_ob_return"])){
     
     $balance = $opening_balance_row["quantity"] - $stock_return - $total_discount_on_sales - $balance_row['no_of_boxes'];
    // echo $balance;
+
     if ($balance >= 0) {
 
         $insert = "INSERT INTO  `sar_ob_return`
-
-              SET no_of_boxes='$stock_return',
+    SET no_of_boxes='$stock_return',
               return_id='$stock_return_id',
               return_date='$payment_return_date',
               purchase_id='$popup_return_id',
@@ -76,6 +79,13 @@ if(isset($_POST["add_ob_return"])){
         $sql_1 = $connect->prepare($insert);
         $sql_1->execute();
       $lastInsertId = $connect->lastInsertId();
+
+      $st_amt=$rate*$balance;
+
+
+      $update="update sar_stock set quantity=$balance,stock_amount=$st_amt where purchase_id='$popup_return_id'";
+$exe=mysqli_query($con,$update);
+
     }
     //echo $insert;
     $total_qry = "SELECT *, sum(no_of_boxes) as totalquantity FROM sar_ob_return WHERE purchase_id='$popup_return_id' GROUP BY purchase_id ";
@@ -99,19 +109,19 @@ if(isset($_POST["add_ob_return"])){
         // $delete_sql->execute();
 
         // $date = date("Y/m/d");
-
+if($balance==0){
         $delete = "UPDATE `sar_stock` SET return_status=1  where purchase_id ='$popup_return_id'";
 
         $delete_sql = $connect->prepare($delete);
 
         $delete_sql->execute();
-
+}
         $select_qry3 = "SELECT * FROM sar_stock WHERE purchase_id='$popup_return_id'";
         $sel_sql3 = $connect->prepare($select_qry3);
         $sel_sql3->execute();
         $sel_row3 = $sel_sql3->fetchAll();
         // echo var_dump($sel_row3);
-        // exit;
+        // exit; 
         // foreach ($sel_row3 as $sel) {
         //     $add_balance_query = "INSERT INTO `sar_cash_carry` SET
         //   cash_no = '" . $sel['balance_id'] . "',
@@ -142,7 +152,6 @@ if(isset($_POST["add_stock_payment"])){
     $popup_purchase_id = $_POST["popup_purchase_id"];
    // $customer_name=$_POST['customer_name'];
     $opening_balance_qry = "SELECT * FROM sar_stock WHERE purchase_id='$popup_purchase_id' GROUP BY purchase_id";
-
     $opening_balance_sql = $connect->prepare($opening_balance_qry);
     $opening_balance_sql->execute();
     $opening_balance_row = $opening_balance_sql->fetch(PDO::FETCH_ASSOC);
@@ -171,10 +180,16 @@ if(isset($_POST["add_stock_payment"])){
               purchase_id='$popup_purchase_id',
               balance='$balance'
               ";
-        $sql_1 = $connect->prepare($insert);
+
+       $sql_1 = $connect->prepare($insert);
         $sql_1->execute();
-      $lastInsertId = $connect->lastInsertId();
+
+        // $update="update sar_stock set stock=$balance where purchase_id='$popup_return_id'";
+        // $exe=mysqli_query($con,$update);
+        
+                $lastInsertId = $connect->lastInsertId();
     }
+    
     $total_qry = "SELECT *, sum(amount) as totalamount FROM sar_stock_payment WHERE purchase_id='$popup_purchase_id' GROUP BY purchase_id ";
     $total_sql = $connect->prepare($total_qry);
     $total_sql->execute();
@@ -206,6 +221,7 @@ if(isset($_POST["add_stock_payment"])){
         $sel_sql3 = $connect->prepare($select_qry3);
         $sel_sql3->execute();
         $sel_row3 = $sel_sql3->fetchAll();
+     
         // echo var_dump($sel_row3);
         // exit;
         // foreach ($sel_row3 as $sel) {
@@ -512,8 +528,8 @@ function update_return_modal(purchase_id,data_src) {
                     { "data": "rate"},
                     { "data": "stock_amount" },
                     { "data": "updated_by"},
-                    { "data": "id"}
-            ],
+                    { "data": "id"},
+                  ],
             columnDefs: [
                 {
                     targets: 0,
@@ -558,7 +574,7 @@ function update_return_modal(purchase_id,data_src) {
                         return row.stock_amount;
                     }
                 },
-                {
+                      {
                     targets: 7,
                     render: function(data, type, row) {
                         return row.updated_by;
@@ -567,14 +583,14 @@ function update_return_modal(purchase_id,data_src) {
                 {
                     targets: 8,
                     render: function(data, type, row) {
-                        if(row.paid_amount == null && row.no_of_boxes == null){
-                            return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" id="mymodal_id" href="#" purchase_id="'+row.purchase_id+'"><i class="ri-eye-fill mr-2"></i>Payment</a><a class="dropdown-item" href="view_stock.php?req=delete&id='+row.id+'" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a><a class="dropdown-item" href="#" id="return_modal" purchase_id="'+row.purchase_id+'"><i class="ri-file-download-fill mr-2"></i>Return</a><a class="dropdown-item" target="_blank" onclick="var w = window.open(\'download_stock_purchase.php?purchase_id='+row.purchase_id+'\',\'mywin\'); w.print();" ><i class="fa fa-print"></i>&nbsp;&nbsp; Print</a></div></div>';
+                        // if(row.paid_amount == null && row.no_of_boxes == null){
+                            return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" id="mymodal_id" href="stock_purchase.php?purchase_id='+row.purchase_id+'"><i class="bx bxs-edit mr-2"></i>Edit</a><a class="dropdown-item" id="mymodal_id" href="#" purchase_id="'+row.purchase_id+'"><i class="ri-eye-fill mr-2"></i>Payment</a><a class="dropdown-item" href="view_stock.php?req=delete&id='+row.id+'" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a><a class="dropdown-item" href="#" id="return_modal" purchase_id="'+row.purchase_id+'"><i class="ri-file-download-fill mr-2"></i>Return</a><a class="dropdown-item" target="_blank" onclick="var w = window.open(\'download_stock_purchase.php?purchase_id='+row.purchase_id+'\',\'mywin\'); w.print();" ><i class="fa fa-print"></i>&nbsp;&nbsp; Print</a></div></div>';
                         
-                    }else if(row.paid_amount != null){
-                            return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" id="mymodal_id" href="#" purchase_id="'+row.purchase_id+'"><i class="ri-eye-fill mr-2"></i>Payment</a></div></div>';
-                        }else if(row.no_of_boxes != null){
-                            return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" href="#" id="return_modal" purchase_id="'+row.purchase_id+'"><i class="ri-file-download-fill mr-2"></i>Return</a></div></div>';
-                    }
+                    // }else if(row.paid_amount != null){
+                    //         return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" id="mymodal_id" href="#" purchase_id="'+row.purchase_id+'"><i class="ri-eye-fill mr-2"></i>Payment</a></div></div>';
+                    //     }else if(row.no_of_boxes != null){
+                    //         return '<div class="iq-card-header-toolbar d-flex align-items-center"><span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ri-more-fill"></i></span><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" ><a class="dropdown-item" href="#" id="return_modal" purchase_id="'+row.purchase_id+'"><i class="ri-file-download-fill mr-2"></i>Return</a></div></div>';
+                    // }
                   }
                 }
              ],
@@ -883,10 +899,19 @@ function checkDelete(){
                                     <td>
                                         <select name="payment_stock_mode" class="form-control" required>
                                             <option value="">--Select Payment Mode--</option>
-                                            <option value="neft">NEFT</option>
+                                            <!-- <option value="neft">NEFT</option>
                                             <option value="online">Online</option>
                                             <option value="cash">Cash</option>
-                                            <option value="dd">DD</option>
+                                            <option value="dd">DD</option> -->
+                                            <option value="NEFT">NEFT</option>
+
+<option value="Gpay">Gpay(UPI)</option>
+
+<option value="Cash">Cash</option>
+
+<option value="Cheque">Cheque</option>
+
+
                                         </select>
                                     </td>
                                 </tr>
@@ -900,7 +925,7 @@ function checkDelete(){
                         </div>
                     </form>
                     <!--<a href="#" id="waiver_click">Waiver</a>-->
-                        <form method="POST">
+                        <!-- <form method="POST">
                             
                                 <div id="waiver_form"><a href="#"><h4>Waiver<h4></a></div>
                                 <table class="table table-bordered" >
@@ -923,7 +948,7 @@ function checkDelete(){
                                     </tbody>
                                 </table>
                         
-                        </form>
+                        </form> -->
                 </div>
                 <div id="tabs2" class="tabcontent">
                     <table class="table table-bordered">
@@ -1023,13 +1048,10 @@ function checkDelete(){
                         </div>
                     </form>
                     
-                        <form method="POST">
+                        <!-- <form method="POST">
                             
                             <div id="waiver_return_form"><a href="#"><h4>Waiver<h4></a></div>
                                 <table class="table table-bordered" >
-                                    <!--<thead>-->
-                                    <!--    <h4>Box Waiver</h4>-->
-                                    <!--</thead>-->
                                     <tbody>
                                         <tr>
                                             <td>
@@ -1053,7 +1075,7 @@ function checkDelete(){
                                 </table>
                             
                             
-                        </form>
+                        </form> -->
                 </div>
                 <div id="tabs2" class="tabcontent">
                     <table class="table table-bordered">
@@ -1070,6 +1092,8 @@ function checkDelete(){
                                             <!--<th>Total Amount</th>-->
                                         </tr>
                                     </thead>
+                                           <h4 class="modal-title">Return</h4>
+         
                                     <tbody id="stock_return">
                                         
                                     </tbody>

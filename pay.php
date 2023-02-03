@@ -401,10 +401,18 @@ if($rowda["total"]!=0){
              <div class="col-md-6 mt-4">
                 <select id="payment_mode"  class="form-control" name="payment_mode">
         <option disabled>Select Payment Mode</option>
-        <option value="NEFT">NEFT</option>
+        <!-- <option value="NEFT">NEFT</option>
         <option value="Cash">Cash</option>
         <option value="Online">Online</option>
-        <option value="DD">DD</option>
+        <option value="DD">DD</option> -->
+             
+        <option value="NEFT">NEFT</option>
+
+<option value="Gpay">Gpay(UPI)</option>
+
+<option value="Cash">Cash</option>
+
+<option value="Cheque">Cheque</option>
        </select> 
              </div>
                    </div>

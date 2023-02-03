@@ -720,10 +720,18 @@ if (isset($_POST["add_payment"])) {
                                     <td><input type="text" class="form-control" name="amount" required></td>
                                     <td><select name="payment_mode" class="form-control" required>
                                             <option value="">--Select Payment Mode--</option>
-                                            <option value="neft">NEFT</option>
+                                            <!-- <option value="neft">NEFT</option>
                                             <option value="online">Online</option>
                                             <option value="cash">Cash</option>
-                                            <option value="dd">DD</option>
+                                            <option value="dd">DD</option> -->
+                                                 
+                                <option value="NEFT">NEFT</option>
+
+<option value="Gpay">Gpay(UPI)</option>
+
+<option value="Cash">Cash</option>
+
+<option value="Cheque">Cheque</option>
                                         </select></td>
 
                                 </tr>

@@ -24,10 +24,23 @@ if($req=="delete")
     header("location:add_customer.php");
 }
 
-if($req=="deletes")
+if($req=="deletecu")
 {
     $delete="delete from sar_group_customer where id='$id'";
   $exe=mysqli_query($con,$delete);
+
+    header("location:add_customer.php");
+}
+
+if($req=="deletes")
+{
+    $name=$_REQUEST["name"];
+
+    $delete="delete from sar_group where id='$id'";
+  $exe=mysqli_query($con,$delete);
+
+  $deletesup="delete from sar_supplier where group_name='$name'";
+  $exesup=mysqli_query($con,$deletesup);
 
     header("location:add_customer.php");
 }
@@ -266,6 +279,164 @@ if(isset($_POST["add_customer"])){
                 
         $sql_1= $connect->prepare($query_1);
         $sql_1->execute();
+
+         $name=$customer_name;
+    $group_name=$grp_cust_name;
+    $amount=$_POST["amount1"];
+     $category='Customer';
+    //  print_r($_POST);die();
+
+    $cusname="select * from sar_customer where customer_no='$name'";
+    $execus=mysqli_query($con,$cusname);
+    $customername=mysqli_fetch_assoc($execus);
+    $cusname=$customername['customer_name'];
+
+    
+    $supplier_qry="SELECT id FROM sar_opening_balance ORDER BY id DESC LIMIT 1 ";
+    $supplier_sql=$connect->prepare("$supplier_qry");
+    $supplier_sql->execute();
+    $supplier_row1=$supplier_sql->fetch(PDO::FETCH_ASSOC);
+    $Last_id=$supplier_row1["id"]+1;
+    $balance_id = "COB".date("Ym")."0".$Last_id;
+    $date=date("Y-m-d");
+
+    $supplier_insert_query="insert into `sar_opening_balance`(date,balance_id,name,group_name,amount,customerid,category,updated_by) values('$date','$balance_id','$name','$group_name',$amount,'$customer_no','$category','$username')";
+   $supplier_sql=mysqli_query($con,$supplier_insert_query);
+    
+   $sql = "SELECT * FROM  sar_customer WHERE customer_no='$name'";
+   $query = $connect -> prepare($sql);
+      $query->execute();
+      $results=$query->fetch(PDO::FETCH_OBJ);
+      $names=$results->customer_name;
+      $groupname=$results->grp_cust_name;
+      // print_r($names);die();
+
+      
+$tray="SELECT * FROM trays where name='$name' ORDER BY id DESC LIMIT 1 ";
+$tray1=$connect->prepare("$tray");
+$tray1->execute();
+$tray=$tray1->fetch(PDO::FETCH_ASSOC);   
+//  $balc= $balan['balance']-$amount;
+//  $balc=abs($balc);
+$small=$tray['smalltray'];
+$big=$tray['bigtray'];
+$inhand=$tray['inhand'];
+     
+  $sqlbal="select * from payment_sale where customerid='$name' order by id desc limit 1";
+  $exebal=mysqli_query($con,$sqlbal);
+  $valbal=mysqli_fetch_assoc($exebal);
+  $no=mysqli_num_rows($exebal);
+  
+  // $exebal = $connect->prepare("$sqlbal");
+  // $exebal->execute(); 
+  // $valbal = $exebal->fetch(PDO::FETCH_ASSOC);
+  // $no=$valbal->rowCount();
+  // print_r($no);die();
+  if($valbal['total']==0){
+      $paybal = $valbal["id"] + 1;
+      $pay_id = "PAY" . date("Ym") . $paybal;   
+  
+          $op=$amount;
+      
+        $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$group_name','$pay_id','$date','$name',$op,0,0,0,0,$op,'$customer_no','OB')";
+        // print_r($insbal."k");die(); 
+        $exe=mysqli_query($con,$insbal);
+      
+  }
+  else{
+  if($no==0) {
+      if($valbal==""){
+     $pay_id = "PAY".date("Ym")."1";
+      }
+      else{
+          $paybal = $valbal["id"] + 1;
+          $pay_id = "PAY" . date("Ym") . $paybal;   
+     }
+  //    print_r($sqlbal);die();
+  
+  $ob="select * from sar_opening_balance where name='$name' order by id desc limit 1";
+  $op = $connect->prepare("$ob");
+  $op->execute(); 
+  $opb = $op->fetch(PDO::FETCH_ASSOC);
+  $opne=$opb['amount'];
+  // $ob_supplier_id=$opb['ob_supplier_id'];
+  if($opne==""){
+      $opne=0;
+  }
+  else{
+      $opne=$amount;
+  }
+  
+  // $tr="select * from trays where name='$supplier_id' and type='$type' order by id desc limit 1";
+  // $tra = $connect->prepare("$tr");
+  // $tra->execute(); 
+  // $trayp = $tra->fetch(PDO::FETCH_ASSOC);
+  // if($trayp==""){
+  //     $traypay=$boxes_arrived*100;    
+  // }
+  // else{
+  // $traypay=$trayp['inhand']*100;
+  // }
+  $pay=0;
+      $total=$opne;
+  
+  
+    $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$group_name','$pay_id','$date','$name',$opne,0,0,0,0,$total,'$customer_no','OB')";
+    // print_r($insbal."ok");die(); 
+    $exe=mysqli_query($con,$insbal);
+  }
+  else{
+      $paybal = $valbal["id"] + 1;
+      $pay_id = "PAY" . date("Ym") . $paybal;   
+    
+
+      if($valbal['total']!=0){
+          $ob="select * from payment_sale where customerid='$name' order by id desc limit 1";
+          //   print_r($ob);die();
+            $op = $connect->prepare("$ob");
+          $op->execute(); 
+          $opb = $op->fetch(PDO::FETCH_ASSOC);
+          $opne=$opb['total'];
+          // print_r($opne);die();
+          $ob_supplier_id="";
+          if($opne==0){
+              $opne=0;
+          }
+          else{
+              $opne=$opne;
+          }
+      }
+      else{
+          $ob="select * from sar_opening_balance where name='$name' order by id desc limit 1";
+          //   print_r($ob);die();
+            $op = $connect->prepare("$ob");
+          $op->execute(); 
+          $opb = $op->fetch(PDO::FETCH_ASSOC);
+          $opne=$opb['amount'];
+          // print_r($opne);die();
+          // $ob_supplier_id=$opb['ob_supplier_id'];
+          if($opne==0){
+              $opne=0;
+          }
+          else{
+              $opne=$opne;
+          } 
+      }
+  
+  if($valbal['total']==""){
+      $total1=$opne+$amount;
+      $total = $valbal["total"]+$total1;
+   }
+   else{
+      $total=$opne+$amount;  
+   }
+  
+   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$group_name','$pay_id','$date','$name',$opne,0,0,0,0,$total,'$customer_no','OB')";
+    // print_r($insbal."ko");die(); 
+    $exe=mysqli_query($con,$insbal);
+  
+  } }
+    
       
     }
      else if($count !=0 && $customer_count!=0) {
@@ -329,8 +500,7 @@ $(document).ready(function() {
                         return "-";
                         }
                 else{
-                    return '<a href="#" class="mymodal" grp_cust_name="' + row.grp_cust_name +
-                        '" ><i class="bx bx-comment-dots"></i>&nbsp;View</a>';
+                    return '<a href="#" class="mymodal" grp_cust_name="'+ row.grp_cust_name +'" ><i class="bx bx-comment-dots"></i>&nbsp;View</a>';
                   
                 }
             }
@@ -338,12 +508,12 @@ $(document).ready(function() {
             {
                 targets: 2,
                 render: function(data, type, row) {
-                    if (row.no == 0) {
-                        return '<a href="add_customer.php?req=delete&id=' + row.id +
+                    // if (row.no == 0) {
+                        return '<a href="add_customer.php?req=deletecu&id=' + row.id +
                             '" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a>';
-                    } else {
-                        return "-";
-                    }
+                    // } else {
+                    //     return "-";
+                    // }
                 }
             }
         ]
@@ -396,18 +566,19 @@ $(document).ready(function() {
     });
     $('#example tbody').on('click', '.mymodal', function() {
         var grp_cust_name = $(this).attr("grp_cust_name");
+        // alert(grp_cust_name)
         $("#myModal").modal("show");
         $("#grp_cust_name").val(grp_cust_name);
-        update_model_data(grp_cust_name)
+        update_model_data(grp_cust_name);
     });
 
     function update_model_data(grp_cust_name) {
-
+// aert(grp_cust_name)
         $.ajax({
             type: "POST",
             url: "forms/ajax_request_view.php",
             data: {
-                "action": "view_grp_customer_modal",
+                "action": "view_customer_modal",
                 "grp_cust_name": grp_cust_name
             },
             dataType: "json",
@@ -443,6 +614,14 @@ $(document).ready(function() {
 
     $('.close').on('click', function() {
         $("#mymodal_supplier").modal("hide");
+    });
+
+    $('.mymodal').on('click', function() {
+        $("#myModal").modal("show");
+    });
+
+    $('.close').on('click', function() {
+        $("#myModal").modal("hide");
     });
 
     $('.mymodalfarmer').on('click', function() {
@@ -515,8 +694,7 @@ $(document).ready(function() {
                         return "-";                     }
                     else{
 
-return '<a href="#" class="mymodalsupgrpview" group_name="' + row
-                        .group_name + '" ><i class="bx bx-comment-dots"></i>&nbsp;View</a>';
+return '<a href="#" class="mymodalsupgrpview" group_name="' + row.group_name + '" ><i class="bx bx-comment-dots"></i>&nbsp;View</a>';
                 
                     } 
                 }
@@ -524,18 +702,19 @@ return '<a href="#" class="mymodalsupgrpview" group_name="' + row
             {
                 targets: 2,
                 render: function(data, type, row) {
-                    if (row.no == 0) {
+                    // if (row.no == 0) {
                         return '<a href="add_customer.php?req=deletes&id=' + row.id +
-                            '" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a>';
-                    } else {
-                        return "-";
-                    }
+                            '&name='+row.group_name+'" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a>';
+                    // } else {
+                    //     return "-";
+                    // }
                 }
             }
         ]
     });
     $('#example_sup tbody').on('click', '.mymodalsupgrpview', function() {
         var group_name = $(this).attr("group_name");
+        // alert("group_name");
         $("#mymodal_sup_grp_view").modal("show");
         $("#group_name").val(group_name);
         //$("#supplier_id").val(patti_id);
@@ -587,7 +766,7 @@ return '<a href="#" class="mymodalsupgrpview" group_name="' + row
                             '<td><a class="label label-success" href="add_supplier.php?req=edit&id=' +
                             result[i].id + '"><span class="bx bxs-edit" ></span></a></td>');
                         $("#produ_details").append(
-                            '<td><a class="label label-delete" href="add_supplier.php?req=delete&id=' +
+                            '<td><a class="label label-delete" href="add_customer.php?req=delete&id=' +
                             result[i].id + '"><span class="bx bxs-trash" ></span></a></td>');
                         $('#produ_details').append('</tr>');
                     }
@@ -777,10 +956,16 @@ function checkDelete() {
                                 </div>
                             </div>
                             <div class="col-md-12 row">
-                                <div class="form-group col-md-12">
+                                <div class="form-group col-md-6">
                                     <label for="exampleInputText1">Address </label>
                                     <input type="text" class="form-control" id="address" name="address"
                                         value="<?=$Address?>" placeholder="Enter Address">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="exampleInputText1">Opening Balance</label><span
+                                        style="color:red">*</span>
+                                    <input type="text" class="form-control" id="amount"
+                                        name="amount"   placeholder="Enter Opening Balance" value="">
                                 </div>
                             </div>
                             <button style="position: relative;left:15px" type="submit" name="add_supplier"
@@ -1026,6 +1211,11 @@ function checkDelete() {
                                 <input type="text" class="form-control" id="address" name="address"
                                     value="<?=$address?>" placeholder="Enter Address" required>
                             </div>
+                            <div class="form-group col-md-6">
+                                <label for="exampleInputText1">Opening Balance </label>
+                                <input type="text" class="form-control" id="amount1" name="amount1"
+                                    value="" placeholder="Enter Opening Balances">
+                            </div>
                         </div>
                         <button style="position: relative;left:20px;" type="submit" name="add_customer"
                             id="add_customer" class="btn btn-primary">Submit</button>
@@ -1107,7 +1297,7 @@ function checkDelete() {
      
   
   $query_1 = "INSERT INTO `sar_supplier` SET 
-                group_id='$group_no',
+                group_id=' $grp_no',
                 group_name='$grp_name',
                 supplier_no='$supplier_no',
                 contact_person='$contact_person',
@@ -1115,22 +1305,154 @@ function checkDelete() {
                 address='$address',
                 created_by='$date'
                 ";
-                
-                
-        
+
         $sql_1= $connect->prepare($query_1);
         $sql_1->execute();
+
+    $supplier_qry="SELECT id FROM sar_ob_supplier ORDER BY id DESC LIMIT 1 ";
+    $supplier_sql=$connect->prepare("$supplier_qry");
+    $supplier_sql->execute();
+    $supplier_row1=$supplier_sql->fetch(PDO::FETCH_ASSOC);
+    $Last_id=$supplier_row1["id"]+1;
+    $ob_supplier_id = "SOB".date("Ym")."0".$Last_id;
+    
+    $date = date("Y-m-d");
+    $name=$contact_person;
+    $group_name=$grp_name;
+    $amount=$_POST["amount"];
+    
+    $supplier_insert_query="insert into `sar_ob_supplier`(date,ob_supplier_id,supplier_name,group_name,amount,updated_by)values('$date','$ob_supplier_id','$name','$group_name',$amount,'$username')";
+    $supplier_sql=mysqli_query($con,$supplier_insert_query);
+   
+    $sql = "SELECT * FROM  sar_supplier WHERE supplier_no='$name'";
+ $query = $connect -> prepare($sql);
+    $query->execute();
+    $results=$query->fetch(PDO::FETCH_OBJ);
+    $names=$results->contact_person;
+    $groupname=$results->group_name;
+    // print_r($names);die();
+   
+$sqlbal="select * from payment where supplierid='$name' order by id desc limit 1";
+$exebal=mysqli_query($con,$sqlbal);
+$valbal=mysqli_fetch_assoc($exebal);
+$no=mysqli_num_rows($exebal);
+
+
+if($valbal['total']==0){
+    $paybal = $valbal["id"] + 1;
+    $pay_id = "PAY" . date("Ym") . $paybal;   
+
+        $op=$amount;
+    
+      $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid) values('$group_name','$pay_id','$date','$name',$op,0,0,0,0,$op,'$supplier_no','OB')";
+    //   print_r($insbal."k");die(); 
+      $exe=mysqli_query($con,$insbal);
+    
+}
+else{
+if($no==0) {
+    if($valbal==""){
+   $pay_id = "PAY".date("Ym")."1";
+    }
+    else{
+        $paybal = $valbal["id"] + 1;
+        $pay_id = "PAY" . date("Ym") . $paybal;   
+   }
+//    print_r($sqlbal);die();
+
+$ob="select * from sar_ob_supplier where supplier_name='$name' order by id desc limit 1";
+$op = $connect->prepare("$ob");
+$op->execute(); 
+$opb = $op->fetch(PDO::FETCH_ASSOC);
+$opne=$opb['amount'];
+// $ob_supplier_id=$opb['ob_supplier_id'];
+if($opne==""){
+    $opne=0;
+}
+else{
+    $opne=$amount;
+}
+
+// $tr="select * from trays where name='$supplier_id' and type='$type' order by id desc limit 1";
+// $tra = $connect->prepare("$tr");
+// $tra->execute(); 
+// $trayp = $tra->fetch(PDO::FETCH_ASSOC);
+// if($trayp==""){
+//     $traypay=$boxes_arrived*100;    
+// }
+// else{
+// $traypay=$trayp['inhand']*100;
+// }
+$pay=0;
+    $total=$opne;
+
+
+  $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid) values('$group_name','$pay_id','$date','$name',$opne,0,$amount,0,0,$total,'$supplier_no','OB')";
+//   print_r($insbal."ok");die(); 
+  $exe=mysqli_query($con,$insbal);
+}
+else{
+    $paybal = $valbal["id"] + 1;
+    $pay_id = "PAY" . date("Ym") . $paybal;   
+  
+    if($valbal['total']!=0){
+        $ob="select * from payment where supplierid='$name' order by id desc limit 1";
+        //   print_r($ob);die();
+          $op = $connect->prepare("$ob");
+        $op->execute(); 
+        $opb = $op->fetch(PDO::FETCH_ASSOC);
+        $opne=$opb['total'];
+        // print_r($opne);die();
+        $ob_supplier_id="";
+        if($opne==0){
+            $opne=0;
+        }
+        else{
+            $opne=$opne;
+        }
+    }
+    else{
+        $ob="select * from sar_ob_supplier where supplier_name='$name' order by id desc limit 1";
+        //   print_r($ob);die();
+          $op = $connect->prepare("$ob");
+        $op->execute(); 
+        $opb = $op->fetch(PDO::FETCH_ASSOC);
+        $opne=$opb['amount'];
+        // print_r($opne);die();
+        // $ob_supplier_id=$opb['ob_supplier_id'];
+        if($opne==0){
+            $opne=0;
+        }
+        else{
+            $opne=$opne;
+        } 
+    }
+
+if($valbal['total']==""){
+    $total1=$opne+$amount;
+    $total = $valbal["total"]+$total1;
+ }
+ else{
+    $total=$opne+$amount;  
+ }
+
+ $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid) values('$group_name','$pay_id','$date','$name',$opne,0,$amount,0,0,$total,'$supplier_no','OB')";
+//   print_r($insbal."ko");die(); 
+  $exe=mysqli_query($con,$insbal);
+
+}
+}
         
 }
-else if($id==""){
+// else if($id==""){
     
     
-    $query_1 = "UPDATE `sar_supplier` SET 
-                contact_person='$supplier_name',
-                contact_number1='$mobile_number',
-                address='$supplier_address'
-                ";
-}
+//     $query_1 = "UPDATE `sar_supplier` SET 
+//                 contact_person='$supplier_name',
+//                 contact_number1='$mobile_number',
+//                 address='$supplier_address'
+//                 ";
+// }
 else if($query_1->errno === 1062) {
     echo "Exist";
 }

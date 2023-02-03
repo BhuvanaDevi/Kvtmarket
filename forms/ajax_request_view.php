@@ -417,6 +417,31 @@ else if($action=="view_supplier_modal")
         	
 	echo json_encode($fetch);
 }
+else if($action=="view_customer_modal")
+{
+    $group_name = $_REQUEST["grp_cust_name"];
+    $cash_qry="SELECT * FROM sar_customer WHERE grp_cust_name='$group_name'";
+    $cash_sql=$connect->prepare($cash_qry);
+    $cash_sql->execute();
+    $fetch=array();
+
+    while($cash_row = $cash_sql->fetch(PDO::FETCH_ASSOC)){
+        $fetch[]=array(
+            "id"=>$cash_row["id"],
+            "grp_cust_id"=> $cash_row["grp_cust_id"],
+            "grp_cust_name"=>  $cash_row["grp_cust_name"],
+            "customer_no"=>  $cash_row["customer_no"],
+            "customer_name"=>  $cash_row["customer_name"],
+            "contact_number1"=>  $cash_row["contact_number1"],
+            "address"=>  $cash_row["address"],
+            // "is_active"=>  $cash_row["is_active"]
+           
+        );
+    }
+        	
+	echo json_encode($fetch);
+}
+
 else if($action=="view_open_balance_modal")
 {
 	
@@ -661,7 +686,8 @@ else if($action=="view_ob_return_modal")
     	$total_discount_on_sales = $select_sql2->fetch(PDO::FETCH_ASSOC);
     	
     	$fetch['total_discount_on_sales'] =  $total_discount_on_sales['discount']?$total_discount_on_sales['discount'] : 0; 
-    $fetch=array();
+ 	 
+        $fetch=array();
     $amount = 0;
     while($quotation_row = $quotation_sql->fetch(PDO::FETCH_ASSOC)){
         $fetch['data'][] =array(
