@@ -20,7 +20,6 @@ $pdf->Ln();
 $pdf->Cell(260,2,"CH - 600 090.",0,0,'C');
 $pdf->Ln();
 $pdf->Cell(260,8,"7667871022 / 8122294561. ",0,0,'C');
-$pdf->Cell(30,20,'90421 94877',0,0,'C');
 
 $pdf -> Line(0, 90, 200, 90); 
 
@@ -79,20 +78,20 @@ $category=$_REQUEST["category"];
 //print_r($results['purchased_from']);die();
 
 
-$sel_qryb = "SELECT * FROM `sar_expenditure` order by id desc limit 1";
+$sel_qryb = "SELECT * FROM `sar_revenue` order by id desc limit 1";
 //print_r($sel_qry2);die();
 $data_qryb= $connect->prepare($sel_qryb);
 $data_qryb->execute();
 $resultb=$data_qryb->fetch(PDO::FETCH_ASSOC);
 //print_r($resultb['balance']);die();
 if($category!="" && $from!="" && $to!=""){
-    $sel_qry2 = "SELECT * FROM `sar_expenditure` WHERE (date >='$from' AND date<='$to') AND type='$category'";
+    $sel_qry2 = "SELECT * FROM `sar_revenue` WHERE (date >='$from' AND date<='$to') AND type='$category'";
 //print_r($sel_qry2);die();
 $data_qry2= $connect->prepare($sel_qry2);
 $data_qry2->execute();
 }
 else{
-        $sel_qry2 = "SELECT * FROM `sar_expenditure`";
+        $sel_qry2 = "SELECT * FROM `sar_revenue`";
 //print_r($sel_qry2);die();
 $data_qry2= $connect->prepare($sel_qry2);
 $data_qry2->execute();

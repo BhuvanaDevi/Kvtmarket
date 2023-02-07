@@ -5,18 +5,20 @@ $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetLeftMargin(15);
 //$pdf->Image('images/sar-pdf2.jpg',15,2,170);
-$pdf->Image('images/ab_pdf.png',50,2,100);
-// Arial bold 15
-$pdf->Ln(45);
-$pdf->SetFont('Arial','B',24);
-// Move to the right
-$pdf->Cell(80);
-// Title
-$pdf->Cell(30,10,'A108 Adam Street New York, Us',0,0,'C');
-// Line break
-$pdf->Ln(10);
-$pdf->Cell(80);
-$pdf->Cell(30,20,'90421 94877',0,0,'C');
+   $pdf->Image('images/ab-tomato.png',10,5,35);
+   // Arial bold 15
+   // $pdf->Ln(45);
+   $pdf->SetFont('Arial','B',10);
+   // Move to the right
+   $pdf->Cell(80);
+   // Title
+   $pdf->Cell(110,3,"KARPAGAMBAL VEGETABLE TRADERS",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,8,"AU - 6 D BLOCK, PERIYAR VEGETABLE MARKET COMPLEX,",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,2,"CH - 600 090.",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,8,"7667871022 / 8122294561. ",0,0,'C');
 
 $pdf -> Line(0, 90, 200, 90); 
 

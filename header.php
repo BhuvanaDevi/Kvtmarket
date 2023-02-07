@@ -16,7 +16,7 @@ session_start();
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <title>AB</title>
-      <link rel="shortcut icon" href="images/tomato-SAR-5.png" />
+      <link rel="shortcut icon" href="images/ab-tomato.png" />
     <!--
       <link rel="stylesheet" href="css/bootstrap.min.css">
 
@@ -88,13 +88,13 @@ session_start();
 
                   <div class="iq-light-logo">
 
-                     <img src="images/tomato-SAR-5.png" class="img-fluid" alt="">
+                     <img src="images/ab-tomato.png" class="img-fluid" alt="">
 
                    </div>
 
                      <div class="iq-dark-logo">
 
-                        <img src="images/tomato-SAR-5.png" class="img-fluid" alt="">
+                        <img src="images/ab-tomato.png" class="img-fluid" alt="">
 
                      </div>
 
@@ -102,7 +102,7 @@ session_start();
 
                <div class="iq-dark-logo">
 
-                  <img src="images/tomato-SAR-5.png" class="img-fluid" alt="">
+                  <img src="images/ab-tomato.png" class="img-fluid" alt="">
 
                </div>
 
@@ -153,21 +153,22 @@ session_start();
                      <li><a href="add_farmer.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-pin'></i><span>Add Farmer</span></a></li> -->
 
      <li><a href="add_customer.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Add People</span></a></li>
-     <li><a href="Add-item_demo.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-book-add' ></i><span>Add Vegetables</span></a></li>
-     <li><a href="stock_purchase.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Stock Purchase</span></a></li>
+     <li><a href="Add-item_demo.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-sitemap' ></i><span>Add Vegetables</span></a></li>
+     <li><a href="stock_purchase.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bxs-layer' ></i><span>Stock Purchase</span></a></li>
      <!-- <li><a href="add_user.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Add User</span></a></li> -->
-  <li><a href="add_open_balance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Opening Balance</span></a></li>
+  <li><a href="add_open_balance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-dollar' ></i><span>Opening Balance</span></a></li>
   <li><a href="expenditure.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-store-alt' ></i><span>Expenditure</span></a></li>
-  <li><a href="view_wastage.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-book-add' ></i><span>Add Wastage</span></a></li>
+  <li><a href="revenue.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-money' ></i><span>Revenue</span></a></li>
+  <li><a href="view_wastage.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-collection' ></i><span>Add Wastage</span></a></li>
     
   <li><a href="GeneratPatti.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-checkbox-checked'></i><span>Generate Patti</span></a></li>
 
   <li><a href="sales_invoice2.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-carousel' ></i><span>Generate Sales Invoice</span></a></li>
                           </li> 
                           <li><a href="pay.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-money' ></i><span>Payment</span></a></li>
-                     <li><a href="add_chit.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Add Chit</span></a></li>
-                    <li><a href="finance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Finance</span></a></li>
-                    <li><a href="ask_finance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-check' ></i><span>Interest</span></a></li>
+                     <li><a href="add_chit.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-user-pin' ></i><span>Add Chit</span></a></li>
+                    <li><a href="finance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bxs-comment-add' ></i><span>Finance</span></a></li>
+                    <li><a href="ask_finance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bxs-add-to-queue' ></i><span>Interest</span></a></li>
                
                           </li>
          <!--   <li><a href="Generate-sales-invoice.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-carousel' ></i><span>Generate Sales Invoice</span></a></li>-->
@@ -344,7 +345,7 @@ session_start();
 
                      <!--<li><a href="view_sales_invoice_demo.php" class="iq-waves-effect" aria-expanded="false"><i class="ri-chat-check-line"></i><span>View Sales Invoice demo</span></a></li>-->
 
-                     <li><a href="view_date_wise.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-cabinet' ></i><span>View Date Wise Report</span></a></li>
+                     <li><a href="view_date_wise.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-calendar' ></i><span>View Date Wise Report</span></a></li>
                      <li><a href="view_paymentwise.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-cabinet' ></i><span>View Payment Wise Report</span></a></li>
 
                      <!-- <li><a href="view_day_wise_report.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-bar-chart-alt-2'></i><span>View Day Wise Report</span></a></li> -->
@@ -355,8 +356,8 @@ session_start();
 
                      <!-- <li><a href="view_tray_inventory.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-book-content' ></i><span>View Tray Inventory</span></a></li> -->
                       <!-- <li><a href="view_miscellaneous_revenue.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-book-content' ></i><span>View Miscellaneous Revenue</span></a></li> -->
-                      <li><a href="view_stock.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bxs-report'></i><span>View Stock</span></a></li>
-                      <li><a href="view_ob_balance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bxs-report'></i><span>View Open Balance</span></a></li>
+                      <li><a href="view_stock.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bxs-box'></i><span>View Stock</span></a></li>
+                      <li><a href="view_ob_balance.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-dollar'></i><span>View Open Balance</span></a></li>
                      <!-- <li><a href="view_wastage.php" class="iq-waves-effect" aria-expanded="false"><i class='bx bx-book-content' ></i><span>View Wastage</span></a></li> -->
 
                      <!-- <li class="iq-menu-title"><i class="ri-subtract-line"></i><span>Login</span></li> -->
@@ -812,11 +813,11 @@ session_start();
 
                         <a href="#" class="search-toggle iq-waves-effect d-flex align-items-center bg-primary rounded">
 
-                           <img src="images/tomato-SAR-5.png" class="img-fluid rounded mr-3" alt="user">
+                           <img src="images/ab-tomato.png" class="img-fluid rounded mr-3" style="height:30px!important" alt="user">
 
                            <div class="caption">
 
-                              <h6 class="mb-0 line-height text-white">AB</h6>
+                              <h6 class="mb-0 line-height text-white">KVT</h6>
 
                               <span class="font-size-12 text-white">Available</span>
 

@@ -5,16 +5,21 @@ $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetLeftMargin(15);
 
-   $pdf->Image('images/ab_pdf.png',10,2,50);
-   // Arial bold 15
-   // $pdf->Ln(45);
-   $pdf->SetFont('Arial','B',12);
-   // Move to the right
-   $pdf->Cell(80);
-   // Title
-   $pdf->Cell(100,15,'A108 Adam Street New York, Us - 9042194877',0,0,'R');
-   // Line break
-   // $pdf->Ln(10);
+   
+$pdf->Image('images/ab-tomato.png',10,5,35);
+// Arial bold 15
+// $pdf->Ln(45);
+$pdf->SetFont('Arial','B',10);
+// Move to the right
+$pdf->Cell(80);
+// Title
+$pdf->Cell(110,3,"KARPAGAMBAL VEGETABLE TRADERS",0,0,'C');
+$pdf->Ln();
+$pdf->Cell(260,8,"AU - 6 D BLOCK, PERIYAR VEGETABLE MARKET COMPLEX,",0,0,'C');
+$pdf->Ln();
+$pdf->Cell(260,2,"CH - 600 090.",0,0,'C');
+$pdf->Ln();
+$pdf->Cell(260,8,"7667871022 / 8122294561. ",0,0,'C');
    $pdf -> Line(10, 30, 200, 30);
   
    $pdf->SetFont('Arial','B',14);

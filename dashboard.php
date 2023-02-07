@@ -33,6 +33,7 @@ $stockm_sql= $connect->prepare($stockm);
 $stockpm= $stockm_exe['receivemtoday'];
 
 $stocktoday=$stockp+$stockpm;
+// print_r($stocktoday);die();
 
 //Old
  $old_stock_qry2="select SUM(boxes_arrived) as patti_old from sar_patti WHERE is_active=1 AND patti_date<'$today_date'";
@@ -50,13 +51,15 @@ $stocko_sql= $connect->prepare($stocko);
 $stockpo= $stocko_exe['receiveotoday'];
 
 $old=$old_stock2+$stockpo;
+// print_r($old);die();
 
 //Current
 $stock_status_qry2="select SUM(boxes_arrived) as `patti_box` from sar_patti WHERE is_active=1 and nullify!=1 and patti_date='$today_date'";
 $stock_status_sql2= $connect->prepare($stock_status_qry2);
  $stock_status_sql2->execute();
  $stock_status_row2=$stock_status_sql2->fetch(PDO::FETCH_ASSOC);
-$current_stock2= $stock_status_row2['patti_box'];
+$current_stock2= isset($stock_status_row2['patti_box'])?$stock_status_row2['patti_box']:0;
+// print_r($current_stock2);die();
 
 //Sold
 $stock_sales_qry="select SUM(boxes_arrived) as `sales_box` from sar_sales_invoice WHERE date='".$today_date."' and is_active=1 and nullify!=1";
@@ -70,7 +73,10 @@ $stock_cash_sql= $connect->prepare($stock_cash_qry);
  $stock_cash_sql->execute();
  $stock_cash_row=$stock_cash_sql->fetch(PDO::FETCH_ASSOC);
 
-$stock_sales=$stock_sales_row['sales_box']-$stock_cash_row['cash_box'];
+ $salebox = isset($stock_sales_row['sales_box'])?$stock_sales_row['sales_box']:0;
+ $cash_box = isset($stock_cash_row['cash_box'])?$stock_cash_row['cash_box']:0;
+$stock_sales=$salebox-$cash_box;
+// print_r($stock_sales);die();
 
 //Wastage
 $prevday = date('Y-m-d', strtotime($today_date . ' -1 day'));
@@ -79,7 +85,11 @@ $stock_wastage_sql= $connect->prepare($stock_wastage_qry);
  $stock_wastage_sql->execute();
  $stock_wastage_row=$stock_wastage_sql->fetch(PDO::FETCH_ASSOC);
 
-$balance= $stock_status_row['receivetoday'] - $stock_sales - $stock_wastage_row['wastage'];
+ $receivetoday=isset($stock_status_row['receivetoday'])?$stock_status_row['receivetoday']:0; 
+ $wastage=isset($stock_wastage_row['wastage'])?$stock_wastage_row['wastage']:0;
+
+$balance= $receivetoday - $stock_sales - $wastage;
+// print_r($balance);die();
 
 //Balance
 $stock_sales_qry2="select SUM(boxes_arrived) as `sales_box` from sar_sales_invoice WHERE is_active=1 and nullify!=1";
@@ -98,31 +108,40 @@ $stock_wastage_sql2= $connect->prepare($stock_wastage_qry2);
  $stock_wastage_sql2->execute();
  $stock_wastage_row2=$stock_wastage_sql2->fetch(PDO::FETCH_ASSOC);
 //$stock_sales_row2['sales_box'] - 
-$balance2= $stock_sales2 - $stock_wastage_row2['wastage'];
+$wastage=isset($stock_wastage_row2['wastage'])?$stock_wastage_row2['wastage']:0;
+
+$balance2= $stock_sales2 - $wastage;
+// print_r($balance2);die();
 
 //Net Patti, cooli, box charge, lorry hire
-$net_query="select SUM(net_bill_amount) as `sum`,SUM(commision)as `commision`,SUM(cooli) as `cooli`,SUM(lorry_hire) as `lorry`,SUM(box_charge)as `box`from sar_patti WHERE patti_date='".$today_date."' and is_active=1";
+$net_query="select SUM(net_bill_amount) as `sum`,SUM(commision) as `commision`,SUM(cooli) as `cooli`,SUM(lorry_hire) as `lorry`,SUM(box_charge) as `box`from sar_patti WHERE patti_date='".$today_date."' and is_active=1";
 $net_sql= $connect->prepare($net_query);
  $net_sql->execute();
  $net_row=$net_sql->fetch(PDO::FETCH_ASSOC);
+//  print_r($net_row['commision']);die();
 
  //Sales
 $sales_query="select SUM(total_bill_amount) as `sales` from sar_sales_invoice WHERE date='".$today_date."' and is_active=1";
 $sales_sql= $connect->prepare($sales_query);
  $sales_sql->execute();
  $sales_row=$sales_sql->fetch(PDO::FETCH_ASSOC);
+//  print_r($sales_row['sales']);die();
 
  //Expenditure
- $revenue_expenditure_qry="select SUM(amount) as `expenditure` from sar_expenditure WHERE revenue='Expenditure' and date='".$today_date."'";
+ $revenue_expenditure_qry="select SUM(amount) as `expenditure` from sar_expenditure WHERE date='".$today_date."'";
+ //revenue='Expenditure' and 
  $revenue_expenditure_sql= $connect->prepare($revenue_expenditure_qry);
   $revenue_expenditure_sql->execute();
   $revenue_expenditure_row=$revenue_expenditure_sql->fetch(PDO::FETCH_ASSOC);
+//   print_r($revenue_expenditure_row['expenditure']);die();
 
   //Miscellaneous revenue
-  $miscellaneous_query="select SUM(amount) as `miscellaneous` from sar_expenditure WHERE date='".$today_date."' and revenue='Miscellaneous Revenue'";
+  $miscellaneous_query="select SUM(amount) as `miscellaneous` from sar_expenditure WHERE date='".$today_date."'";
+  //and revenue='Miscellaneous Revenue'
   $miscellaneous_sql= $connect->prepare($miscellaneous_query);
    $miscellaneous_sql->execute();
    $miscellaneous_row=$miscellaneous_sql->fetch(PDO::FETCH_ASSOC);
+//    print_r($revenue_expenditure_row['miscellaneous']);die();
 
 
    //Actual Patti
@@ -133,7 +152,7 @@ $res7= $connect->prepare($query7);
  $rec7=$res7->fetch(PDO::FETCH_ASSOC);
 
  //Patti Count
- $no_of_patti_qry="SELECT count(pat_id) as `patti_count` FROM sar_patti where is_active=1 group by pat_id";
+ $no_of_patti_qry="SELECT count(*) as `patti_count` FROM sar_patti where is_active=1 group by pat_id";
  // where is_active=1 group by pat_id
  $no_of_patti_sql= $connect->prepare($no_of_patti_qry);
   $no_of_patti_sql->execute();
@@ -143,15 +162,16 @@ while($no=$no_of_patti_sql->fetch(PDO::FETCH_ASSOC)){
 $nos=$no["patti_count"];
 $cou+=$nos;
 }
-
-//unsettled patti
+// print_r($cou);die();
+//unsettled patti;
 
 $patti_total="select sum(total_bill_amount) as `unsettled_patti` from sar_patti";
 $res_total2= $connect->prepare($patti_total);
  $res_total2->execute();
  $rec2=$res_total2->fetch(PDO::FETCH_ASSOC);
   
-  $total_sum_patti=$rec2["unsettled_patti"];
+  $total_sum_patti=isset($rec2["unsettled_patti"])?$rec2["unsettled_patti"]:0;
+//   print_r($total_sum_patti);die();
   
 //   $patti_payment="select * from payment WHERE pattid like 'P_%' or pattid like 'OB'";
 $patti_payment="select name,max(id) as ids from payment group by name";

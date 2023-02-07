@@ -22,7 +22,7 @@ if(isset($_REQUEST['exp_no'])!=""){
 }
 if($req=="delete")
 {
-    $delete="DELETE FROM sar_expenditure WHERE id=:id";
+    $delete="DELETE FROM sar_revenue WHERE id=:id";
     $delete_sql= $connect->prepare($delete);
     $delete_sql->execute(array(':id' => $id));
     
@@ -30,7 +30,7 @@ if($req=="delete")
     $delete_fin_qry="DELETE FROM financial_transactions WHERE exp_id='$exp_no'";
     $delete_fin_sql= $connect->prepare($delete_fin_qry);
     $delete_fin_sql->execute();
-    header("location:expenditure.php");
+    header("location:revenue.php");
     
 }
  ?>
@@ -44,7 +44,7 @@ if($req=="delete")
                  <div class="iq-card">
                      <div class="iq-card-header d-flex justify-content-between">
                            <div class="iq-header-title">
-                              <h4 class="card-title">View Expenditure</h4>
+                              <h4 class="card-title">View Revenue</h4>
                            </div>
                         </div>
                         <div class="iq-card-body">
@@ -110,7 +110,7 @@ if($req=="delete")
                             </div>
                             
                             <div class="col-md-12">
-                            <button type="button" style="position: relative;left:500px" id="add" name="add" style="color:#fff" class="btn btn-warning mymodalexpenditure">Add Expenditure</button>
+                            <button type="button" style="position: relative;left:500px" id="add" name="add" style="color:#fff" class="btn btn-warning mymodalrevenue">Add Revenue</button>
                             </div>
             <table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                 <thead>
@@ -118,7 +118,7 @@ if($req=="delete")
                         <th>Date</th>
                         <th>Group</th>
                         <th>Name</th>
-                        <th>Expenditure</th>
+                        <th>Revenue</th>
                         <th>Amount</th>
                         <th>Balance</th>
                         <th>Payment Mode</th>
@@ -139,7 +139,7 @@ if($req=="delete")
 
 <?php
 if(isset($_POST["submit"])){
-  $exp_qry="SELECT id FROM sar_expenditure ORDER BY id DESC LIMIT 1 ";
+  $exp_qry="SELECT id FROM sar_revenue ORDER BY id DESC LIMIT 1 ";
   $exp_sql=$connect->prepare("$exp_qry");
   $exp_sql->execute();
   $exp_row=$exp_sql->fetch(PDO::FETCH_ASSOC);
@@ -148,11 +148,11 @@ if(isset($_POST["submit"])){
   
   $date = ucwords($_POST["date"]);
   $type=$_POST['type'];
-
-  $grp=$_POST['grpname1'];
-  $purchased_from = ucwords($_POST["search_val1"]);
- 
   
+  $grp=$_POST['grpname'];
+  $purchased_from = ucwords($_POST["search_val"]);
+  
+ 
   if($grp=="" && $purchased_from==""){
     $grp1=$_POST['grpname1'];
     $purchased_from1 = ucwords($_POST["search_val1"]);  
@@ -181,7 +181,7 @@ if(isset($_POST["submit"])){
 //     }
 //   }
 //   else{
-    $balance_qry="SELECT * FROM sar_expenditure ORDER BY id DESC LIMIT 1 ";
+    $balance_qry="SELECT * FROM sar_revenue ORDER BY id DESC LIMIT 1 ";
     $balance_sql=$connect->prepare("$balance_qry");
     $balance_sql->execute();
     $bal_row=$balance_sql->fetch(PDO::FETCH_ASSOC);    
@@ -197,7 +197,7 @@ if(isset($_POST["submit"])){
   $bal=$balance;
  // print_r($balance);die();
   if($id==""){
-  $query_1 = "INSERT INTO `sar_expenditure` SET 
+  $query_1 = "INSERT INTO `sar_revenue` SET 
                 exp_no='$exp_no',
                 date='$date',
                 type='$type',
@@ -218,12 +218,12 @@ if(isset($_POST["submit"])){
         $balance_sql=$connect->prepare("$balance_qry");
         $balance_sql->execute();
         $bal_row=$balance_sql->fetch(PDO::FETCH_ASSOC);    
-        if($revenue=="Expenditure"){
+        if($revenue=="Revenue"){
             if($bal_row["balance"]!=""){
-        $balance = $bal_row["balance"] - $amount;
+        $balance = $bal_row["balance"] + $amount;
        }
        if($bal_row["balance"]==""){
-        $balance = -$amount;
+        $balance = $amount;
          }
            else{
         $balance = $amount;
@@ -233,9 +233,9 @@ if(isset($_POST["submit"])){
                         date = '$date',
                         debit = '$amount',
                         balance = '$balance',
-                        description = 'Expenditure : $particulars'";
+                        description = 'Revenue : $particulars'";
         $res2=mysqli_query($con,$fin_trans_qry);
-        header('Location: expenditure.php');
+        header('Location: revenue.php');
     }
     else{
         if($bal_row["balance"]!=""){
@@ -249,13 +249,13 @@ if(isset($_POST["submit"])){
                             date = '$date',
                             credit = '$amount',
                             balance = '$balance',
-                            description = 'Expenditure : $particulars'";
+                            description = 'Revenue : $particulars'";
             $res2=mysqli_query($con,$fin_trans_qry);
-            header('Location: expenditure.php');
+            header('Location: revenue.php');
     }      
 }else {
         
-            $query_1 = "UPDATE `sar_expenditure` SET 
+            $query_1 = "UPDATE `sar_revenue` SET 
                         exp_no='$exp_no',
                         date='$date',
                         purchased_from='$purchased_from',
@@ -281,7 +281,7 @@ if(isset($_POST["submit"])){
             "serverSide": true,
             "responsive": true,
             "ajax": {
-                "url": "forms/ajax_request.php?action=view_expenditure",
+                "url": "forms/ajax_request.php?action=view_revenue",
                 "type": "POST"
             },
             "columns": [
@@ -348,7 +348,7 @@ if(isset($_POST["submit"])){
                 {
                     targets: 8,
                     render: function(data, type, row) {
-                        return '<a href="edit_expenditure.php?exp_id='+row.id+'" class="mr-2"><span class="bx bxs-edit"></span> Edit</a>'+' '+'<a href="expenditure.php?req=delete&id='+row.id+'&exp_no='+row.exp_no+'" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill"></i>Delete</a>';
+                        return '<a href="edit_revenue.php?exp_id='+row.id+'" class="mr-2"><span class="bx bxs-edit"></span> Edit</a>'+' '+'<a href="revenue.php?req=delete&id='+row.id+'&exp_no='+row.exp_no+'" onclick="return checkDelete()"><i class="ri-delete-bin-6-fill"></i>Delete</a>';
                     }
                 }
                 
@@ -358,13 +358,13 @@ if(isset($_POST["submit"])){
             var from=$("#from").val();
             var to=$("#to").val();
             var category=$("#category").val();
-            // alert(category);
+            // alert(category)
           //  var purchased=$("#purchased").val();
             if(from!="" && to!=""){
-                table.ajax.url("forms/ajax_request.php?action=view_expenditure&from="+from+'&to='+to+'&category='+category).load();
+                table.ajax.url("forms/ajax_request.php?action=view_revenue&from="+from+'&to='+to+'&category='+category).load();
                 table.ajax.reload();
             } else {
-                table.ajax.url("forms/ajax_request.php?action=view_expenditure").load();
+                table.ajax.url("forms/ajax_request.php?action=view_revenue").load();
                 table.ajax.reload();
             }
 
@@ -378,16 +378,16 @@ if(isset($_POST["submit"])){
             var category=$("#category").val();
             // alert(category);
            // var purchased=$("#purchased").val();
-             window.location.href="GetExpenditure.php?from="+from+"&to="+to+"&category="+category;
+             window.location.href="GetRevenue.php?from="+from+"&to="+to+"&category="+category;
         });
         
         
-        $('.mymodalexpenditure').on('click', function (){
-    $( "#mymodal_expenditure" ).modal( "show" );
+        $('.mymodalrevenue').on('click', function (){
+    $( "#mymodal_revenue" ).modal( "show" );
 });
 
  $('.close').on('click', function (){
-    $( "#mymodal_expenditure" ).modal( "hide" );
+    $( "#mymodal_revenue" ).modal( "hide" );
 });
 
     });
@@ -414,12 +414,12 @@ function checkDelete(){
 }
 </script>
 
-<div class="modal fade" id="mymodal_expenditure" role="dialog">
+<div class="modal fade" id="mymodal_revenue" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title" style="color:#f55989;">Add Expenditure</h4>
+                <h4 class="modal-title" style="color:#f55989;">Add Revenue</h4>
                 <button type="button" class="btn-btn close" data-bs-dismiss="modal">X</button>
             </div>
             <!-- Modal body -->
@@ -428,7 +428,7 @@ function checkDelete(){
                     <form method="POST" action="">
                             <div class="row col-md-12">
                                  <?php
-                                 $exp_qry="SELECT id FROM sar_expenditure ORDER BY id DESC LIMIT 1 ";
+                                 $exp_qry="SELECT id FROM sar_revenue ORDER BY id DESC LIMIT 1 ";
                                  $exp_sql=$connect->prepare("$exp_qry");
                                  $exp_sql->execute();
                                  $exp_row=$exp_sql->fetch(PDO::FETCH_ASSOC);
@@ -443,26 +443,19 @@ function checkDelete(){
                               </div>
 
                               <div class="form-group col-md-6">
-                              <label for="exampleInputNumber1">Expenditure Type</label><span style="color:red">*</span>
+                              <label for="exampleInputNumber1">Revenue Type</label><span style="color:red">*</span>
                             <select name="particulars" class="form-control">
-                                <option disabled selected>Select Expenditure Type</option>
+                                <option disabled selected>Select Revenue Type</option>
 
                                 <option value="Comission">Comission</option>
 
-<option value="Tea">Tea</option>
-
-<option value="Salary">Salary</option>
-
-<option value="Breakfast">Breakfast</option>
-
-<option value="Fuel">Fuel</option>
-
-<option value="Stationary">Stationary</option>
-
-<option value="Repair">Repair</option>
-<option value="Furniture">Furniture</option>
+<!-- <option value="Comission">Comission</option> -->
 <option value="Hand Loan">Hand Loan</option>
-<option value="Other Expense">Other Expense</option>  
+<option value="Interest">Interest</option>
+
+<option value="Gift">Gift</option>
+
+<option value="Other Revenue">Other Revenue</option>  
 
                             </select>
                            </div>
@@ -514,7 +507,7 @@ function checkDelete(){
                                </div>
 
                                <div class="form-group col-md-4" id="cus">
-                               <label for="exampleInputText1">Expenditure To </label>
+                               <label for="exampleInputText1">Revenue From</label>
                           <input list="searchval1" id="search_val1" class="form-control" name="search_val1">
                                 <datalist class="searchval1" id="searchval1" name="customer_name" required>
                                     <option value="">--Choose Customer Name--</option>
@@ -533,7 +526,7 @@ function checkDelete(){
                                 </div>
   
                               <div class="form-group col-md-4" id="sup">
-                                 <label for="exampleInputText1">Expenditure To </label>
+                                 <label for="exampleInputText1">Revenue From</label>
                            <input list="searchval" id="search_val" class="form-control" name="search_val">
                                 <datalist class="searchval" id="searchval" name="supplier_name" required>
                                     <option value="">--Choose Supplier Name--</option>

@@ -490,7 +490,8 @@ if($rowda["total"]!=0){
         <form method="POST" action="">
         <div class="row col-md-12">  
         <input type="submit" name="revokec" class="btn btn-danger" value="Revoke"/>
-        <div class="col-md-6"> 
+        <a href="paymentbill.php?supplier_id=<?=$fetchrevoke['supplierid']?>" target="_blank" class='btn btn-success ml-2'>Print</a>    
+  <div class="col-md-6"> 
     <input type="hidden" name="revpati" value="<?=$pattiid?>" />
         <input type="hidden" value="<?=$sup_id?>" name="suppid" />
         <input type="hidden" name="revamt" class="form-control" value="<?=$fetchrevoke['pay']?>" placeholder="Enter Revoke Amount Here"/> 
@@ -549,6 +550,7 @@ while($fetchcpay=mysqli_fetch_assoc($execpay)) {?>
 <td><form method="POST" action="">
     <div class="row col-md-12">  
       <input type="submit" name="revokes" class="btn btn-danger" value="Revoke"/>
+      <a href="paymentbill_customer.php?customer_id=<?=$cid?>" target="_blank" class='btn btn-success ml-2'>Print</a>    
       <div class="col-md-6"> 
     <input type="hidden" name="revpati" value="<?=$sal_no?>" />
         <input type="hidden" value="<?=$cid?>" name="suppid" />

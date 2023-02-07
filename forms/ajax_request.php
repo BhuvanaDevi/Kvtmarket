@@ -2253,7 +2253,7 @@ else if($action=="view_expenditure")
     }
 	if($category!="")
     {
-     $sel_qry .=" AND revenue='$category'";   
+     $sel_qry .=" AND type='$category'";   
     }
     $sel_sql= $connect->prepare($sel_qry);
 	$sel_sql->execute();
@@ -2276,7 +2276,92 @@ else if($action=="view_expenditure")
     }
 	if($category!="")
     {
-     $data_sql .=" AND revenue='$category'";   
+     $data_sql .=" AND type='$category'";   
+    }
+    
+	$data_sql.=" ORDER BY ".$columnName." DESC limit ".$row.",".$rowperpage;
+	
+	//echo $data_sql;
+	
+	$data_qry= $connect->prepare($data_sql);
+	$data_qry->execute();
+	
+	$data = array();
+	while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
+	   $data[] = $data_row;
+	}
+
+	$response = array(
+        "draw" => intval($draw),
+        "iTotalRecords" => $totalRecords,
+        "iTotalDisplayRecords" => $totalRecordwithFilter,
+        "aaData" => $data,
+        "qry1" => $sel_qry,
+        "qry2" => $data_sql
+	);
+
+	echo json_encode($response);
+   
+}
+else if($action=="view_revenue")
+{
+    $req=$_REQUEST["req"];
+    $from=$_REQUEST["from"];
+    $to=$_REQUEST["to"];
+   $category=$_REQUEST["category"];
+    $draw = isset($_REQUEST['draw']) ? $_REQUEST['draw']: '';
+	$row = isset($_REQUEST['start']) ? $_REQUEST['start']: '';
+	$rowperpage = isset($_REQUEST['length']) ? $_REQUEST['length']: '10';
+	$columnIndex = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column']: '';
+	$columnName =    isset($_REQUEST['columns'][$columnIndex]['data']) ? $_REQUEST['columns'][$columnIndex]['data']: 'ID';
+	$columnSortOrder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir']: '';
+	$searchValue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value']: '';
+
+	$searchQuery = " ";
+	if($searchValue != ''){
+	   $searchQuery = " 
+	   (
+            date like '%".$searchValue."%'
+            OR purchased_from like '%".$searchValue."%'
+            OR particulars like '%".$searchValue."%'
+            OR amount like '%".$searchValue."%'
+	    )";
+	}
+	
+	$sel_qry = "SELECT count(*) as allcount FROM `sar_revenue` WHERE status=1 ";
+	if($searchValue!=''){
+	    $sel_qry .= " AND ".$searchQuery;
+	}
+    if($from!="" && $to!="")
+    {
+     $sel_qry .=" AND (date >='$from' AND date<='$to')";   
+    }
+	if($category!="")
+    {
+     $sel_qry .=" AND type='$category'";   
+    }
+    $sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecords = $sel_row["allcount"];
+
+	$sel_sql= $connect->prepare($sel_qry);
+	$sel_sql->execute();
+	$sel_row = $sel_sql->fetch(PDO::FETCH_ASSOC);
+	$totalRecordwithFilter = $sel_row["allcount"];
+
+
+    $data_sql = "SELECT * FROM `sar_revenue` WHERE status=1 ";
+    if($searchValue!=''){
+	    $data_sql .= " AND ".$searchQuery;
+	}
+    if($from!="" && $to!="")
+    {
+     $data_sql .=" AND (date >='$from' AND date<='$to')";   
+    }
+	if($category!="")
+    {
+     $data_sql .=" AND type='$category'";   
     }
     
 	$data_sql.=" ORDER BY ".$columnName." DESC limit ".$row.",".$rowperpage;

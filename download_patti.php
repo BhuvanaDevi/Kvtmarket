@@ -17,16 +17,21 @@ $date = date("Y-m-d");
 // $pdf->Ln();
 
    // Logo
-   $pdf->Image('images/ab_pdf.png',10,2,50);
+ 
+   $pdf->Image('images/ab-tomato.png',10,5,35);
    // Arial bold 15
    // $pdf->Ln(45);
-   $pdf->SetFont('Arial','B',12);
+   $pdf->SetFont('Arial','B',10);
    // Move to the right
    $pdf->Cell(80);
    // Title
-   $pdf->Cell(100,15,'A108 Adam Street New York, Us - 9042194877',0,0,'R');
-   // Line break
-   // $pdf->Ln(10);
+   $pdf->Cell(110,3,"KARPAGAMBAL VEGETABLE TRADERS",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,8,"AU - 6 D BLOCK, PERIYAR VEGETABLE MARKET COMPLEX,",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,2,"CH - 600 090.",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,8,"7667871022 / 8122294561. ",0,0,'C');
    $pdf -> Line(10, 30, 200, 30);
    // $pdf->Cell(80);
    // $pdf->Cell(80,10,'',0,0,'R');
@@ -259,7 +264,7 @@ $inhand=$select_row4["inhand"];
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(40 ,1,'','T',0,'C');
             $pdf->Cell(30 ,1,'','T',1,'R');
-            
+             
             $old="select * from payment where supplierid = '$supplier_id' and date<'$date' order by id desc limit 1";
     $oldsql=$connect->prepare($old);
 $oldsql->execute();
@@ -269,36 +274,55 @@ $olds=$oldbal['total'];
     $pdf->Ln();
         
 
-                          $old1="select * from payment where supplierid = '$supplier_id' and date='$date' and (paymentmode!='cash' or paymentmode!='percentage' or paymentmode!='-' or paymentmode!='') order by id desc limit 1";
-    $oldsql1=$connect->prepare($old1);
-$oldsql1->execute();
-$oldbal1 = $oldsql1->fetch(PDO::FETCH_ASSOC);
-$olds1=$oldbal1['obal'];
-// print_r($olds1);die();
-          
-          
-          
-                                            $old4="select * from payment where supplierid = '$supplier_id' and date='$date' order by id desc limit 1";
-    $oldsql4=$connect->prepare($old4);
-$oldsql4->execute();
-$oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
+                             $today1="select SUM(dis) as dis from payment where supplierid = '$supplier_id' and date='$date' and (paymentmode='cash' or paymentmode='percentage')";
+    $todaysql1=$connect->prepare($today1);
+$todaysql1->execute();
+$oldbal11 = $todaysql1->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal11);die();
+// $old11=$oldbal11['pay'];
+$dis=isset($oldbal11['dis'])?$oldbal11['dis']:0;
+
+
+    $today2="select SUM(pay) as pay from payment where supplierid = '$supplier_id' and date='$date' and (pattid='OB')";
+    $todaysql2=$connect->prepare($today2);
+$todaysql2->execute();
+$oldbal12 = $todaysql2->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal12);die();
+// $old11=$oldbal11['pay'];
+$obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
+
+           
+                $old2="select * from payment where supplierid = '$supplier_id' and (date<'$date' or date='$date') and (paymentmode='cash' or paymentmode='percentage') order by id desc limit 1";
+    $oldsql2=$connect->prepare($old2);
+$oldsql2->execute();
+$oldbal2 = $oldsql2->fetch(PDO::FETCH_ASSOC);
+
+
+    $todays="select SUM(sale) as sale from payment where supplierid = '$supplier_id' and date='$date' and pattid!='OB' order by id desc limit 1";
+    $todaysqls=$connect->prepare($todays);
+$todaysqls->execute();
+$oldbal1ss = $todaysqls->fetch(PDO::FETCH_ASSOC);
+
+// $old11=$oldbal11['pay'];
+$tod=isset($oldbal1ss['sale'])?$oldbal1ss['sale']:0;
+// print_r($todays);die();
 
               $pdf->Cell(95 ,6,'',0,0);
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(50 ,10,'Today Patti',0,0,'R');
-             if($oldbal4['sale'] > 0){
-          $pdf->Cell(38 ,10,$oldbal4['sale'],0,1,'R');
-             }
-             else{
-          $pdf->Cell(38 ,10,0,0,1,'R');
-            }
+            //  if($oldbal4['sale'] > 0){
+          $pdf->Cell(38 ,10,$tod,0,1,'R');
+        //      }
+        //      else{
+        //   $pdf->Cell(38 ,10,0,0,1,'R');
+        //     }
              
              
             $pdf->Cell(95 ,6,'',0,0);
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(50 ,10,'Old Balance',0,0,'R');
-             if($oldbal['obal']>0){
-        $pdf->Cell(38 ,10,$oldbal['total'],0,1,'R');
+             if($olds>0){
+        $pdf->Cell(38 ,10,$olds,0,1,'R');
              }
         //          else if($oldbal['obal'] > 0){
         //   $pdf->Cell(38 ,10,$oldbal['total'],0,1,'R');
@@ -307,33 +331,81 @@ $oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
         $pdf->Cell(38 ,10,0,0,1,'R');
                  
              }
-             
-                                            $old2="select * from payment where supplierid = '$supplier_id' and (date<'$date' or date='$date') and (paymentmode='cash' or paymentmode='percentage') order by id desc limit 1";
-    $oldsql2=$connect->prepare($old2);
-$oldsql2->execute();
-$oldbal2 = $oldsql2->fetch(PDO::FETCH_ASSOC);
-    if($oldbal4['dis']>0){
+    $today1="select SUM(dis) as dis from payment where supplierid = '$supplier_id' and date='$date' and (paymentmode='cash' or paymentmode='percentage')";
+    $todaysql1=$connect->prepare($today1);
+$todaysql1->execute();
+$oldbal11 = $todaysql1->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal11);die();
+// $old11=$oldbal11['pay'];
+$dis=isset($oldbal11['dis'])?$oldbal11['dis']:0;
+
+    if($dis>0){
          
                $pdf->Cell(95 ,6,'',0,0);
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(50 ,10,'Discount',0,0,'R');
-          $pdf->Cell(38 ,10,$oldbal4['dis'],0,1,'R');
+          $pdf->Cell(38 ,10,$dis,0,1,'R');
              }
         //      else{
         //   $pdf->Cell(38 ,10,0,0,1,'R');
                  
         //      }
              
-               $old3="select * from payment where supplierid = '$supplier_id' or date<'$date' order by id desc limit 1";
-    $oldsql3=$connect->prepare($old3);
-$oldsql3->execute();
-$oldbal3 = $oldsql3->fetch(PDO::FETCH_ASSOC);
+                        
+    $today="select * from payment where supplierid = '$supplier_id' and date='$date' and (paymentmode='' or paymentmode='-') and pattid!='OB'";
+    $todaysql=$connect->prepare($today);
+$todaysql->execute();
+$oldbal1 = $todaysql->fetch(PDO::FETCH_ASSOC);
+$old1=$oldbal1['pay'];
+
+                    if($old1>0){
+         
+               $pdf->Cell(95 ,6,'',0,0);
+            $pdf->SetFont('Arial','B',14);
+            $pdf->Cell(50 ,10,'Payment',0,0,'R');
+          $pdf->Cell(38 ,10,$old1,0,1,'R');
+             }
+        //      else{
+        //   $pdf->Cell(38 ,10,0,0,1,'R');
+                 
+        //      }
+             
+             
+$today2="select SUM(pay) as pay from payment where supplierid = '$supplier_id' and date='$date' and (pattid='OB')";
+    $todaysql2=$connect->prepare($today2);
+$todaysql2->execute();
+$oldbal12 = $todaysql2->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal12);die();
+// $old11=$oldbal11['pay'];
+$obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
+
+                                 if($obal>0){
+         
+               $pdf->Cell(95 ,6,'',0,0);
+            $pdf->SetFont('Arial','B',14);
+            $pdf->Cell(50 ,10,'Opening Balance',0,0,'R');
+          $pdf->Cell(38 ,10,$obal,0,1,'R');
+             }
+        //      else{
+        //   $pdf->Cell(38 ,10,0,0,1,'R');
+                 
+        //      }
+      
+    $bal="select * from payment where supplierid = '$supplier_id' order by id desc limit 1";
+    $balsql=$connect->prepare($bal);
+$balsql->execute();
+$oldbal2 = $balsql->fetch(PDO::FETCH_ASSOC);
+
+
+$balance=$oldbal2['total'];
+
+
             
        $pdf->Cell(95 ,6,'',"T",0);
             $pdf->SetFont('Arial','B',14);
             $pdf->Cell(50 ,10,'Balance',"T",0,'R');
-           if($oldbal['total']>0){
-               $pdf->Cell(38 ,10,$oldbal['total'],'T',1,'R');
+           if($balance>0){
+               $pdf->Cell(38 ,10,$balance,'T',1,'R');
            }
         //   else if($oldbal1['tpay']==""){
         //       $pdf->Cell(38 ,10,$oldbal['tpay'],'T',1,'R');

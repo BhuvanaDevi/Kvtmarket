@@ -17,16 +17,21 @@ $dates = date("Y-m-d");
 // $pdf->Ln();
 
    // Logo
-   $pdf->Image('images/ab_pdf.png',10,2,50);
+  
+   $pdf->Image('images/ab-tomato.png',10,5,35);
    // Arial bold 15
    // $pdf->Ln(45);
-   $pdf->SetFont('Arial','B',12);
+   $pdf->SetFont('Arial','B',10);
    // Move to the right
    $pdf->Cell(80);
    // Title
-   $pdf->Cell(100,15,'A108 Adam Street New York, Us - 9042194877',0,0,'R');
-   // Line break
-   // $pdf->Ln(10);
+   $pdf->Cell(110,3,"KARPAGAMBAL VEGETABLE TRADERS",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,8,"AU - 6 D BLOCK, PERIYAR VEGETABLE MARKET COMPLEX,",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,2,"CH - 600 090.",0,0,'C');
+   $pdf->Ln();
+   $pdf->Cell(260,8,"7667871022 / 8122294561. ",0,0,'C');
    $pdf -> Line(10, 30, 200, 30);
    // $pdf->Cell(80);
    // $pdf->Cell(80,10,'',0,0,'R');
@@ -222,89 +227,144 @@ $pdf->Ln(10);
     	$total_sum=$outward_sum;
         //echo $select_qry3;
         $balance =  $row->total_bill_amount - $total_discount_on_sales - $data_row2["paid_amount"];
-
-        $old="select * from payment_sale where customerid = '$cusid' and date<'$dates' order by id desc limit 1";
- $oldsql=$connect->prepare($old);
-$oldsql->execute();
-$oldbal = $oldsql->fetch(PDO::FETCH_ASSOC);
-$olds=$oldbal['total'];
-// print_r($old);die();
-$pdf->SetFont('Arial','B',16);
-$pdf->Cell(87 ,6,'','T',0);
-// $pdf->Cell(45 ,10,'Sub Total',1,0,'C');
-
-
-                                            $old4="select * from payment_sale where customerid = '$cusid' and date='$dates' order by id desc limit 1";
-    $oldsql4=$connect->prepare($old4);
-$oldsql4->execute();
-$oldbal4 = $oldsql4->fetch(PDO::FETCH_ASSOC);
-
-
-$pdf->Cell(47, 10, 'Today Sales', "T", 0, "R");
-
-
- $old1="select * from payment_sale where customerid = '$cusid' and date='$dates' and (paymentmode!='cash' or paymentmode!='percentage' or paymentmode!='-' or paymentmode!='') order by id desc limit 1";
-$oldsql1=$connect->prepare($old1);
-$oldsql1->execute();
-$oldbal1 = $oldsql1->fetch(PDO::FETCH_ASSOC);
-$olds1=$oldbal1['obal'];
-
-
-// $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
-  if($oldbal4['sale']>0){
-$pdf->Cell(47, 10, $oldbal4['sale'], 'T', 0, "R");
-}
-else{
-$pdf->Cell(47, 10, 0, 'T', 0, "R");    
-}
-$pdf->Ln(10);
-
-$pdf->Cell(87 ,6,'',0,0);
-$pdf->Cell(47, 10, 'Old Balance', 0, 0, "R");
-// $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
-       if($oldbal['obal']>0){
-   $pdf->Cell(47, 10,$oldbal['total'], 0, 0, "R");
-}
-else{
-$pdf->Cell(47, 10,0, 0, 0, "R");
-    }
+        $old="select * from payment_sale where customerid = '$customer_id' and date<'$dates' order by id desc limit 1";
+        $oldsql=$connect->prepare($old);
+    $oldsql->execute();
+    $oldbal = $oldsql->fetch(PDO::FETCH_ASSOC);
+    $olds=isset($oldbal['total'])?$oldbal['total']:0;
+    
+    
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Cell(87 ,6,'','T',0);
+    // $pdf->Cell(45 ,10,'Sub Total',1,0,'C');
+    
+       $oldp="select * from payment_sale where customerid = '$customer_id' and date<'$dates' order by id desc limit 1";
+        $oldsqlp=$connect->prepare($oldp);
+    $oldsqlp->execute();
+    $oldbalp = $oldsqlp->fetch(PDO::FETCH_ASSOC);
+    $oldss=isset($oldbalp['total'])?$oldbalp['total']:0;
+        // print_r($oldss);die();
+        
+        $today="select * from payment_sale where customerid = '$customer_id' and date='$dates' and (paymentmode='' or paymentmode='-') and saleid!='OB'";
+        $todaysql=$connect->prepare($today);
+    $todaysql->execute();
+    $oldbal1 = $todaysql->fetch(PDO::FETCH_ASSOC);
+    $old1=isset($oldbal1['pay'])?$oldbal1['pay']:0;
+    //  print_r($old1);die();
+    
+        $today1="select SUM(dis) as dis from payment_sale where customerid = '$customer_id' and date='$dates' and (paymentmode='cash' or paymentmode='percentage')";
+        $todaysql1=$connect->prepare($today1);
+    $todaysql1->execute();
+    $oldbal11 = $todaysql1->fetch(PDO::FETCH_ASSOC);
+    // print_r($oldbal11);die();
+    // $old11=$oldbal11['pay'];
+    $dis=isset($oldbal11['dis'])?$oldbal11['dis']:0;
+    // print_r($dis);die();
+    
+    $today2="select SUM(pay) as pay from payment_sale where customerid = '$customer_id' and date='$dates' and saleid='OB'";
+        $todaysql2=$connect->prepare($today2);
+    $todaysql2->execute();
+    $oldbal12 = $todaysql2->fetch(PDO::FETCH_ASSOC);
+    
+    // $old11=$oldbal11['pay'];
+    $obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
+    // print_r($obal);die();
+     
+     
+     
+     
+    $pdf->Cell(47, 10, 'Today Sales', "T", 0, "R");
+    // $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
+    //   if($old1>0){
+    
+    
+        $todays="select SUM(sale) as sale from payment_sale where customerid = '$customer_id' and date='$dates' and  saleid!='OB' order by id desc limit 1";
+        $todaysqls=$connect->prepare($todays);
+    $todaysqls->execute();
+    $oldbal1ss = $todaysqls->fetch(PDO::FETCH_ASSOC);
+    
+    // $old11=$oldbal11['pay'];
+    $tod=isset($oldbal1ss['sale'])?$oldbal1ss['sale']:0;
+    // print_r($todays);die();
+    
+    
+    $pdf->Cell(40, 10, $tod, 'T', 0, "R");
+    // }
+    // else{
+    // $pdf->Cell(40, 10, 0, 'T', 0, "R");    
+    // }
     $pdf->Ln(10);
     
+    $pdf->Cell(87 ,6,'',0,0);
+    $pdf->Cell(47, 10, 'Old Balance', 0, 0, "R");
+    // $pdf->Cell(47,10,$row->total_bill_amount,1,0,'C');
+           if($oldss>0){
+       $pdf->Cell(40, 10,$oldss, 0, 0, "R");
+    }
+    // else{
+    // $pdf->Cell(40, 10,0, 0, 0, "R");
+    //     }
+        $pdf->Ln(10);
+        
+        
+    //       $old2="select * from payment_sale where customerid = '$customer_id' and (date<'$dates' or date='$dates') and (paymentmode='cash' or paymentmode='percentage') order by id desc limit 1";
+    //     $oldsql2=$connect->prepare($old2);
+    // $oldsql2->execute();
+    // $oldbal2 = $oldsql2->fetch(PDO::FETCH_ASSOC);
     
-       $old2="select * from payment_sale where customerid = '$cusid' and (date<'$dates' or date='$dates') and (paymentmode='cash' or paymentmode='percentage') order by id desc limit 1";
-    $oldsql2=$connect->prepare($old2);
-$oldsql2->execute();
-$oldbal2 = $oldsql2->fetch(PDO::FETCH_ASSOC);
-
-if($oldbal4['dis']>0){
-$pdf->Cell(87 ,6,'',0,0);
-$pdf->Cell(47, 10, 'Discount', 0, 0, "R");
-
-    $pdf->Cell(47, 10,$oldbal4['dis'], 0, 0, "R");
-}
-// else{
-//     $pdf->Cell(40, 10,0, 0, 0, "R");
-//     }
-    $pdf->Ln(5);
+    if($dis>0){
+    $pdf->Cell(87 ,6,'',0,0);
+    $pdf->Cell(47, 10, 'Discount', 0, 0, "R");
     
-       $old3="select * from payment_sale where customerid = '$cusid' or date<'$dates' order by id desc limit 1";
-    $oldsql3=$connect->prepare($old3);
-$oldsql3->execute();
-$oldbal3 = $oldsql3->fetch(PDO::FETCH_ASSOC);
-
-
-$pdf->Cell(87 ,6,'',0,0);
-$pdf->Cell(47, 10, 'Balance', "T", 0, "R");
-   if($oldbal3['total']>0){
-               $pdf->Cell(47 ,10,$oldbal3['total'],'T',1,'R');
-           }
-           else if($oldbal1['tpay']==""){
-               $pdf->Cell(47 ,10,$oldbal['tpay'],'T',1,'R');
-           }
-           else{
-               $pdf->Cell(47 ,10,0,'T',1,'R');
-               
-           }
+        $pdf->Cell(40, 10,$dis, 0, 0, "R");
+    }
+    // else{
+    //     $pdf->Cell(40, 10,0, 0, 0, "R");
+    //     }
+        
+        
+        if($obal>0){
+    $pdf->Cell(87 ,6,'',0,0);
+    $pdf->Cell(47, 10, 'Opening Balance', 0, 0, "R");
+    
+        $pdf->Cell(40, 10,$obal, 0, 0, "R");
+    }
+    // else{
+    //     $pdf->Cell(40, 10,0, 0, 0, "R");
+    //     }
+        
+            
+        if($old1>0){
+    $pdf->Cell(87 ,6,'',0,0);
+    $pdf->Cell(47, 10, 'Today Payment', 0, 0, "R");
+    
+        $pdf->Cell(40, 10,$old1, 0, 0, "R");
+    }
+    // else{
+    //     $pdf->Cell(40, 10,0, 0, 0, "R");
+    //     }
+        
+        
+        $pdf->Ln(0);
+        
+    $bal="select * from payment_sale where customerid = '$customer_id' order by id desc limit 1";
+        $balsql=$connect->prepare($bal);
+    $balsql->execute();
+    $oldbal2 = $balsql->fetch(PDO::FETCH_ASSOC);
+    $balance=$oldbal2['total'];
+    
+    $pdf->Cell(87 ,6,'',0,0);
+    $pdf->Cell(47, 10, 'Balance', "T", 0, "R");
+       if($balance>0){
+                   $pdf->Cell(38 ,10,$balance,'T',1,'R');
+               }
+            //   else if($oldbal1['tpay']==""){
+            //       $pdf->Cell(38 ,10,$oldbal['tpay'],'T',1,'R');
+            //   }
+               else{
+                   $pdf->Cell(38 ,10,0,'T',1,'R');
+                   
+               }
 $pdf->Ln(10);
 // $pdf->Cell(87 ,6,'',0,0);
 // $pdf->Cell(47, 10, 'Inhand Trays', "T", 0, "R");
