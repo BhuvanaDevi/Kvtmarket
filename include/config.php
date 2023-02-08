@@ -10,10 +10,10 @@ date_default_timezone_set('Asia/kolkata');
   //   $dbName="udhaarsu_ab";
 
     
-  $dbHost = "localhost";
-  $dbUsername="udhaarsu_ab1";
-  $dbPassword="ab1234";
-  $dbName="udhaarsu_ab1";
+  // $dbHost = "localhost";
+  // $dbUsername="udhaarsu_kvt";
+  // $dbPassword="GbC8EU05^e*#";
+  // $dbName="udhaarsu_kvt";
   
   //  $dbHost = "localhost";
   //   $dbUsername="root";
