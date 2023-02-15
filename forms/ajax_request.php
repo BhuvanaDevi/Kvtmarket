@@ -538,7 +538,7 @@ else if($action=="view_patti")
 	$totalRecordwithFilter = $sel_row["allcount"];
 
 
-    $data_sql = "SELECT * FROM `sar_patti`";
+    $data_sql = "SELECT *,SUM(net_payable) as net,SUM(total_deduction) as deduct,SUM(total_bill_amount) as tot FROM `sar_patti`";
 	
 	if($req=="enabled")
     {
@@ -567,7 +567,7 @@ else if($action=="view_patti")
 	$data_qry->execute();
 	
 	$data = array();
-$tot=0;
+// $net=0;
 	while ($data_row = $data_qry->fetch(PDO::FETCH_ASSOC)) {
 	   if($data_row['patti_id']!=null){
 	    $select_qry3= "SELECT * FROM `trays` WHERE ids='".$data_row["patti_id"]."' and type='".$data_row["type"]."'";
@@ -578,12 +578,15 @@ $tot=0;
     	$small=isset($select_row3["smalltray"])?$select_row3["smalltray"]:0;
     	$big=isset($select_row3["bigtray"])?$select_row3["bigtray"]:0;
     	
-		$tot+=$data_row['total_bill_amount'];
-    	// $select_qry4= "SELECT sum(outward) as outward_sum FROM `trays` WHERE category='Supplier' AND name='".$data_row["supplier_name"]."' ";
+		// $net+=$data_row['net_payable'];
+
+    	// $select_qry4= "SELECT SUM(net_payable) as net FROM `sar_patti` group by pat_id";
 	    // $select_sql4=$connect->prepare($select_qry4);
     	// $select_sql4->execute();
     	// $select_row4 = $select_sql4->fetch(PDO::FETCH_ASSOC);
-    	// $outward_sum=$select_row4["outward_sum"];
+    	// $outward_sum=$select_row4["net"];
+
+
     	$total_sum=$inward_sum;
     	
     	$select_qry6 = "SELECT sum(amount) as paid FROM sar_patti_payment WHERE supplier_id='".$data_row["patti_id"]."' AND is_revoked is NULL GROUP BY supplier_id";
@@ -592,6 +595,7 @@ $tot=0;
         $select_sql6->execute();
         $sel_row6 = $select_sql6->fetch(PDO::FETCH_ASSOC);
     
+
 	    $data[]=array(
 	        "id"=>$data_row["id"],
 	        "paid"=>$sel_row6["paid"],
@@ -604,11 +608,12 @@ $tot=0;
 	        "pat_id"=>$data_row["pat_id"],
 	        "updated_by"=>$data_row["updated_by"],
 	        "boxes_arrived"=>$data_row["boxes_arrived"],
-	        "total_deduction"=>$data_row["total_deduction"],
-	        "net_bill_amount"=>$data_row["net_bill_amount"],
-	       // "net_payable"=>$data_row["net_payable"],
+	        "total_deduction"=>$data_row['deduct'],
+	        "net_bill_amount"=>$data_row["net"],
+	    //    "net_payable"=>$data_row['net'],
 	         "mobile_number"=>$data_row["mobile_number"],
-	         "totalbillamount"=>$tot,
+	         "totalbillamount"=>$data_row['tot'],
+			 "f"=>$data_row["f"],
 	         "is_active"=>$data_row["is_active"],
 	         "small"=>$small,
 			 "big"=>$big

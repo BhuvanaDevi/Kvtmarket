@@ -124,7 +124,20 @@ $obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
              }
   
       $pdf->Ln();
-       $pdf->Cell(80,10,"Today Payment",0,0,'R');
+     
+      $todayp="select SUM(total_bill_amount) as tot from sar_patti where supplier_id = '$supplier_id' and patti_date='$date'";
+    $todaysqlp=$connect->prepare($todayp);
+$todaysqlp->execute();
+$oldbal1p = $todaysqlp->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal11);die();
+// $old11=$oldbal11['pay'];
+$pat=isset($oldbal1p['tot'])?$oldbal1p['tot']:0;
+
+       $pdf->Cell(80,10,"Patti",0,0,'R');
+        $pdf->Cell(100,10,$pat,0,0,'C');
+      $pdf->Ln();
+     
+       $pdf->Cell(80,10,"Payment",0,0,'R');
         $pdf->Cell(100,10,$old1,0,0,'C');
       $pdf->Ln();
       

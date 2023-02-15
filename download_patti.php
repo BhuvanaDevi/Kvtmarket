@@ -71,15 +71,29 @@ $data_row2 = $data_qry2->fetch(PDO::FETCH_ASSOC);
 
 //code for print data
 
-$sql = "SELECT * from  sar_patti where supplier_id='$supplier_id' and pat_id='$patti_id' and patti_date='$patti_date' and farmer_name='$farmer'";
+$sql = "SELECT * from  sar_patti where supplier_id='$supplier_id' and pat_id='$patti_id' and patti_date='$patti_date' and is_active=1 and farmer_name='$farmer'";
 $query = $connect -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
  
+
+
+$am = "SELECT *,SUM(net_payable) as net from sar_patti where is_active=1";
+$amquery = $connect -> prepare($am);
+$amquery->execute();
+$amres=$amquery->fetch(PDO::FETCH_OBJ);
+// print_r($amres['net']);die();
+
 $cnt=1;
 $total_quantity=0;
 // $pdf->Ln(40);
+$adv=0;
+$npay=0;
+
 foreach($results as $row) {
+$adv+=$row->advance;
+$npay+=$row->net_payable;
+
     if($cnt == 1){
 
         $paid=$row->patti_id;
@@ -93,28 +107,28 @@ $smalltray=$select_row4["smalltray"];
 $bigtray=$select_row4["bigtray"];
 $inhand=$select_row4["inhand"];
       
-        $pdf->SetFont('Arial','B',14);
-        $pdf->Cell(45 ,10,'Invoice Id',0,0,'L',false);
-        $pdf->SetFont('Arial','',14);
-        $pdf->Cell(47 ,10,$row->patti_id,0,0,'L',false);
+        // $pdf->SetFont('Arial','B',14);
+        // $pdf->Cell(45 ,10,'Invoice Id',0,0,'L',false);
+        // $pdf->SetFont('Arial','',14);
+        // $pdf->Cell(47 ,10,$row->patti_id,0,0,'L',false);
         
-        $pdf->SetFont('Arial','B',14);
-        $pdf->Cell(45,10,'Farmer Name  ',0,0,'R',false);
-        $pdf->SetFont('Arial','',14);
+        // $pdf->SetFont('Arial','B',14);
+        // $pdf->Cell(45,10,'Farmer Name  ',0,0,'R',false);
+        // $pdf->SetFont('Arial','',14);
        
-        // $pdf->SetTopMargin(50);
-        $pdf->Cell(20,10,$row->farmer_name,0,0,false);
+        // // $pdf->SetTopMargin(50);
+        // $pdf->Cell(20,10,$row->farmer_name,0,0,false);
        
-        $pdf->Ln();
+        $pdf->Ln(5);
         
         $pdf->SetFont('Arial','B',14);
           
-            $pdf->Cell(15,10,'Date ',0,0,'R',false);
+            $pdf->Cell(32,10,'Party Peroid ',0,0,'R',false);
             $pdf->SetFont('Arial','',14);
-            $pdf->Cell(10,10,$row->patti_date,0,0,false);
+            $pdf->Cell(58,10,$row->patti_date." to ".$row->to_date,0,0,'R',false);
            
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(110 ,10,'Supplier Name ',0,0,'R',false);
+            $pdf->Cell(63 ,10,'Supplier Name ',0,0,'R',false);
             $pdf->SetFont('Arial','',14);
             $pdf->Cell(45 ,10,$row->supplier_name,0,0,'L',false);
             $pdf->Ln();
@@ -131,23 +145,23 @@ $inhand=$select_row4["inhand"];
             // $pdf->SetFont('Arial','',14);
             // $pdf->Cell(47 ,10,$row->supplier_address,0,0,'L',false);
             // $pdf->Ln();
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(45 ,10,'Mobile Number',0,0,'L',false);
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(45 ,10,$row->mobile_number,0,0,'L',false);
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(45 ,10,'Mobile Number',0,0,'L',false);
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(45 ,10,$row->mobile_number,0,0,'L',false);
             
             
                 
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(45 ,10,'Boxes Arrived',0,0,'R',false);
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(45 ,10,$row->boxes_arrived,0,0,'L',false);
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(45 ,10,'Boxes Arrived',0,0,'R',false);
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(45 ,10,$row->boxes_arrived,0,0,'L',false);
           
             // $pdf->SetFont('Arial','B',14);
             // $pdf->Cell(69,10,'Big Tray :',0,0,'R',false);
             // $pdf->SetFont('Arial','',14);
             // $pdf->Cell(10,10,$bigtray,0,0,false);
-            $pdf->Ln();
+            // $pdf->Ln();
             
            
             // $pdf->SetFont('Arial','B',14);
@@ -157,37 +171,60 @@ $inhand=$select_row4["inhand"];
             
             // $pdf->Ln();
             
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(45 ,10,'Lorry No',0,0,'L',false);
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(45 ,10,$row->lorry_no,0,0,'L',false);
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(45 ,10,'Lorry No',0,0,'L',false);
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(45 ,10,$row->lorry_no,0,0,'L',false);
             
            
-            $pdf->Ln(10);
+            // $pdf->Ln(10);
             $pdf->SetFillColor(40,48,77);
             $pdf->SetTextColor(255,255,255);
-            $pdf->SetFont('Arial','B',16);
+            $pdf->SetFont('Arial','B',9);
            // $pdf->Cell(30,10,'SI NO.',0,0,'L',true);
-            $pdf->Cell(30,10,'Q.Name',0,0,'L',true);
-            $pdf->Cell(47,10,'Quantity',0,0,'R',true);
-            $pdf->Cell(47,10,'Rate',0,0,'R',true);
-            $pdf->Cell(56,10,'Bill Amount',0,0,'R',true);
+           $pdf->Cell(20,10,'Date',0,0,'L',true);
+           $pdf->Cell(10,10,'Rate',0,0,'L',true);
+            $pdf->Cell(10,10,'Bags',0,0,'L',true);
+            $pdf->Cell(20,10,'Particulars',0,0,'L',true);
+            $pdf->Cell(15,10,'Weight',0,0,'L',true);
+            $pdf->Cell(15,10,'Amount',0,0,'L',true);
+            $pdf->Cell(15,10,'Lor.Hire',0,0,'L',true);
+            $pdf->Cell(20,10,'Commision',0,0,'L',true);
+            $pdf->Cell(10,10,'Cooli',0,0,'L',true);
+            $pdf->Cell(15,10,'Postage',0,0,'L',true);
+            $pdf->Cell(10,10,'F',0,0,'L',true);
+            $pdf->Cell(15,10,'N.Amt',0,0,'R',true);
+            $pdf->Cell(15,10,'Advance',0,0,'L',true);
             $pdf->Ln();
               
     }
        
             $pdf->SetTextColor(1, 0, 4);
-            $pdf->SetFont('Arial','',14);
+            $pdf->SetFont('Arial','',9);
            // $pdf->Cell(30,10,$cnt,0,0,'C');
-           $pdf->Cell(30,10,$row->quality_name,0,0,'L');
-            $pdf->Cell(47,10,$row->quantity ,0, 0, "R");
-            $pdf->Cell(47,10,$row->rate,0,0,'R');
-            $pdf->Cell(56,10,$row->bill_amount,0,1,'R');
-            
+           
+           $pdf->Cell(15,10,$row->patti_date,0,0,'L');
+           $pdf->Cell(10,10,$row->rate,0,0,'R');
+           $pdf->Cell(10,10,$row->bag ,0, 0, "R");
+        //    $pdf->Cell(15,10,$row->quantity ,0, 0, "R");
+           $pdf->Cell(20,10,$row->quality_name ,0, 0, "R");
+           $pdf->Cell(15,10,$row->boxes_arrived ,0, 0, "R");
+           $pdf->Cell(20,10,$row->total_bill_amount ,0, 0, "R");
+           $pdf->Cell(15,10,$row->lorry_hire ,0, 0, "R");
+           $pdf->Cell(20,10,$row->commision,0,0,'R');
+           $pdf->Cell(10,10,$row->cooli,0,0,'R');
+           $pdf->Cell(15,10,$row->box_charge,0,0,'R');
+           $pdf->Cell(10,10,$row->f,0,0,'R');
+           $pdf->Cell(15,10,$row->net_payable,0,0,'R');
+           $pdf->Cell(15,10,$row->advance,0,0,'R');
+           
             $supplier_name=$row->supplier_name;
             
            $total_quantity = $total_quantity + $row->quantity;
            $cnt++;
+
+           $pdf->Ln();
+           
 }
 
 // $select_qry3= "SELECT sum(inward) as inward_sum FROM `trays` WHERE category='Supplier' AND name='$supplier_name' ";
@@ -204,60 +241,61 @@ $inhand=$select_row4["inhand"];
 //     	$total_sum=$outward_sum-$inward_sum;
 
      
-
+$pdf->Ln(5);
+            
         //echo $select_qry4;
         $balance =  $row->net_bill_amount - $sel_row6["paid_amount"];
 
             $pdf->SetFont('Arial','',14);
-            $pdf->Cell(56, 10, ' Total Qty', "T", 0, "C");
-            $pdf->Cell(35, 10, $total_quantity, 'T', 0, "C");
+            $pdf->Cell(56, 10, '', "T", 0, "C");
+            $pdf->Cell(35, 10, '', 'T', 0, "C");
             //$pdf->Ln15);
             $pdf->Cell(18 ,6,'','T',0);
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(40, 10, 'Sub Total',1,0, "C");
+            $pdf->Cell(40, 10, 'Total',1,0, "C");
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(32 ,10,$row->total_bill_amount,1,0,'R');
+            $pdf->Cell(40 ,10,$npay,1,0,'R');
             $pdf->Ln(10);
             
-            $pdf->Cell(35, 15, ' ', "T", 0, "R");
-            $pdf->Cell(25, 15, '', 'T', 0, "R");
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(42 ,10,'',"T",0);
-            $pdf->Cell(20 ,10,'Commision',"T",0,'C');
-            $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(35, 15, ' ', "T", 0, "R");
+            // $pdf->Cell(25, 15, '', 'T', 0, "R");
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(42 ,10,'',"T",0);
+            // $pdf->Cell(20 ,10,'Commision',"T",0,'C');
+            // $pdf->SetFont('Arial','',14);
 
             
             
-            $pdf->Cell(27 ,10,$row->commision,"R",0,'R');
-            $pdf->Cell(50 ,10,'',0,0);
-            $pdf->Ln();
-            $pdf->Cell(110 ,10,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(13 ,10,'Cooli',0,0,'C');
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(26 ,10,$row->cooli,"R",0,'R');
-            $pdf->Ln();
+            // $pdf->Cell(27 ,10,$row->commision,"R",0,'R');
+            // $pdf->Cell(50 ,10,'',0,0);
+            // $pdf->Ln();
+            // $pdf->Cell(110 ,10,'',0,0);
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(13 ,10,'Cooli',0,0,'C');
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(26 ,10,$row->cooli,"R",0,'R');
+            // $pdf->Ln();
             
-            $pdf->Cell(99 ,6,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(25 ,10,'Box Charge',0,0,'C');
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(25 ,10,$row->box_charge,"R",0,'R');
-            $pdf->Ln();
+            // $pdf->Cell(99 ,6,'',0,0);
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(25 ,10,'Box Charge',0,0,'C');
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(25 ,10,$row->box_charge,"R",0,'R');
+            // $pdf->Ln();
             
-            $pdf->Cell(100 ,6,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(25 ,10,'Lorry Hire',0,0,'C');
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(24 ,10,$row->lorry_hire,"R",0,'R');
+            // $pdf->Cell(100 ,6,'',0,0);
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(25 ,10,'Lorry Hire',0,0,'C');
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(24 ,10,$row->lorry_hire,"R",0,'R');
             
                
-            $pdf->Cell(119 ,6,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(36 ,10,'Deduction',0,0,'C');
+            // $pdf->Cell(119 ,6,'',0,0);
+            // $pdf->SetFont('Arial','B',14);
+            // $pdf->Cell(36 ,10,'Deduction',0,0,'C');
           
-            $pdf->SetFont('Arial','',14);
-            $pdf->Cell(30 ,10,$row->total_deduction,0,1,'C');
+            // $pdf->SetFont('Arial','',14);
+            // $pdf->Cell(30 ,10,$row->total_deduction,0,1,'C');
            
             
             $pdf->Cell(113 ,6,'',"T",0);
@@ -307,30 +345,38 @@ $oldbal1ss = $todaysqls->fetch(PDO::FETCH_ASSOC);
 $tod=isset($oldbal1ss['sale'])?$oldbal1ss['sale']:0;
 // print_r($todays);die();
 
-              $pdf->Cell(95 ,6,'',0,0);
+            //   $pdf->Cell(95 ,6,'',0,0);
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(50 ,10,'Today Patti',0,0,'R');
+            $pdf->Cell(50 ,10,"$row->supplier_name Balance to KVT",0,0,'R');
             //  if($oldbal4['sale'] > 0){
-          $pdf->Cell(38 ,10,$tod,0,1,'R');
+          $pdf->Cell(20 ,10,$tod,0,0,'R');
+          $pdf->Cell(80 ,10,"Total Advance",0,0,'R');
+          if($olds>0){
+     $pdf->Cell(38 ,10,$adv+$npay,0,1,'R');
+          }
+          else{
+            $pdf->Cell(38 ,10,0,0,1,'R');
+                     
+                 }
         //      }
         //      else{
         //   $pdf->Cell(38 ,10,0,0,1,'R');
         //     }
+        // $pdf->Ln();
              
-             
-            $pdf->Cell(95 ,6,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(50 ,10,'Old Balance',0,0,'R');
-             if($olds>0){
-        $pdf->Cell(38 ,10,$olds,0,1,'R');
-             }
-        //          else if($oldbal['obal'] > 0){
-        //   $pdf->Cell(38 ,10,$oldbal['total'],0,1,'R');
-        //      }
-           else{
+        $pdf->SetFont('Arial','B',14);
+        $pdf->Cell(50 ,10,"Advance",0,0,'R');
+        //  if($oldbal4['sale'] > 0){
+      $pdf->Cell(20 ,10,$adv,0,0,'R');
+      $pdf->Cell(80 ,10,$row->patti_date." to ".$row->to_date,0,0,'R');
+      if($amres!=""){
+ $pdf->Cell(38 ,10,$amres->net,0,1,'R');
+      }
+      else{
         $pdf->Cell(38 ,10,0,0,1,'R');
                  
              }
+
     $today1="select SUM(dis) as dis from payment where supplierid = '$supplier_id' and date='$date' and (paymentmode='cash' or paymentmode='percentage')";
     $todaysql1=$connect->prepare($today1);
 $todaysql1->execute();
@@ -341,10 +387,10 @@ $dis=isset($oldbal11['dis'])?$oldbal11['dis']:0;
 
     if($dis>0){
          
-               $pdf->Cell(95 ,6,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(50 ,10,'Discount',0,0,'R');
-          $pdf->Cell(38 ,10,$dis,0,1,'R');
+        //        $pdf->Cell(95 ,6,'',0,0);
+        //     $pdf->SetFont('Arial','B',14);
+        //     $pdf->Cell(50 ,10,'Discount',0,0,'R');
+        //   $pdf->Cell(38 ,10,$dis,0,1,'R');
              }
         //      else{
         //   $pdf->Cell(38 ,10,0,0,1,'R');
@@ -360,10 +406,10 @@ $old1=$oldbal1['pay'];
 
                     if($old1>0){
          
-               $pdf->Cell(95 ,6,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(50 ,10,'Payment',0,0,'R');
-          $pdf->Cell(38 ,10,$old1,0,1,'R');
+        //        $pdf->Cell(95 ,6,'',0,0);
+        //     $pdf->SetFont('Arial','B',14);
+        //     $pdf->Cell(50 ,10,'Payment',0,0,'R');
+        //   $pdf->Cell(38 ,10,$old1,0,1,'R');
              }
         //      else{
         //   $pdf->Cell(38 ,10,0,0,1,'R');
@@ -381,10 +427,10 @@ $obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
 
                                  if($obal>0){
          
-               $pdf->Cell(95 ,6,'',0,0);
-            $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(50 ,10,'Opening Balance',0,0,'R');
-          $pdf->Cell(38 ,10,$obal,0,1,'R');
+        //        $pdf->Cell(95 ,6,'',0,0);
+        //     $pdf->SetFont('Arial','B',14);
+        //     $pdf->Cell(50 ,10,'Opening Balance',0,0,'R');
+        //   $pdf->Cell(38 ,10,$obal,0,1,'R');
              }
         //      else{
         //   $pdf->Cell(38 ,10,0,0,1,'R');
@@ -401,11 +447,11 @@ $balance=$oldbal2['total'];
 
 
             
-       $pdf->Cell(95 ,6,'',"T",0);
+    //    $pdf->Cell(95 ,6,'',"T",0);
             $pdf->SetFont('Arial','B',14);
-            $pdf->Cell(50 ,10,'Balance',"T",0,'R');
+            $pdf->Cell(50 ,10,'Total Advance',"T",0,'R');
            if($balance>0){
-               $pdf->Cell(38 ,10,$balance,'T',1,'R');
+               $pdf->Cell(20 ,10,$adv+$npay,'T',0,'R');
            }
         //   else if($oldbal1['tpay']==""){
         //       $pdf->Cell(38 ,10,$oldbal['tpay'],'T',1,'R');
@@ -414,6 +460,17 @@ $balance=$oldbal2['total'];
               $pdf->Cell(38 ,10,0,'T',1,'R');
                
           }
+          $pdf->Cell(80 ,10,$row->supplier_name." Balance to KVT","T",0,'R');
+          if($balance>0){
+              $pdf->Cell(38 ,10,abs(($adv+$npay)-$amres->net),'T',1,'R');
+          }
+       //   else if($oldbal1['tpay']==""){
+       //       $pdf->Cell(38 ,10,$oldbal['tpay'],'T',1,'R');
+       //   }
+         else{
+             $pdf->Cell(38 ,10,0,'T',1,'R');
+              
+         }
             $pdf->Ln();
           
             $pdf->Cell(20,10,'Note  :',0,0,'');

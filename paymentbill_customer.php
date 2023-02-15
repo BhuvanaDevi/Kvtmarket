@@ -6,7 +6,6 @@ $pdf->AddPage();
 $pdf->SetLeftMargin(15);
 $date = date("Y-m-d");
 
-
 $pdf->Image('images/ab-tomato.png',10,5,35);
 // Arial bold 15
 // $pdf->Ln(45);
@@ -21,7 +20,6 @@ $pdf->Ln();
 $pdf->Cell(260,2,"CH - 600 090.",0,0,'C');
 $pdf->Ln();
 $pdf->Cell(260,8,"7667871022 / 8122294561. ",0,0,'C');
-   $pdf -> Line(10, 30, 200, 30);
 $pdf->SetFont('Arial','B',14);
 $pdf->SetXY(80,20);
 
@@ -88,7 +86,7 @@ $oldbal = $oldsql->fetch(PDO::FETCH_ASSOC);
 $olds=isset($oldbal['total'])?$oldbal['total']:0;
     // print_r($olds);die();
     
-    $today="select * from payment_sale where customerid = '$customer_id' and date='$date' and (paymentmode='' or paymentmode='-') and saleid!='OB'";
+    $today="select SUM(pay) as pay from payment_sale where customerid = '$customer_id' and date='$date' and (paymentmode='' or paymentmode='-') and saleid!='OB'";
     $todaysql=$connect->prepare($today);
 $todaysql->execute();
 $oldbal1 = $todaysql->fetch(PDO::FETCH_ASSOC);
@@ -127,7 +125,22 @@ $obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
              }
   
       $pdf->Ln();
-       $pdf->Cell(80,10,"Today Payment",0,0,'R');
+      
+      
+      
+      $todayp="select SUM(total_bill_amount) as tot from sar_sales_invoice where customer_id = '$customer_id' and date='$date'";
+    $todaysqlp=$connect->prepare($todayp);
+$todaysqlp->execute();
+$oldbal1p = $todaysqlp->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal11);die();
+// $old11=$oldbal11['pay'];
+$pat=isset($oldbal1p['tot'])?$oldbal1p['tot']:0;
+
+       $pdf->Cell(80,10,"Sales",0,0,'R');
+        $pdf->Cell(100,10,$pat,0,0,'C');
+      $pdf->Ln();
+     
+       $pdf->Cell(80,10,"Payment",0,0,'R');
         $pdf->Cell(100,10,$old1,0,0,'C');
       $pdf->Ln();
       

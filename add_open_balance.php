@@ -223,7 +223,7 @@ if($valbal['total']==0){
 
         $op=$amount;
     
-      $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$op,0,0,0,0,$op,'$name','OB',$small,$big,$inhand)";
+      $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid) values('$groupname','$pay_id','$date','$names',$op,0,0,0,0,$op,'$name','OB')";
     //   print_r($insbal."k");die(); 
       $exe=mysqli_query($con,$insbal);
     
@@ -266,7 +266,7 @@ $pay=0;
     $total=$opne;
 
 
-  $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$opne,0,$amount,0,0,$total,'$name','OB',$small,$big,$inhand)";
+  $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid) values('$groupname','$pay_id','$date','$names',$opne,0,$amount,0,0,$total,'$name','OB')";
 //   print_r($insbal."ok");die(); 
   $exe=mysqli_query($con,$insbal);
 }
@@ -315,7 +315,7 @@ if($valbal['total']==""){
     $total=$opne+$amount;  
  }
 
- $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$opne,0,$amount,0,0,$total,'$name','OB',$small,$big,$inhand)";
+ $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid) values('$groupname','$pay_id','$date','$names',$opne,0,$amount,0,0,$total,'$name','OB')";
 //   print_r($insbal."ko");die(); 
   $exe=mysqli_query($con,$insbal);
 
@@ -386,7 +386,7 @@ $inhand=$tray['inhand'];
   
           $op=$amount;
       
-        $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$op,0,$amount,0,0,$op,'$name','OB',$small,$big,$inhand)";
+        $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$op,0,$amount,0,0,$op,'$name','OB')";
       //   print_r($insbal."k");die(); 
         $exe=mysqli_query($con,$insbal);
       
@@ -429,7 +429,7 @@ $inhand=$tray['inhand'];
       $total=$opne;
   
   
-    $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$opne,0,0,0,0,$total,'$name','OB',$small,$big,$inhand)";
+    $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$opne,0,0,0,0,$total,'$name','OB')";
   //   print_r($insbal."ok");die(); 
     $exe=mysqli_query($con,$insbal);
   }
@@ -479,7 +479,7 @@ $inhand=$tray['inhand'];
       $total=$opne+$amount;  
    }
   
-   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$opne,0,$amount,0,0,$total,'$name','OB',$small,$big,$inhand)";
+   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$opne,0,$amount,0,0,$total,'$name','OB')";
   //   print_r($insbal."ko");die(); 
     $exe=mysqli_query($con,$insbal);
   

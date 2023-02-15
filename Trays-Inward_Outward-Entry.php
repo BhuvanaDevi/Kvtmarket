@@ -1100,7 +1100,7 @@ else{
          $obal=$valbal['obal'];
       }
                    
-                  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','',$small,$big,$inhand)";
+                  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','')";
                     //  print_r($insbal."k");die(); 
                     $exe=mysqli_query($con,$insbal);
                 
@@ -1250,7 +1250,7 @@ else{
                $obal=$valbal['obal'];
             }
 
-                        $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','',$small,$big,$inhand)";
+                        $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','')";
                         //   print_r($insbal."k");die(); 
                           $exe=mysqli_query($con,$insbal);
                 
@@ -1403,7 +1403,7 @@ else{
          $obal=$valbal['obal'];
       }
                    
-                  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','',$small,$big,$inhand)";
+                  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','')";
                   //   print_r($insbal."k");die(); 
                     $exe=mysqli_query($con,$insbal);
                 
@@ -1546,7 +1546,7 @@ $query->execute();
 $results=$query->fetch(PDO::FETCH_OBJ);
 $names=$results->customer_name;
              
-            $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','',$small,$big,$inhand)";
+            $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','')";
             //   print_r($insbal."k");die(); 
               $exe=mysqli_query($con,$insbal);
              
@@ -1697,7 +1697,7 @@ $names=$results->customer_name;
          $obal=$valbal['obal'];
       }
 
-                   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','',$small,$big,$inhand)";
+                   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','')";
                    //   print_r($insbal."k");die(); 
                      $exe=mysqli_query($con,$insbal);
                 
@@ -1846,7 +1846,7 @@ else{
       else{
          $obal=$valbal['obal'];
       }
-                  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','',$small,$big,$inhand)";
+                  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$names',$obal,0,0,$pay,0,$tot,'$name','')";
                   //   print_r($insbal."k");die(); 
                     $exe=mysqli_query($con,$insbal);
                 

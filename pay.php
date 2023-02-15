@@ -46,6 +46,55 @@ if($req=="disabled")
 ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+   $(document).ready(function(){
+
+        $("#supp").hide();
+    $("#custom").hide();
+
+    var invoice=$(this).find(":selected").val();
+   if(invoice=="Patti"){
+    $("#supp").show();
+    $("#custom").hide();
+
+ }
+   else if(invoice=="Sales"){
+    $("#custom").show();
+    $("#supp").hide();
+   }
+   
+    $("#invoice").change(function(){
+
+        var invoice=$(this).find(":selected").val();
+        // alert(invoice)
+   if(invoice=="Patti"){
+   
+    var url = window.location.href;
+
+// window.location.replace("https://udhaarsudhaar.net/ab_live1/pay.php?invoice=Patti&supplier=<?=$_GET['supplier']?>&customer=&submit=submit");
+window.location.replace("http://localhost/kvtmarket/pay.php?invoice=Patti&supplier=<?=$_GET['supplier']?>&customer=&submit=submit");
+
+//   if(url == "https://udhaarsudhaar.net/ab_live1/pay.php?invoice=<?=$_GET['invoice']?>&supplier=<?=$_GET['supplier']?>&customer=&submit=submit" || url == "http://udhaarsudhaar.net/ab_live1/pay.php?invoice=<?=$_GET['invoice']?>&supplier=<?=$_GET['supplier']?>&customer=&submit=submit"){
+// window.location.replace("https://udhaarsudhaar.net/ab_live1/pay.php?invoice=<?=$_GET['invoice']?>&supplier=<?=$_GET['supplier']?>&customer=&submit=submit");
+                         
+//     }
+      $("#supp").show();
+    $("#custom").hide();
+
+ }
+   else if(invoice=="Sales"){
+    var url = window.location.href;
+window.location.replace("http://localhost/kvtmarket/pay.php?invoice=Sales&supplier=&customer=<?=$_GET['customer']?>&submit=submit");
+                            
+//   if(url == "https://udhaarsudhaar.net/ab_live1/pay.php?invoice=<?=$_GET['invoice']?>&supplier=&customer=<?=$_GET['customer']?>&submit=submit" || url == "http://udhaarsudhaar.net/ab_live1/pay.php?invoice=<?=$_GET['invoice']?>&supplier=&customer=<?=$_GET['customer']?>&submit=submit"){
+// window.location.replace("https://udhaarsudhaar.net/ab_live1/pay.php?invoice=<?=$_GET['invoice']?>&supplier=&customer=<?=$_GET['customer']?>&submit=submit");
+//     }
+    $("#custom").show();
+    $("#supp").hide();
+   }
+    });
+});
+    </script>
 <div id="content-page" class="content-page">
         <div class="container-fluid">
           <div class="row col-lg-12">
@@ -243,27 +292,68 @@ if($cus=="") {
     <td>0</td><td></td><td></td></tr>";
   }
    if($date==$date){
+              $today="select SUM(pay) as pay from payment where supplierid = '$rowid[supplier_no]' and date='$date' and (paymentmode='' or paymentmode='-') and pattid!='OB'";
+    $todaysql=$connect->prepare($today);
+$todaysql->execute();
+$oldbal1 = $todaysql->fetch(PDO::FETCH_ASSOC);
+$old1=$oldbal1['pay'];
+
     if($rowd['sale']==0){
       $tots=$rowda["total"]+$row1["sale"];
       echo"<tr><td align='right'>Today Patti</td>
     <td>$row1[sale]</td><td></td><td></td></tr>";
-    echo"<tr><td align='right'>Total</td>
-    <td>$tots</td><td></td><td></td></tr>";
+    // echo"<tr><td align='right'>Total</td>
+    // <td>$tots</td><td></td><td></td></tr>";
       }
       else{
         $tots=$rowda["total"]+$rowd["sale"];
         echo"<tr><td align='right'>Today Patti</td>
         <td>$rowd[sale]</td><td></td><td></td></tr>";
-        echo"<tr><td align='right'>Total</td>
-        <td>$tots</td><td></td><td></td></tr>";
+        // echo"<tr><td align='right'>Total</td>
+        // <td>$tots</td><td></td><td></td></tr>";
           }  
-    if($rowd['pay']==0){
+    if($old1==0){
       echo"<tr><td align='right'>Payment</td>
       <td>0</td><td></td><td></td></tr>";
     } else{
       echo"<tr><td align='right'>Payment</td>
-      <td>$rowd[pay]</td><td></td><td></td></tr>";
+      <td>$old1</td><td></td><td></td></tr>";
     } 
+    
+    
+    $today1="select SUM(dis) as dis from payment where supplierid = '$rowid[supplier_no]' and date='$date' and (paymentmode='cash' or paymentmode='percentage')";
+    $todaysql1=$connect->prepare($today1);
+$todaysql1->execute();
+$oldbal11 = $todaysql1->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal11);die();
+// $old11=$oldbal11['pay'];
+$dis=isset($oldbal11['dis'])?$oldbal11['dis']:0;
+
+   if($dis==0){
+      echo"<tr><td align='right'>Discount</td>
+      <td>0</td><td></td><td></td></tr>";
+    } else{
+      echo"<tr><td align='right'>Discount</td>
+      <td>$dis</td><td></td><td></td></tr>";
+    } 
+
+
+$today2="select SUM(pay) as pay from payment where supplierid = '$rowid[supplier_no]' and date='$date' and (pattid='OB')";
+    $todaysql2=$connect->prepare($today2);
+$todaysql2->execute();
+$oldbal12 = $todaysql2->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal12);die();
+// $old11=$oldbal11['pay'];
+$obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
+    
+      if($obal==0){
+      echo"<tr><td align='right'>Opening Balance</td>
+      <td>0</td><td></td><td></td></tr>";
+    } else{
+      echo"<tr><td align='right'>Opening Balance</td>
+      <td>$obal</td><td></td><td></td></tr>";
+    } 
+    
     echo"<tr><td align='right'>Balance</td>
     <td>$row1[total]</td><td></td><td></td></tr>";
     $bal+=$row1["total"];
@@ -284,26 +374,68 @@ if($rowda["total"]!=0){
  }
   if($date==$date){
     if($rowd['sale']==0){
+        
+          $today="select SUM(pay) as pay from payment where supplierid = '$rowid[supplier_no]' and date='$date' and (paymentmode='' or paymentmode='-') and pattid!='OB'";
+    $todaysql=$connect->prepare($today);
+$todaysql->execute();
+$oldbal1 = $todaysql->fetch(PDO::FETCH_ASSOC);
+$old1=$oldbal1['pay'];
+
       $tots=$rowda["total"]+$row1["sale"];
       echo"<tr><td align='right'>Today Patti</td>
     <td>$row1[sale]</td><td></td><td></td></tr>";
-    echo"<tr><td align='right'>Total</td>
-    <td>$tots</td><td></td><td></td></tr>";
+    // echo"<tr><td align='right'>Total</td>
+    // <td>$tots</td><td></td><td></td></tr>";
       }
       else{
         $tots=$rowda["total"]+$rowd["sale"];
         echo"<tr><td align='right'>Today Patti</td>
         <td>$rowd[sale]</td><td></td><td></td></tr>";
-        echo"<tr><td align='right'>Total</td>
-        <td>$tots</td><td></td><td></td></tr>";
+        // echo"<tr><td align='right'>Total</td>
+        // <td>$tots</td><td></td><td></td></tr>";
           }  
-    if($rowd['pay']==0){
+    if($old1==0){
       echo"<tr><td align='right'>Payment</td>
       <td>$row1[pay]</td><td></td><td></td></tr>";
     } else{
       echo"<tr><td align='right'>Payment</td>
-      <td>$rowd[pay]</td><td></td><td></td></tr>";
+      <td>$old1</td><td></td><td></td></tr>";
     } 
+    
+    
+    $today1="select SUM(dis) as dis from payment where supplierid = '$rowid[supplier_no]' and date='$date' and (paymentmode='cash' or paymentmode='percentage')";
+    $todaysql1=$connect->prepare($today1);
+$todaysql1->execute();
+$oldbal11 = $todaysql1->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal11);die();
+// $old11=$oldbal11['pay'];
+$dis=isset($oldbal11['dis'])?$oldbal11['dis']:0;
+
+       if($dis==0){
+      echo"<tr><td align='right'>Discount</td>
+      <td>$row1[pay]</td><td></td><td></td></tr>";
+    } else{
+      echo"<tr><td align='right'>Discount</td>
+      <td>$dis</td><td></td><td></td></tr>";
+    } 
+    
+    
+$today2="select SUM(pay) as pay from payment where supplierid = '$rowid[supplier_no]' and date='$date' and (pattid='OB')";
+    $todaysql2=$connect->prepare($today2);
+$todaysql2->execute();
+$oldbal12 = $todaysql2->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal12);die();
+// $old11=$oldbal11['pay'];
+$obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
+    
+       if($obal==0){
+      echo"<tr><td align='right'>Opening Balance</td>
+      <td>$row1[pay]</td><td></td><td></td></tr>";
+    } else{
+      echo"<tr><td align='right'>Opening Balance</td>
+      <td>$obal</td><td></td><td></td></tr>";
+    } 
+    
     echo"<tr><td align='right'>Balance</td>
     <td>$row1[total]</td><td></td><td></td></tr>";
     $bal+=$row1["total"];
@@ -341,29 +473,84 @@ if($rowda["total"]!=0){
       <td>0</td><td></td><td></td></tr>";
      }
      if($date==$date){
+         
        if($rowd['sale']==0){
          $tots=$rowda["total"]+$row1["sale"];
          echo"<tr><td align='right'>Today Sales</td>
        <td>$row1[sale]</td><td></td><td></td></tr>";
-       echo"<tr><td align='right'>Total</td>
-       <td>$tots</td><td></td><td></td></tr>";
+    //   echo"<tr><td align='right'>Total</td>
+    //   <td>$tots</td><td></td><td></td></tr>";
          }
          else{
            $tots=$rowda["total"]+$rowd["sale"];
            echo"<tr><td align='right'>Today Sales</td>
            <td>$rowd[sale]</td><td></td><td></td></tr>";
-           echo"<tr><td align='right'>Total</td>
-           <td>$tots</td><td></td><td></td></tr>";
+        //   echo"<tr><td align='right'>Total</td>
+        //   <td>$tots</td><td></td><td></td></tr>";
              }  
-       if($rowd['pay']==0){
+             
+                 
+    $today="select SUM(pay) as pay from payment_sale where customerid = '$cus_id' and date='$date' and (paymentmode='' or paymentmode='-') and saleid!='OB'";
+    $todaysql=$connect->prepare($today);
+$todaysql->execute();
+$oldbal1 = $todaysql->fetch(PDO::FETCH_ASSOC);
+$old1=isset($oldbal1['pay'])?$oldbal1['pay']:0;
+//  print_r($old1);die();
+
+                  if($old1==0){
          echo"<tr><td align='right'>Payment</td>
          <td>0</td><td></td><td></td></tr>";
        } else{
          echo"<tr><td align='right'>Payment</td>
-         <td>$rowd[pay]</td><td></td><td></td></tr>";
+         <td>$old1</td><td></td><td></td></tr>";
        } 
+       
+       
+    $today1="select SUM(dis) as dis from payment_sale where customerid = '$cus_id' and date='$date' and (paymentmode='cash' or paymentmode='percentage')";
+    $todaysql1=$connect->prepare($today1);
+$todaysql1->execute();
+$oldbal11 = $todaysql1->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal11);die();
+// $old11=$oldbal11['pay'];
+$dis=isset($oldbal11['dis'])?$oldbal11['dis']:0;
+// print_r($dis);die();
+
+               if($dis==0){
+         echo"<tr><td align='right'>Discount</td>
+         <td>0</td><td></td><td></td></tr>";
+       } else{
+         echo"<tr><td align='right'>Discount</td>
+         <td>$dis</td><td></td><td></td></tr>";
+       } 
+       
+       
+$today2="select SUM(pay) as pay from payment_sale where customerid = '$cus_id' and date='$date' and saleid='OB'";
+    $todaysql2=$connect->prepare($today2);
+$todaysql2->execute();
+$oldbal12 = $todaysql2->fetch(PDO::FETCH_ASSOC);
+// print_r($oldbal12);die();
+// $old11=$oldbal11['pay'];
+$obal=isset($oldbal12['pay'])?$oldbal12['pay']:0;
+    // print_r($obal);die();
+
+       if($obal==0){
+         echo"<tr><td align='right'>Opening Balance</td>
+         <td>0</td><td></td><td></td></tr>";
+       } else{
+         echo"<tr><td align='right'>Opening Balance</td>
+         <td>$obal</td><td></td><td></td></tr>";
+       }   
+
+      
+    $bal="select * from payment_sale where customerid = '$cus_id' order by id desc limit 1";
+    $balsql=$connect->prepare($bal);
+$balsql->execute();
+$oldbal2 = $balsql->fetch(PDO::FETCH_ASSOC);
+$balas=$oldbal2['total'];
+
+
        echo"<tr><td align='right'>Balance</td>
-       <td>$row1[total]</td><td></td><td></td></tr>";
+       <td>$balas</td><td></td><td></td></tr>";
        $bals+=$row1["total"];
       }  echo "</table>";
       }
@@ -401,18 +588,10 @@ if($rowda["total"]!=0){
              <div class="col-md-6 mt-4">
                 <select id="payment_mode"  class="form-control" name="payment_mode">
         <option disabled>Select Payment Mode</option>
-        <!-- <option value="NEFT">NEFT</option>
+        <option value="NEFT">NEFT</option>
         <option value="Cash">Cash</option>
         <option value="Online">Online</option>
-        <option value="DD">DD</option> -->
-             
-        <option value="NEFT">NEFT</option>
-
-<option value="Gpay">Gpay(UPI)</option>
-
-<option value="Cash">Cash</option>
-
-<option value="Cheque">Cheque</option>
+        <option value="DD">DD</option>
        </select> 
              </div>
                    </div>
@@ -474,7 +653,7 @@ if($rowda["total"]!=0){
          </thead>
          <tbody> 
      <?php 
-     $sqlrevoke="select * from payment where pattid like 'PAT_%' and active=0 order by id desc";
+     $sqlrevoke="select * from payment where pattid like 'PAT_%' and active=0 and supplierid='$sup_id' order by id desc";
      $exerevoke=mysqli_query($con,$sqlrevoke);
      $norevoke=mysqli_num_rows($exerevoke);
     $s=0;
@@ -490,8 +669,8 @@ if($rowda["total"]!=0){
         <form method="POST" action="">
         <div class="row col-md-12">  
         <input type="submit" name="revokec" class="btn btn-danger" value="Revoke"/>
-        <a href="paymentbill.php?supplier_id=<?=$fetchrevoke['supplierid']?>" target="_blank" class='btn btn-success ml-2'>Print</a>    
-  <div class="col-md-6"> 
+         <a href="paymentbill.php?supplier_id=<?=$fetchrevoke['supplierid']?>" target="_blank" class='btn btn-success ml-2'>Print</a>    
+        <div class="col-md-6"> 
     <input type="hidden" name="revpati" value="<?=$pattiid?>" />
         <input type="hidden" value="<?=$sup_id?>" name="suppid" />
         <input type="hidden" name="revamt" class="form-control" value="<?=$fetchrevoke['pay']?>" placeholder="Enter Revoke Amount Here"/> 
@@ -536,7 +715,7 @@ if($rowda["total"]!=0){
          </thead>
     <tbody> 
       <?php
-$sqlcpay="select * from payment_sale where saleid like 'CR_%' and active=0 order by id desc";
+$sqlcpay="select * from payment_sale where saleid like 'CR_%' and active=0 and customerid='$cus_id' order by id desc";
 $execpay=mysqli_query($con,$sqlcpay);
 $nocpay=mysqli_num_rows($execpay);
 $c=0;
@@ -550,7 +729,8 @@ while($fetchcpay=mysqli_fetch_assoc($execpay)) {?>
 <td><form method="POST" action="">
     <div class="row col-md-12">  
       <input type="submit" name="revokes" class="btn btn-danger" value="Revoke"/>
-      <a href="paymentbill_customer.php?customer_id=<?=$cid?>" target="_blank" class='btn btn-success ml-2'>Print</a>    
+       <a href="paymentbill_customer.php?customer_id=<?=$cid?>" target="_blank" class='btn btn-success ml-2'>Print</a>    
+        
       <div class="col-md-6"> 
     <input type="hidden" name="revpati" value="<?=$sal_no?>" />
         <input type="hidden" value="<?=$cid?>" name="suppid" />
@@ -629,7 +809,7 @@ ids='$sid'
 ";
 $res2=mysqli_query($con,$fin_trans_qry);
 
-header("location:pays.php?invoice=Patti&supplier=$supplier");
+header("location:pay.php?invoice=Patti&supplier=$supplier");
 
 
 }
@@ -712,7 +892,7 @@ $inhand=$tray['inhand'];
       }
     $total = $valbal["total"]+$revamt;
   
-   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode,smalltray,bigtray,inhand,description,active) values('$group_names','$pay_id','$date','$customer',0,0,$revamt,0,0,$total,'$cus_id','$revpati','',$small,$big,$inhand,'Revoked Amount',2)";
+   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode,description,active) values('$group_names','$pay_id','$date','$customer',0,0,$revamt,0,0,$total,'$cus_id','$revpati','','Revoked Amount',2)";
     // print_r($insbal."ko");die(); 
     $exe=mysqli_query($con,$insbal);
   }
@@ -822,7 +1002,7 @@ $inhand=$tray['inhand'];
 
     $total = $valbal["total"]+$revamt;
   
-   $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode,smalltray,bigtray,inhand,description,active) values('$groupnames','$pay_id','$date','$supplier',$opne,0,$revamt,0,0,$total,'$sup_id','$pattiid','',$small,$big,$inhand,'Revoked Supplier',2)";
+   $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode,description,active) values('$groupnames','$pay_id','$date','$supplier',$opne,0,$revamt,0,0,$total,'$sup_id','$pattiid','','Revoked Supplier',2)";
     // print_r($insbal."ko");die(); 
     $exe=mysqli_query($con,$insbal);
   }
@@ -884,50 +1064,11 @@ ids='$sid'
 ";
 $res2=mysqli_query($con,$fin_trans_qry);
 
-header("location:pays.php?invoice=Sales&customer=$customer");
+header("location:pay.php?invoice=Sales&customer=$customer");
     
 }  
 ?>
-<script>
-   $(document).ready(function(){
 
-        $("#supp").hide();
-    $("#custom").hide();
-
-    var invoice=$(this).find(":selected").val();
-   if(invoice=="Patti"){
-    $("#supp").show();
-    $("#custom").hide();
-
- }
-   else if(invoice=="Sales"){
-    $("#custom").show();
-    $("#supp").hide();
-   }
-   
-    $("#invoice").change(function(){
-
-        var invoice=$(this).find(":selected").val();
-   if(invoice=="Patti"){
-    var url = window.location.href;
-    if(url == "https://udhaarsudhaar.net/ab_live1/pays.php?invoice=<?=$_GET['invoice']?>&supplier=<?=$_GET['supplier']?>&customer=<?=$_GET['customer']?>&submit=submit"){
-window.location.replace("https://udhaarsudhaar.net/ab_live1/pays.php?invoice=Patti&supplier=<?=$_GET['supplier']?>&submit=submit");
-    }
-      $("#supp").show();
-    $("#custom").hide();
-
- }
-   else if(invoice=="Sales"){
-    var url = window.location.href;
-    if(url == "https://udhaarsudhaar.net/ab_live1/pays.php?invoice=<?=$_GET['invoice']?>&supplier=<?=$_GET['supplier']?>&customer=<?=$_GET['customer']?>&submit=submit"){
-window.location.replace("https://udhaarsudhaar.net/ab_live1/pays.php?invoice=Sales&customer=<?=$_GET['customer']?>&submit=submit");
-    }
-    $("#custom").show();
-    $("#supp").hide();
-   }
-    });
-});
-    </script>
 
 <?php
 if(isset($_POST['remainings'])){
@@ -1047,7 +1188,7 @@ if($valbal['total']==""){
 
 //  print_r($opne." ".$tot." ".$total);die();
  if($total==0){
- $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode,smalltray,bigtray,inhand) values('$groupnames','$pay_id','$date','$supplier',$opne,0,$amount,0,$dis,$total,'$sup_id','$pattiid','$amttype',$small,$big,$inhand)";
+ $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode) values('$groupnames','$pay_id','$date','$supplier',$opne,0,$amount,0,$dis,$total,'$sup_id','$pattiid','$amttype')";
   // print_r($insbal."ko");die(); 
   $exe=mysqli_query($con,$insbal);
 
@@ -1056,7 +1197,7 @@ if($valbal['total']==""){
 
 }
 else{
- $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode,smalltray,bigtray,inhand) values('$groupnames','$pay_id','$date','$supplier',$opne,0,$amount,0,$dis,$total,'$sup_id','$pattiid','$amttype',$small,$big,$inhand)";
+ $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode) values('$groupnames','$pay_id','$date','$supplier',$opne,0,$amount,0,$dis,$total,'$sup_id','$pattiid','$amttype')";
   // print_r($insbal."ko");die(); 
   $exe=mysqli_query($con,$insbal);
 }
@@ -1167,7 +1308,7 @@ $inhand=$tray['inhand'];
    
    if($total==0){
     //cus_id
-    $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$customer',$opne,0,$amount,0,$dis,$total,'$cus_id','$sal_no','$amttype',$small,$big,$inhand)";
+    $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode) values('$groupname','$pay_id','$date','$customer',$opne,0,$amount,0,$dis,$total,'$cus_id','$sal_no','$amttype')";
     // print_r($insbal."ko");die(); 
     $exe=mysqli_query($con,$insbal);
   
@@ -1176,7 +1317,7 @@ $inhand=$tray['inhand'];
   
   }
    else{
-    $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$customer',$opne,0,$amount,0,$dis,$total,'$cus_id','$sal_no','$amttype',$small,$big,$inhand)";
+    $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode) values('$groupname','$pay_id','$date','$customer',$opne,0,$amount,0,$dis,$total,'$cus_id','$sal_no','$amttype')";
     // print_r($insbal."ko");die(); 
     $exe=mysqli_query($con,$insbal);
     }

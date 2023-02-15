@@ -111,43 +111,73 @@ if(isset($_REQUEST['req'])!="" && $_REQUEST["req"] == 'edit'){
 	//     </div>';
 
     //iq-card col-md-89 qualityBox
-        $quality_box .= '
-	    <div class="row col-md-12 qualityBox" id="inputFormRow" style="margin:10px;">                      
-	            <div class="form-group col-md-2">
-	            <label for="exampleFormControlSelect1">Select Quality</label>
-	            <select class="form-control" id="exampleFormControlSelect1" name="quality_name[]">
-    	                <option value="">--Choose Quality--</option>';
-            	   foreach ($quality_name_list as $value){
-            	       $selected = '';
-            	       if($value == $data_row['quality_name']){
-            	           $selected = 'selected';
-            	       }
-            	       $quality_box .= '<option '. $selected.'>'.$value.'</option>';
-            	   }
-    	        $quality_box .= '</select>
-	        </div>
-	        <div class="col-md-2">
-	            <label>Quantity</label>
-	            <input type="text" class="form-control qty sum_qty" onkeyup="total_qty();" onchange="calculate_bill_amount('.$cnt.')" name="quantity[]" myattr="' . $cnt . '" id="qty' . $cnt . '" value="'.$data_row['quantity'].'" min="0">
-	        </div> 
-	       
-	        <div class="form-group col-md-2">
-	            <label for="exampleInputNumber1">Rate</label>
-	            <input type="number" onchange="calculate_bill_amount('.$cnt.')" class="form-control rate_arr" id="rate_arr' . $cnt . '" myattr="' . $cnt . '" name="rate[]" value="'.$data_row['rate'].'" min="0">
-	        </div>
-            <div class="form-group col-md-2">
-            <label for="exampleInputNumber1">Type</label>
-            <input type="text" class="form-control rate_arr" id="type' . $cnt . '" myattr="' . $cnt . '" name="type[]" value="'.$data_row['type'].'" readonly>
+    $quality_box .= '
+    <div class="row col-md-12 qualityBox" id="inputFormRow" style="margin:10px;">                      
+            <div class="form-group col">
+            <label for="exampleFormControlSelect1">Quality</label>
+            <select class="form-control" id="exampleFormControlSelect1" name="quality_name[]">
+                    <option value="">--Choose Quality--</option>';
+               foreach ($quality_name_list as $value){
+                   $selected = '';
+                   if($value == $data_row['quality_name']){
+                       $selected = 'selected';
+                   }
+                   $quality_box .= '<option '. $selected.'>'.$value.'</option>';
+               }
+            $quality_box .= '</select>
         </div>
-	        <div class="col-md-2">
-	            <label>Total</label>
-	            <input type="text" name="bill_amount[]" class="form-control boxTotal" id="total_amount' . $cnt . '" value="'.$data_row['bill_amount'].'">
-	            <input type="hidden" name="rec_id[]" class="form-control boxTotal" id="rec_id' . $cnt . '" value="'.$data_row['id'].'" min="0" readonly>
-	        </div>
-            <div class="col-md-2">
-	        <button id="removeRow" data-rec-id="' . $data_row['id'] . '" type="button" class="btn btn-danger" style="padding:8px !important;position:relative;top:30px !important">Remove</button>
-	        </div>
-	    </div>';
+        <div class="form-group col">
+        <label for="exampleInputNumber1">Rate</label>
+        <input type="number" class="form-control rate_arr" id="rate_arr' . $cnt . '" myattr="' . $cnt . '" onchange="calculate_bill_amount('.$cnt.')" name="rate[]" value="'.$data_row['rate'].'" >
+        
+        </div>
+
+              
+<div class="form-group col">
+<label>Bag</label>
+<input type="number" class="form-control" placeholder="Bags" id="bag' . $cnt . '" myattr="' . $cnt . '" name="bag[]" value="'.$data_row['bag'].'">
+</div>
+
+
+        <div class="col">
+        <label>Quantity</label>
+        <input type="text" class="form-control qty sum_qty" onkeyup="total_qty();" onchange="calculate_bill_amount('.$cnt.')" name="quantity[]" myattr="' . $cnt . '" id="qty' . $cnt . '" value="'.$data_row['quantity'].'">
+</div>
+
+<div class="form-group col">
+<label>Bag Type</label>
+<input list="bagtype" class="form-control" name="bag_type[]" id="bag_type" placeholder="Type"  value="'.$data_row['type'].'"> 
+<datalist id="bagtype" name="bag_type[]">
+<option value="Big">Big</option>
+<option value="None">None</option>
+</datalist>
+</div>
+
+<div class="form-group col">
+<label>Lorry Hire</label>
+<input type="number" class="form-control lorry_hire" placeholder="lorryhire" id="lorry_hire' . $cnt . '"  value="'.$data_row['lorry_hire'].'" myattr="' . $cnt . '" name="lorry_hire[]">
+</div>
+
+<div class="form-group col">
+<label>Commision</label>
+<input type="number" class="form-control commision_arr" placeholder="commision" id="commision_arr' . $cnt . '" value="'.$data_row['commision'].'"  myattr="' . $cnt . '" name="commision_arr[]">
+</div>
+
+<div class="form-group col">
+<label>Cooli</label>
+<input type="number" class="form-control cooli_arr" placeholder="cooli" id="cooli_arr' . $cnt . '" myattr="' . $cnt . '" name="cooli_arr[]" value="'.$data_row['cooli'].'" >
+</div>
+
+<div class="form-group col">
+<label>Bill Amount</label>
+<input type="text" name="bill_amount[]" class="form-control boxTotal" placeholder="Amount" id="total_amount' . $cnt . '" readonly value="'.$data_row['bill_amount'].'">
+<input type="hidden" name="rec_id[]" class="form-control boxTotal" id="rec_id' . $cnt . '" value="'.$data_row['id'].'" min="0" readonly>
+</div>
+
+          <div class="col">
+        <button id="removeRow" data-rec-id="' . $data_row['id'] . '" type="button" class="btn btn-danger" style="padding:8px !important;position:relative;top:30px !important">Remove</button>
+        </div>
+    </div>';
 	   $cnt = $cnt + 1;
 	}
 } else {
@@ -166,11 +196,6 @@ if(isset($_REQUEST['id'])!=""){
 } else {
     $id="";
 }
-
-
-
-
-
 
 $val="select *,SUM(bill_amount) as tb from sar_patti where pat_id='$patti_id'";
 $exe=mysqli_query($con,$val);
@@ -260,20 +285,26 @@ $no=mysqli_num_rows($exe);
                          <!--&nbsp;-->
                          <!--<button type="button" id="clear" name="clear" class="btn btn-danger ">Clear-->
                          <!--</button>-->
-                         <button style="position:relative;left:170px !important;top:5px !important" type="button" id="add_supplier" name="add_supplier" class="btn btn-sm btn-success mymodal">Add Supplier</button>
+                         <!-- <button style="position:relative;left:170px !important;top:5px !important" type="button" id="add_supplier" name="add_supplier" class="btn btn-sm btn-success mymodal">Add Supplier</button> -->
                          
                          <div id="delete_rec_id_list">
                          
                          </div>
                          </div>
-                         <div class="form-group col-md-6">
+                         <div class="row col-md-12">
+                         <div class="form-group col ml-3">
                             <label for="exampleInputdate">Patti ID </label>
 
                             <input type="text" class="form-control" id="patti_id" name="patti_id" value="<?= $patti_id ?>" readonly>
                          </div>
-                         <div class="form-group col-md-6">
-                            <label for="exampleInputdate">Date </label><span style="color:red">*</span>
+                         <div class="form-group col">
+                            <label for="exampleInputdate">From Date </label><span style="color:red">*</span>
                             <input type="date" value="<?= $date ?>" class="form-control datepicker" id="exampleInputdate" name="patti_date" required>
+                         </div>
+                         <div class="form-group col">
+                            <label for="exampleInputdate">To Date </label><span style="color:red">*</span>
+                            <input type="date" value="<?= $date ?>" class="form-control datepicker" id="exampleInputdate" name="to_date" required>
+                         </div>
                          </div>
                           <div class="form-group col-md-6">
                             <label for="exampleInputNumber1">Mobile number</label><span style="color:red">*</span>
@@ -361,7 +392,7 @@ $no=mysqli_num_rows($exe);
                         </div>
                      </div>
                      <div class="iq-card-body">
-                        <div class="row col-md-12">
+                        <!-- <div class="row col-md-12">
                          <div class="form-group col-md-6">
                            <label for="exampleInputNumber1">Commission
                            </label><span style="color:red">*</span>
@@ -371,21 +402,38 @@ $no=mysqli_num_rows($exe);
                            <label for="exampleInputNumber1">Lorry Hire
                            </label><span style="color:red">*</span>
                            <input type="text" class="form-control lorry_hire" id="lorry_hire" name="lorry_hire" value="<?=$valg['lorry_hire']?>" min="0" required>
-                        </div></div>
+                        </div></div> -->
                         <div class="row col-md-12">
                          <div class="form-group col-md-6">
-                           <label for="exampleInputNumber1">Box Charges
+                           <label for="exampleInputNumber1">Postage
             
             
                            </label><span style="color:red">*</span>
                            <input type="text" class="form-control box_charge" id="box_charge" name="box_charge" value="<?=$valg['box_charge']?>" min="0" required>
                         </div>
-                        <div class="form-group col-md-6">
+                        <!-- <div class="form-group col-md-6">
                            <label for="exampleInputNumber1">Cooli (Hamali)
                            </label><span style="color:red">*</span>
                            <input type="text" class="form-control cooli" id="cooli" name="cooli" value="<?=$valg['cooli']?>" min="0" required>
+                        </div> -->
+                      
+                        <div class="form-group col-md-6">
+                           <label for="exampleInputNumber1">F
+                           </label>
+                           <span style="color:red">*</span>
+                           <input type="text" class="form-control f" id="f" name="f" value="<?=$valg['f']?>" min="0" required>
+                        </div>  </div>
+
+                            <div class="row col-md-12">
+                    
+                        <div class="form-group col-md-12">
+                           <label for="exampleInputNumber1">Advance
+                           </label>
+                           <!-- <span style="color:red">*</span> -->
+                           <input type="text" class="form-control advance" id="advance" name="advance" value="<?=$valg['advance']?>" min="0" required>
                         </div>
                             </div>
+
                             <div class="row col-md-12">
                          <div class="form-group col-md-12">
                           <label for="exampleInputNumber1"style="font-weight:700;">Total
@@ -438,24 +486,26 @@ if (isset($_POST["add_patti"])) {
 
    $count = count($_POST["quality_name"]);
    $patti_date = $_POST["patti_date"];
+   $to_date = $_POST["to_date"];
    $mobile_number = $_POST["mobile_number"];
    $supplier_name = $_POST["supplier_name"];
    $farmer_name = $_POST["farmer_name"];
    $supplier_address = $_POST["supplier_address"];
    $boxes_arrived = $_POST["boxes_arrived"];
    $lorry_no = $_POST["lorry_no"];
-   $commision = $_POST["commision"];
-   $lorry_hire = $_POST["lorry_hire"];
+//    $commision = $_POST["commision"];
    $box_charge = $_POST["box_charge"];
-   $cooli = $_POST["cooli"];
+   $f = $_POST["f"];
+
 //    $type=$_POST['type'];
-   $total_deduction = $_POST["total_deduction"];
+//    $total_deduction = $_POST["total_deduction"];
    $supplier_id = $_POST["supplier_id"];
    $grpname = $_POST["grpname"];
-   
+   $advance = isset($_POST["advance"])?$_POST["advance"]:0;
+   $total_amount = $_POST["total_amount"];
    
    $total_bill_amount = 0;
-   $net_bill_amount = 0;
+   $net = 0;
    $tot=0;
 
    $patti_qry = "SELECT * FROM sar_patti ORDER BY id DESC LIMIT 1";
@@ -470,14 +520,45 @@ if (isset($_POST["add_patti"])) {
    for($i=0;$i<$count;$i++)
   { 
       $quantity = $_POST["quantity"][$i];
-    //   $type = $_POST["type"][$i];
+      $bagtype = $_POST["bag_type"][$i];
+      $bag = $_POST["bag"][$i];
       $rate = $_POST["rate"][$i];
-      $bill_amount=$quantity*$rate;
-      $total_bill_amount += $bill_amount;
+      $commision = $_POST["commision_arr"][$i];
+      $lorry_hire = $_POST["lorry_hire"][$i];
+      $cooli = $_POST["cooli_arr"][$i];
+      $bill_amount = $_POST["bill_amount"][$i];
+   
+      $rates=$quantity*$rate;
     
+//    $net_bill_amount = $total_bill_amount - $bill_amount;
+if($i==0){
+    $advance = $_POST["advance"];
 
-   $net_bill_amount = $total_bill_amount - $total_deduction;
-   $net_payable = $net_bill_amount + $lorry_hire + $box_charge + $cooli;
+$total_deduction=($lorry_hire + $box_charge + $cooli + $f + $commision);
+$total_bill_amount += $bill_amount;
+$net_bill_amount = $total_bill_amount-$total_deduction;
+
+
+$net_payable = $rates - ($lorry_hire + $cooli + $f + $commision);
+$net+=$net_payable
+
+
+
+
+;
+}
+else{
+    $advance = 0;
+
+    $total_deduction=($lorry_hire + $cooli + $commision);
+    $total_bill_amount += $bill_amount;
+    $net_bill_amount = $total_bill_amount-$total_deduction;
+    
+    $net_payable = $rates - ($lorry_hire + $cooli + $commision); 
+    $net+=$net_payable;
+}
+// print_r($rates." ".$total_bill_amount." ".$total_deduction." ".$net_bill_amount." ".$net_payable);
+// die();
 
    $sample=$total_bill_amount;
    $tot+=$sample;
@@ -516,6 +597,7 @@ if (isset($_POST["add_patti"])) {
             patti_id='$patti_id',
             pat_id='$pat_id',
             patti_date='$patti_date',
+            to_date='$to_date',
             mobile_number='$mobile_number',
             supplier_name='$supplier_name',
             farmer_name='$farmer_name',
@@ -527,7 +609,8 @@ if (isset($_POST["add_patti"])) {
             rate='$rate',
             updated_by='$username',
             bill_amount='$bill_amount',
-            total_bill_amount='$total_bill_amount',
+            advance='$advance',
+            total_bill_amount='$rates',
             commision='$commision',
             lorry_hire='$lorry_hire',
             box_charge='$box_charge',
@@ -538,12 +621,15 @@ if (isset($_POST["add_patti"])) {
             supplier_id='$supplier_id',
             payment_status=1,
             is_active=1,
+            f='$f',
         remain_box=-1,
-        type='$type'";
+        bag='$bag',
+        type='$bagtype'";
          
          $exe_sql= $connect->prepare($add_patti_query);
          $exe_sql->execute();
         // print_r($add_patti_query);die();
+
    $grandTotal = $_POST["grandTotal"];
  // header('Location: view_patti.php');
 
@@ -578,9 +664,9 @@ if (isset($_POST["add_patti"])) {
 
  //    print_r($abtray);die();
  // $boxes=-$boxes_arrived;
- $instray="insert into trays(date,name,no_of_trays,type,description,inward,outward,inhand,updated_by,category,ab_tray,ids,smalltray,bigtray,absmall,abbig) values('$patti_date','$supplier_id','$quantity','$type','Inward from Patti $supplier_name','$quantity',0,'$tray','Admin','Supplier','$abtray','$patti_id',$small,$big,$absmall,$abbig)";
+ $instray="insert into trays(date,name,no_of_trays,type,description,inward,outward,inhand,updated_by,category,ab_tray,ids) values('$patti_date','$supplier_id','$quantity','$type','Inward from Patti $supplier_name','$quantity',0,'$tray','Admin','Supplier','$abtray','$patti_id')";
 //  print_r($instray."d");die();
-   $trayexe=mysqli_query($con,$instray);
+//    $trayexe=mysqli_query($con,$instray);
  
 }
 
@@ -637,17 +723,17 @@ if($valbal['total']==0 || $valbal['total']==""){
     $pay_id = "PAY" . date("Ym") . $paybal;   
 
     if($valbal['total']==""){
-        $total=$tot;
+        $total=$net;
       }
      else{
-        $total=$opne+$tot-($traypay);  
+        $total=$opne+$net-($traypay);  
      }
     
-    $total=round($tot);
-      $am=$valbal['total'];
+    $total=round($net);
+      $am=isset($valbal['total'])?$valbal['total']:0;
   
     
-      $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$patti_date','$supplier_name',$total_bill_amount,$tot,0,0,0,$total,'$supplier_id','$pat_id',$small,$big,$inhand)";
+      $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,advance) values('$grpname','$pay_id','$patti_date','$supplier_name',$am,$net,0,0,0,$total,'$supplier_id','$pat_id','$advance')";
     //   print_r($insbal."oks");die(); 
       $exe=mysqli_query($con,$insbal);
     
@@ -691,17 +777,17 @@ $pay=0;
 
 
 if($valbal['total']==""){
-    $total1=$opne+$tot-($traypay);
+    $total1=$opne+$net-($traypay);
     $total = $valbal["total"]+$total1;
  }
  else{
-    $total=$opne+$tot-($traypay);  
+    $total=$opne+$net-($traypay);  
  }
 
 
     $total=round($total);
   
-  $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$patti_date','$supplier_name',$opne,$tot,0,0,0,$total,'$supplier_id','$pat_id',$small,$big,$inhand)";
+  $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,advance) values('$grpname','$pay_id','$patti_date','$supplier_name',$opne,$net,0,0,0,$total,'$supplier_id','$pat_id','$advance')";
 //   print_r($insbal."ok1");die(); 
   $exe=mysqli_query($con,$insbal);
 }
@@ -755,17 +841,17 @@ else{
 // }
 
 if($valbal['total']==""){
-    $total1=$opne+$tot-($traypay);
+    $total1=$opne+$net-($traypay);
     $total = $valbal["total"]+$total1;
  }
  else{
-    $total=$opne+$tot-($traypay);  
+    $total=$opne+$net-($traypay);  
  }
 
 
     $total=round($total);
     
- $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$patti_date','$supplier_name',$opne,$tot,0,0,0,$total,'$supplier_id','$pat_id',$small,$big,$inhand)";
+ $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,advance) values('$grpname','$pay_id','$patti_date','$supplier_name',$opne,$net,0,0,0,$total,'$supplier_id','$pat_id','$advance')";
 //   print_r($insbal."ko");die(); 
   $exe=mysqli_query($con,$insbal);
 
@@ -786,6 +872,7 @@ header('Location: view_patti.php');
     
    $count = count($_POST["quality_name"]);
    $patti_date = $_POST["patti_date"];
+   $to_date = $_POST["to_date"];
    $mobile_number = $_POST["mobile_number"];
    $grpname = $_POST["grpname"];
    $supplier_name = $_POST["supplier_name"];
@@ -793,25 +880,57 @@ header('Location: view_patti.php');
       $supplier_address = $_POST["supplier_address"];
    $boxes_arrived = $_POST["boxes_arrived"];
    $lorry_no = $_POST["lorry_no"];
-   $commision = $_POST["commision"];
-   $lorry_hire = $_POST["lorry_hire"];
+//    $commision = $_POST["commision"];
+//    $lorry_hire = $_POST["lorry_hire"];
    $box_charge = $_POST["box_charge"];
-   $cooli = $_POST["cooli"];
+   $f = $_POST["f"];
    $total_deduction = $_POST["total_deduction"];
    $supplier_id = $_POST["supplier_id"];
-   
+   $advance = isset($_POST["advance"])?$_POST["advance"]:0;
+ 
    $total_bill_amount = 0;
-   $net_bill_amount = 0;
+   $net= 0;
    $tot=0;
    
           
    for($i=0;$i<$count;$i++)
    { 
-      $quantity = $_POST["quantity"][$i];
+    $quality_name = $_POST["quality_name"][$i];
+    $quantity = $_POST["quantity"][$i];
+      $bagtype = $_POST["bag_type"][$i];
+      $bag = $_POST["bag"][$i];
       $rate = $_POST["rate"][$i];
-    //   $type = $_POST["type"][$i];
-      $bill_amount=$quantity*$rate;
-      $total_bill_amount += $bill_amount;
+      $commision = $_POST["commision_arr"][$i];
+      $lorry_hire = $_POST["lorry_hire"][$i];
+      $cooli = $_POST["cooli_arr"][$i];
+      $bill_amount = $_POST["bill_amount"][$i];
+   
+      $rates=$quantity*$rate;
+    
+//    $net_bill_amount = $total_bill_amount - $bill_amount;
+if($i==0){
+    $advance = $_POST["advance"];
+
+    $total_deduction=($lorry_hire + $box_charge + $cooli + $f + $commision);
+    $total_bill_amount += $bill_amount;
+    $net_bill_amount = $total_bill_amount-$total_deduction;
+    
+    $net_payable = $rates - ($lorry_hire + $cooli + $f + $commision);
+    $net+=$net_payable;
+    }
+    else{
+        $advance = 0;
+
+        $total_deduction=($lorry_hire + $cooli + $commision);
+        $total_bill_amount += $bill_amount;
+        $net_bill_amount = $total_bill_amount-$total_deduction;
+        
+        $net_payable = $rates - ($lorry_hire + $cooli + $commision); 
+        $net+=$net_payable;
+    }
+      
+    //   $bill_amount=$quantity*$rate;
+    //   $total_bill_amount += $bill_amount;
         $to=$total_bill_amount;
         $tot+=$to;
     }
@@ -859,7 +978,7 @@ $id=$_POST["delete_rec_id"][$i];
     // $boxes=-$boxes_arrived;
     $instray="insert into trays(date,name,no_of_trays,type,description,inward,outward,inhand,updated_by,category,ab_tray,ids,smalltray,bigtray,absmall,abbig) values('$date','$supplier_id','$quantity','$idfetch[type]','Inward from Patti $supplier_name','$box',0,'$tray','Admin','Supplier','$abtray','$patti_id',$small,$big,$absmall,$abbig)";
    //  print_r($instray."d");die();
-      $trayexe=mysqli_query($con,$instray);
+    //   $trayexe=mysqli_query($con,$instray);
 
 // if($patti_id!=""){
       $sqlbal="select * from payment where pattid='$patti_id' and supplierid='$supplier_id' order by id desc limit 1";
@@ -891,15 +1010,17 @@ $inhand=$tray['inhand'];
         $total=$tot;
       }
      else{
-        $total=$valbal['total']-$idfetch['total_bill_amount']+$tot;  
+        $total=$valbal['total']-$idfetch['net_payable'];  
         // $total=$valbal['total']-+$tot;  
      }
     
     $am=$valbal['total'];
     $total=round($total);
+    $fet=$idfetch['net_payable'];
     
-      $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$patti_date','$supplier_name',$am,$tot,0,0,0,$total,'$supplier_id','$patti_id',$small,$big,$inhand)";
-    //   print_r($insbal."ok1".$tot."-".$total."-".$idfetch['total_bill_amount']);die(); 
+      $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,advance,description) values('$grpname','$pay_id','$patti_date','$supplier_name',$am,$fet,0,0,0,$total,'$supplier_id','$patti_id','$advance','Item Removed')";
+    //   print_r($insbal."ok1".$net."-".$valbal['total']."-".$idfetch['net_payable']."-".$total);die(); 
+                            // 11574-15248-3674-23148
       $exe=mysqli_query($con,$insbal);
 
       $del_patti_query = "DELETE FROM `sar_patti` WHERE id=".$_POST["delete_rec_id"][$i];
@@ -913,8 +1034,44 @@ $inhand=$tray['inhand'];
   for($i=0;$i<$count;$i++)
   {
       $quality_name = $_POST["quality_name"][$i];
+     
       $quantity = $_POST["quantity"][$i];
+      $bagtype = $_POST["bag_type"][$i];
+      $bag = $_POST["bag"][$i];
       $rate = $_POST["rate"][$i];
+      $commision = $_POST["commision_arr"][$i];
+      $lorry_hire = $_POST["lorry_hire"][$i];
+      $cooli = $_POST["cooli_arr"][$i];
+      $bill_amount = $_POST["bill_amount"][$i];
+   
+      $rates=$quantity*$rate;
+    
+//    $net_bill_amount = $total_bill_amount - $bill_amount;
+// $total_bill_amount += $bill_amount;
+// $total_deduction=($lorry_hire + $box_charge + $cooli + $f + $commision);
+// $net_bill_amount = $total_bill_amount-$total_deduction;
+
+// $net_payable = $rates - ($lorry_hire + $cooli + $f + $commision);
+
+if($i==0){
+    $advance = $_POST["advance"];
+
+    $total_deduction=($lorry_hire + $box_charge + $cooli + $f + $commision);
+    $total_bill_amount += $bill_amount;
+    $net_bill_amount = $total_bill_amount-$total_deduction;
+    
+    $net_payable = $rates - ($lorry_hire + $cooli + $f + $commision);
+    }
+    else{
+        $advance = 0;
+
+        $total_deduction=($lorry_hire + $cooli + $commision);
+        $total_bill_amount += $bill_amount;
+        $net_bill_amount = $total_bill_amount-$total_deduction;
+        
+        $net_payable = $rates - ($lorry_hire + $cooli + $commision); 
+    }
+
     //   $type = $_POST["type"][$i];
       $rec_id = $_POST["rec_id"][$i];
       $bill_amount=$quantity*$rate;
@@ -927,6 +1084,7 @@ if($rec_id == ""){
             patti_id='$pattiid',
             pat_id='$patti_id',
             patti_date='$patti_date',
+            to_date='$to_date',
             updated_by='admin',
             remain_box=-1,
             mobile_number='$mobile_number',
@@ -939,8 +1097,9 @@ if($rec_id == ""){
             quantity='$quantity',
             rate='$rate',
             bill_amount='$bill_amount',
-            total_bill_amount='$total_bill_amount',
+            total_bill_amount='$rates',
             commision='$commision',
+            advance='$advance',
             lorry_hire='$lorry_hire',
             box_charge='$box_charge',
             cooli='$cooli',
@@ -950,7 +1109,9 @@ if($rec_id == ""){
             supplier_id='$supplier_id',
             payment_status=1,
             is_active=1,
-            type='$type'
+            bag='$bag',
+            f='$f',
+            type='$bagtype'
             ";
             
         $add_patti_sql = mysqli_query($con, $add_patti_query);
@@ -982,20 +1143,24 @@ $inhand=$tray['inhand'];
     $pay_id = "PAY" . date("Ym") . $paybal;   
 
     if($valbal['total']==0){
-        $total=$total_bill_amount;
+        $total=$net;
       }
      else{
         // $total=$valbal['total']+($total_bill_amount-$valbal['sale']);  
-        $total=($valbal['total']+$total_bill_amount)-$valbal['sale']; 
+        $total=($valbal['total']+$net)-$valbal['sale']; 
         }
-    
-    $sale=$total_bill_amount-$valbal['sale'];
-    $total=round($total);
+    $sale=$net-$valbal['sale'];
+    $total=($valbal['total']+$net)-$valbal['sale']; 
     $am=$valbal['total'];
     
-    $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,total,supplierid,pattid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$patti_date','$supplier_name',$am,$sale,0,0,$total,'$supplier_id','$patti_id',$small,$big,$inhand)";
+    // print_r($am." ".$total." ".$sale);die();
+    $total=round($total);
+  
+    $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,total,supplierid,pattid,advance,description) values('$grpname','$pay_id','$patti_date','$supplier_name',$am,$sale,0,0,$total,'$supplier_id','$patti_id','$advance','Item Added')";
     //   print_r($insbal."ok");die()    ; 
       $exe=mysqli_query($con,$insbal);
+
+
      
     }else if($rec_id != ""){
         // patti_id='$patti_id',
@@ -1012,9 +1177,10 @@ $inhand=$tray['inhand'];
             quantity='$quantity',
             rate='$rate',
             bill_amount='$bill_amount',
-            total_bill_amount='$total_bill_amount',
+            total_bill_amount='$rates',
             commision='$commision',
-            lorry_hire='$lorry_hire',
+            advance='$advance',
+              lorry_hire='$lorry_hire',
             box_charge='$box_charge',
             cooli='$cooli',
             total_deduction='$total_deduction',
@@ -1022,6 +1188,9 @@ $inhand=$tray['inhand'];
             net_payable='$net_payable',
             payment_status=1,
             supplier_id='$supplier_id',
+            bag='$bag',
+            f='$f',
+            type='$bagtype',
             is_active=1 WHERE id ='".$rec_id."'
             ";
             
@@ -1072,19 +1241,44 @@ var sum_qty = 0;
  $('#exampleInputNumber1').val(sum_qty);
 }
 function calculate_grantotal() {
-    var totalBoxAmount = ( $("#totalBoxAmount").val() ) ? parseFloat($("#totalBoxAmount").val()) : 0;
-    var total_deduction = ( $("#total_deduction").val() ) ? parseFloat($("#total_deduction").val()) : 0;
-    $("#grandTotal").val(totalBoxAmount - total_deduction);
+    // var totalBoxAmount = ( $("#totalBoxAmount").val() ) ? parseFloat($("#totalBoxAmount").val()) : 0;
+    // var total_deduction = ( $("#total_deduction").val() ) ? parseFloat($("#total_deduction").val()) : 0;
+    // $("#grandTotal").val(totalBoxAmount - total_deduction);
 }
 function calculate_bill_amount(id){
     var qty = $("#qty" + id).val();
-    console.log(qty);
+//    alert(qty)
     var rate_arr = $("#rate_arr" + id).val();
-    console.log(rate_arr);
+    
+    if(id==0){
+   
+    var lorry_arr = $("#lorry_hire" + id).val();
+    var commision_arr = $("#commision_arr" + id).val();
+    var cooli_arr = $("#cooli_arr" + id).val();
+    var f = $("#f").val();
+    var postage = $("#box_charge").val();
+    var tot=parseInt(lorry_arr)+parseInt(commision_arr)+parseInt(cooli_arr)+parseInt(f)+parseInt(postage);
+     }
+    else{
+    var lorry_arr = $("#lorry_hire" + id).val();
+    var commision_arr = $("#commision_arr" + id).val();
+    var cooli_arr = $("#cooli_arr" + id).val();
+    var f = $("#f").val();
+    var postage = $("#box_charge").val();
+    var tot=parseInt(lorry_arr)+parseInt(commision_arr)+parseInt(cooli_arr);
+    }
+ 
+    //  alert(parseInt(lorry_arr)+parseInt(commision_arr)+parseInt(cooli_arr)+parseInt(f)+parseInt(postage));
+  
     var total = qty * rate_arr;
-    console.log(total);
+// alert(total)
+    var sam = Math.abs(tot - total);
+    console.log(sam);
+    
     $("#total_amount" + id).val(total.toFixed(2));
     // alert(total)
+    $("#grandTotal").val(-tot);
+
     var quaBoxTotal = 0;
     $(".qualityBox").each(function(index){
         var value = $(this).find(".boxTotal").val();
@@ -1093,6 +1287,8 @@ function calculate_bill_amount(id){
         }
     });
     // console.log(total);
+
+   
    
     $("#totalBoxAmount").val(quaBoxTotal);
     calculate_grantotal(quaBoxTotal);
@@ -1105,12 +1301,15 @@ $(document).ready(function() {
     //   $("#bill_amount").val(bill_amount.toFixed(2));
     // });
 
-    $("#cooli,#commision,#lorry_hire,#box_charge").on("change", function() {
+    $("#cooli,#commision,#lorry_hire,#box_charge,#f").on("change", function() {
        var commision = ( $("#commision").val() ) ? parseFloat($("#commision").val()) : 0;
+       var f = ( $("#f").val() ) ? parseFloat($("#f").val()) : parseFloat($("#f").val(0));
+    //    alert(f)
        var lorry_hire = ( $("#lorry_hire").val() ) ? parseFloat($("#lorry_hire").val()) : 0;
        var box_charge = ( $("#box_charge").val() ) ? parseFloat($("#box_charge").val()) : 0;
        var cooli = ( $("#cooli").val() ) ? parseFloat($("#cooli").val()) : 0;
-       var total_deduction = commision + lorry_hire + box_charge + cooli;
+       var total_deduction = commision + lorry_hire + box_charge + cooli + f;
+    //    alert(total_deduction);
        //document.getElementById("total_deduction").value=total_deduction;
        $("#total_deduction").val(total_deduction.toFixed(2));
        calculate_grantotal();
@@ -1127,11 +1326,11 @@ $(document).ready(function() {
     var i = <?=$cnt?>;
     $('#add').click(function() {
     //   $('#dynamic_field').append('<div class="col-md-12 row qualityBox" id="inputFormRow" style="margin:10px;"><div class="form-group col-md-2"><input list="qualities" class="form-control" name="quality_name[]" id="quality_name"> <datalist id="qualities" name="quality_name[]"><option value="">--Choose Quality--</option><?php foreach ($quality_name_list as $value){echo '<option>'.$value.'</option>';} ?></datalist></div><div class="form-group col-md-2"><input type="text" class="form-control qty sum_qty" placeholder="Enter Quantity" onkeyup="total_qty();" name="quantity[]" myattr="' + i + '" id="qty' + i + '"></div> <div class="form-group col-md-2"><input type="number" class="form-control rate_arr" placeholder="Rate" id="rate_arr' + i + '" myattr="' + i + '" name="rate[]"></div><div class="form-group col-md-2"><input type="text" name="bill_amount[]" class="form-control boxTotal" placeholder="Total" id="total_amount' + i + '" readonly></div><br><div class="form-group col-md-2"><button id="removeRow" type="button" class="btn btn-danger">Remove</button></div></div></div>');
-      $('#dynamic_field').append('<div class="col-md-12 row qualityBox" id="inputFormRow" style="margin:10px;"><div class="form-group col-md-2"><input list="qualities" class="form-control" name="quality_name[]" id="quality_name"> <datalist id="qualities" name="quality_name[]"><option value="">--Choose Quality--</option><?php foreach ($quality_name_list as $value){echo '<option>'.$value.'</option>';} ?></datalist></div><div class="form-group col-md-2"><input type="text" class="form-control qty sum_qty" placeholder="Enter Quantity" onkeyup="total_qty();" name="quantity[]" myattr="' + i + '" id="qty' + i + '"></div> <div class="form-group col-md-2"><input type="number" class="form-control rate_arr" placeholder="Rate" id="rate_arr' + i + '" myattr="' + i + '" name="rate[]"></div><div class="form-group col-md-2"><input type="text" name="bill_amount[]" class="form-control boxTotal" placeholder="Total" id="total_amount' + i + '" readonly></div><br><div class="form-group col-md-2"><button id="removeRow" type="button" class="btn btn-danger">Remove</button></div></div></div>');
+      $('#dynamic_field').append('<div class="col-md-12 row qualityBox" id="inputFormRow" style="margin:10px;"><div class="form-group col"><input list="qualities" class="form-control" name="quality_name[]" id="quality_name"> <datalist id="qualities" name="quality_name[]"><option value="">--Choose Quality--</option><?php foreach ($quality_name_list as $value){echo '<option>'.$value.'</option>';} ?></datalist></div><div class="form-group col"><input type="number" class="form-control rate_arr" placeholder="Rate" id="rate_arr' + i + '" myattr="' + i + '" name="rate[]"></div><div class="form-group col"><input type="number" class="form-control" placeholder="Bags" id="bag' + i + '" myattr="' + i + '" name="bag[]"></div><div class="form-group col"><input type="text" class="form-control qty sum_qty" placeholder="Enter Weights" onkeyup="total_qty();" name="quantity[]" myattr="' + i + '" id="qty' + i + '"></div><div class="form-group col"><input list="bagtype" class="form-control" name="bag_type[]" id="bag_type"> <datalist id="bagtype" name="bag_type[]"><option value="">--Choose Quality--</option><option value="Big">Big</option><option value="None">None</option></datalist></div><div class="form-group col"><input type="number" class="form-control lorry_hire" placeholder="lorryhire" id="lorry_hire' + i + '" myattr="' + i + '" name="lorry_hire[]"></div><div class="form-group col"><input type="number" class="form-control commision_arr" placeholder="commision" id="commision_arr' + i + '" myattr="' + i + '" name="commision_arr[]"></div><div class="form-group col"><input type="number" class="form-control cooli_arr" placeholder="cooli" id="cooli_arr' + i + '" myattr="' + i + '" name="cooli_arr[]"></div><div class="form-group col"><input type="text" name="bill_amount[]" class="form-control boxTotal" placeholder="Amount" id="total_amount' + i + '" readonly></div><br><div class="form-group col"><button id="removeRow" type="button" class="btn btn-danger">Remove</button></div></div></div>');
     // <div class="form-group col-md-2"><select name="type[]" id="type" class="form-control" required><option>Choose Tray Type</option><option value="Small Tray">Small Tray</option><option value="Big Tray">Big Tray</option></select></div>
     //  $('#dynamic_field').append('<div class="col-md-12 row qualityBox" id="inputFormRow" style="margin:10px;"><div class="form-group col-md-2"><input list="qualities" class="form-control" name="quality_name[]" id="quality_name"> <datalist id="qualities" name="quality_name[]"><option value="">--Choose Quality--</option><?php foreach ($quality_name_list as $value){echo '<option>'.$value.'</option>';} ?></datalist></div><div class="form-group col-md-2"><input type="text" class="form-control qty sum_qty" placeholder="Enter Quantity" onkeyup="total_qty();" name="quantity[]" myattr="' + i + '" id="qty' + i + '"></div> <div class="form-group col-md-2"><input type="number" class="form-control rate_arr" placeholder="Rate" id="rate_arr' + i + '" myattr="' + i + '" name="rate[]"></div><div class="form-group col-md-2"><select name="type[]" id="type" class="form-control" required><option>Choose Tray Type"</option><option value="Small Tray">Small tray</option><option value="Big Tray">Big Tray</option></select></div><div class="form-group col-md-2"><input type="text" name="bill_amount[]" class="form-control boxTotal" placeholder="Total" id="total_amount' + i + '" readonly></div><br><div class="form-group col-md-2"><button id="removeRow" type="button" class="btn btn-danger">Remove</button></div></div></div>');
 
-    $(".rate_arr, .qty").on('change', function() {
+    $(".rate_arr, .qty, .lorry_hire, .commision_arr, .cooli_arr").on('change', function() {
         var id = $(this).attr("myattr");
         calculate_bill_amount(id);
     });

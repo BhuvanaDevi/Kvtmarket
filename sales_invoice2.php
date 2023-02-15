@@ -157,16 +157,17 @@ $numrow=$execheck->rowCount();
     <div class="container-fluid">
        <div class="row">
           <div class="col-lg-12">
-          <?php if($numrow<=0) { ?>
-          <div class="iq-card">
+          <?php 
+          //if($numrow<=0) { ?>
+          <!-- <div class="iq-card">
                 <div class="iq-card-body p-0" style="text-align: center;">
                    <div class="iq-edit-list">
                     <h5>If you generate sales invoice, you will must create patti.</h5><br/>
                     <a href="GeneratPatti.php" class="btn btn-success">Click Here</a>
                    </div>
                 </div>
-          </div>  
-          <?php } else { ?>
+          </div>   -->
+          <?php //} else { ?>
           
           <div class="iq-card">
                 <div class="iq-card-body p-0">
@@ -225,7 +226,7 @@ $numrow=$execheck->rowCount();
                                 <datalist class="searchval" id="searchval" name="searchval" required>
                                   <option>Select Customer Name</option> 
                                  </datalist>
-                                 <button type="button"style="position:relative;top:5px;float:right;" id="add_customer" name="add_customer" class="badge badge-success p-2 mymodal">Add Customer</button>
+                                 <!-- <button type="button"style="position:relative;top:5px;float:right;" id="add_customer" name="add_customer" class="badge badge-success p-2 mymodal">Add Customer</button> -->
                                 <?php } else { ?>
                                     <select class="form-control" name="searchval" id="searchval" required>
                                             <option value="">--Choose Customer Name--</option>
@@ -466,7 +467,7 @@ $numrow=$execheck->rowCount();
                    </div>
                 </div>
              </div>
-             <?php } ?>
+             <?php //} ?>
           </div>
         </div>
     </div>
@@ -705,7 +706,7 @@ if($valbal['total']==0){
         $total=round($tot);
       $am=$valbal["total"];
     
-      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$am,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
+      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$grpname','$pay_id','$date','$customer_name',$am,$tot,0,0,0,$total,'$customer_id','$saleid')";
     // print_r($insbal."ok1");die(); 
       $exe=mysqli_query($con,$insbal);
     
@@ -758,7 +759,7 @@ if($valbal['total']==""){
  
  $total=round($total);
 
-  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$opne,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
+  $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$grpname','$pay_id','$date','$customer_name',$opne,$tot,0,0,0,$total,'$customer_id','$saleid')";
 //   print_r($insbal."okh");die(); 
   $exe=mysqli_query($con,$insbal);
 }
@@ -810,7 +811,7 @@ if($valbal['total']==""){
       $total=round($total);
    
 
- $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$opne,$tot,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
+ $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$grpname','$pay_id','$date','$customer_name',$opne,$tot,0,0,0,$total,'$customer_id','$saleid')";
 //   print_r($insbal."ko");die(); 
   $exe=mysqli_query($con,$insbal);
 
@@ -905,7 +906,7 @@ $inhand=$tray['inhand'];
     $sal=$idfetch['total_bill_amount'];
     $total=round($total);
     
-      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$am,$sal,0,0,0,$total,'$cid','$saleid',$small,$big,$inhand)";
+      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$grpname','$pay_id','$date','$customer_name',$am,$sal,0,0,0,$total,'$cid','$saleid')";
     // print_r($insbal."e".$am."-".$total.$tot);die();
       $exe=mysqli_query($con,$insbal);
 
@@ -1011,7 +1012,7 @@ if($valbal['total']==0){
     $total=round($total);
     $am=$valbal['total'];
     
-      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$customer_name',$am,$sale,0,0,0,$total,'$customer_id','$saleid',$small,$big,$inhand)";
+      $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$grpname','$pay_id','$date','$customer_name',$am,$sale,0,0,0,$total,'$customer_id','$saleid')";
     // print_r($insbal."ok");die(); 
       $exe=mysqli_query($con,$insbal);
     

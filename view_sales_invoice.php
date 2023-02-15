@@ -111,7 +111,7 @@ $no=mysqli_num_rows($exebal);
             // $supplier_sql=mysqli_query($con,$supplier_insert_query);
   
 
-   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$supname',0,$total,0,0,0,$op,'$saleid','',$small,$big,$inhand)";
+   $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid) values('$groupname','$pay_id','$date','$supname',0,$total,0,0,0,$op,'$saleid','')";
     //  print_r($insbal."k");die(); 
      $exe=mysqli_query($con,$insbal);
    

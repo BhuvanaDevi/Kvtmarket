@@ -460,12 +460,16 @@ function update_model_data(patti_id, supid, farmer, patdate, patid, data_src) {
             var sum_totalamount = 0;
             for (i = 0; i < result.length; i++) {
                 if (result[i].hasOwnProperty("patti_id")) {
-                    sum_totalamount += parseFloat(result[i].bill_amount);
+                    sum_totalamount += parseFloat(result[i].net_payable);
                     $('#produ_details').append('<tr>');
                     $('#produ_details').append('<td>' + result[i].quality_name + '</td>');
                     $('#produ_details').append('<td>' + result[i].quantity + '</td>');
                     $('#produ_details').append('<td>' + result[i].rate + '</td>');
-                    $('#produ_details').append('<td>' + result[i].bill_amount + '</td>');
+                    $('#produ_details').append('<td>' + result[i].commision + '</td>');
+                    $('#produ_details').append('<td>' + result[i].lorry_hire + '</td>');
+                    $('#produ_details').append('<td>' + result[i].cooli + '</td>');
+                    $('#produ_details').append('<td>' + result[i].total_deduction + '</td>');
+                    $('#produ_details').append('<td>' + result[i].net_payable + '</td>');
                     $('#produ_details').append('</tr>');
                     $("#boxes_arrived").html(result[i].boxes_arrived);
                     $("#patti_id").html(result[i].patti_id);
@@ -505,6 +509,10 @@ function update_model_data(patti_id, supid, farmer, patdate, patid, data_src) {
                 }
             }
             $('#produ_details').append('<tr>');
+            $('#produ_details').append('<td></td>');
+            $('#produ_details').append('<td></td>');
+            $('#produ_details').append('<td></td>');
+            $('#produ_details').append('<td></td>');
             $('#produ_details').append('<td></td>');
             $('#produ_details').append('<td></td>');
             $('#produ_details').append('<td><b>Total Amount</b></td>');
@@ -1070,10 +1078,14 @@ $(document).ready(function() {
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Quality Name</th>
+                                            <th>Quality</th>
                                             <th>Quantity</th>
                                             <th>Rate</th>
-                                            <th>Bill Amount</th>
+                                            <th>Comission</th>
+                                            <th>Lorry Hire</th>
+                                            <th>Cooli</th>
+                                            <th>Deduction</th>
+                                            <th>Amount</th>
                                             <!--<th>Total Amount</th>-->
                                         </tr>
                                     </thead>

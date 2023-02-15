@@ -94,7 +94,7 @@ if($req1!="" && $id1!=""){
     //         $supplier_sql=mysqli_query($con,$supplier_insert_query);
   
 
-       $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode,smalltray,bigtray,inhand) values('$groupname','$pay_id','$date','$name',$amount1,0,0,0,0,$total,'$cusid','OB Return','',$small,$big,$inhand)";
+       $insbal="insert into payment_sale(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,customerid,saleid,paymentmode) values('$groupname','$pay_id','$date','$name',$amount1,0,0,0,0,$total,'$cusid','OB Return','')";
         // print_r($insbal."ko");die(); 
         $exe=mysqli_query($con,$insbal);
       }
@@ -217,7 +217,7 @@ if($req=="delete")
     //         $supplier_sql=mysqli_query($con,$supplier_insert_query);
   
 
-       $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode,smalltray,bigtray,inhand) values('$grpname','$pay_id','$date','$name',$amount,0,0,0,0,$total,'$supid','OB Return','',$small,$big,$inhand)";
+       $insbal="insert into payment(groupname,payid,date,name,obal,sale,pay,tpay,dis,total,supplierid,pattid,paymentmode) values('$grpname','$pay_id','$date','$name',$amount,0,0,0,0,$total,'$supid','OB Return','')";
         // print_r($insbal."ko");die(); 
         $exe=mysqli_query($con,$insbal);
       }

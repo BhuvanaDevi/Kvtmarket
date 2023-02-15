@@ -845,9 +845,8 @@ else if($action=="view_patti_modal")
     $cash_sql=$connect->prepare($cash_qry);
     $cash_sql->execute();
     $fetch=array();
-
     while($cash_row = $cash_sql->fetch(PDO::FETCH_ASSOC)){
-        $fetch[]=array(
+         $fetch[]=array(
             "id"=>$cash_row["id"],
             "rate"=> $cash_row["rate"],
             "patti_date"=>  $cash_row["patti_date"],
@@ -864,6 +863,7 @@ else if($action=="view_patti_modal")
             "net_bill_amount"=>  $cash_row["net_bill_amount"],
             "net_payable"=>  $cash_row["net_payable"],
             "commision"=>  $cash_row["commision"],
+            "f"=>  $cash_row["f"],
             "lorry_hire"=>  $cash_row["lorry_hire"],
             "cooli"=>  $cash_row["cooli"],
             "box_charge"=>  $cash_row["box_charge"],
